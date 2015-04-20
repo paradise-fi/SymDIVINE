@@ -131,8 +131,8 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
     z3::check_result ret = s.check();
     if ( ret == z3::unknown ) {
         ++unknown_instances;
-        if ( Config::getOption( "verbose" ) || Config::getOption( "vverbose" ) ) {
-            if ( Config::getOption( "vverbose" ) )
+        if (Config.verbose.isSet() || Config.vverbose.isSet()) {
+            if ( Config.vverbose.isSet() )
                 std::cerr << "while checking:\n" << s;
             std::cerr << "\ngot 'unknown', reason: " << s.reason_unknown() << std::endl;
             std::cerr << "\ttimeout = " << timeout << std::endl;

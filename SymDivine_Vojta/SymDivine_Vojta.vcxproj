@@ -659,6 +659,9 @@
     <ClCompile Include="..\llvmsym\programutils\config.cpp" />
     <ClCompile Include="..\llvmsym\programutils\statistics.cpp" />
     <ClCompile Include="..\llvmsym\stanalysis\inputvariables.cpp" />
+    <ClCompile Include="..\toolkit\query_cache.cpp" />
+    <ClCompile Include="..\toolkit\utils.cpp" />
+    <ClCompile Include="..\toolkit\z3cache.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\extlibs\z3-unstable\src\api\api_ast_map.h" />
@@ -1296,5 +1299,8 @@
     <ClInclude Include="..\llvmsym\stanalysis\inputvariables.h" />
     <ClInclude Include="..\toolkit\hash.h" />
     <ClInclude Include="..\toolkit\jenkins.h" />
+    <ClInclude Include="..\toolkit\query_cache.h" />
+    <ClInclude Include="..\toolkit\utils.h" />
+    <ClInclude Include="..\toolkit\z3cache.h" />
   </ItemGroup>
 </Project>

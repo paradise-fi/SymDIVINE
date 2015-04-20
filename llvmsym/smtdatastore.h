@@ -176,11 +176,11 @@ class SMTStore : public DataStore {
         for ( Formula &pc : path_condition )
             conj = conj && pc;
 
-        if ( Config::getOption( "cheapsimplify" ) ) {
+        if ( Config.cheapsimplify.isSet() ) {
             auto simplified = cheap_simplify( conj );
             path_condition.resize( 1 );
             path_condition.back() = simplified;
-        } else if ( !Config::getOption( "dontsimplify" )) {
+        } else if ( !Config.dontsimplify.isSet() ) {
             // regular, full, expensive simplify
             auto simplified = llvm_sym::simplify( conj );
             path_condition.resize( 1 );

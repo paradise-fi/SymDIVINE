@@ -24,18 +24,14 @@ void found( const Eval &eval )
 
 int main( int args, char *argv[] )
 {
-    /* comd arguments example:
-            addArgOption( "foo", "bar", 'f' )
-            adds new options --foo/-f, available via Config::getOption( "bar" ),
-    */
-    Config::parseArgs( args, argv );
+    Config.parse_cmd_args(args, argv);
 
-    if ( args < 2 ) {
+    /*if ( args < 2 ) {
         cerr << "Syntax:\n\t" << argv[0] << " input.ll" << std::endl;
         return 0;
-    }
+    }*/
 
-    shared_ptr< BitCode > bc = make_shared< BitCode >( Config::getArgument() );
+    shared_ptr< BitCode > bc = make_shared< BitCode >( Config.model.getValue() );
     Eval eval( bc );
     Database< Blob, SMTStore, LinearCandidate< SMTStore, SMTSubseteq >, blobHash,
               blobEqual > knowns;
@@ -66,7 +62,7 @@ int main( int args, char *argv[] )
                 }
 
                 if ( knowns.insertCheck( newSucc ) ) {
-                    if ( Config::getOption( "verbose" ) ) {
+                    if ( Config.verbose.isSet() || Config.vverbose.isSet() ) {
                         static int succs_total = 0;
                         std::cerr << ++succs_total << " states so far.\n";
                     }
@@ -81,7 +77,7 @@ int main( int args, char *argv[] )
     if ( !error_found )
         std::cout << "Safe." << std::endl;
 
-    if ( Config::getOption( "statistics" ) ) {
+    if (Config.statistics.isSet()) {
         cout << knowns.size() << endl;
         std::cout << Statistics::get();
     }

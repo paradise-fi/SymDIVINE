@@ -379,6 +379,9 @@
     <Filter Include="Header files\toolkit">
       <UniqueIdentifier>{d19cb42e-1df3-49ea-9b25-c93d56f09e58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\toolkit">
+      <UniqueIdentifier>{68b00b84-4592-4e99-a3f3-46d1e3e4dfd6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\extlibs\z3-unstable\examples\c\test_capi.c">
@@ -2159,6 +2162,15 @@
     </ClCompile>
     <ClCompile Include="..\reachability.cpp">
       <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\toolkit\query_cache.cpp">
+      <Filter>Source files\toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\toolkit\utils.cpp">
+      <Filter>Source files\toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\toolkit\z3cache.cpp">
+      <Filter>Source files\toolkit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -4065,6 +4077,15 @@
       <Filter>Header files\toolkit</Filter>
     </ClInclude>
     <ClInclude Include="..\toolkit\jenkins.h">
+      <Filter>Header files\toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\toolkit\query_cache.h">
+      <Filter>Header files\toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\toolkit\utils.h">
+      <Filter>Header files\toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\toolkit\z3cache.h">
       <Filter>Header files\toolkit</Filter>
     </ClInclude>
   </ItemGroup>
