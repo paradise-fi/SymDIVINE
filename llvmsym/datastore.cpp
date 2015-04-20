@@ -36,9 +36,11 @@ ICmp_Op icmp_negate( ICmp_Op what )
         case ICmp_Op::SLE:
             retVal = ICmp_Op::SGT;
             break;
+        default:
+            assert(false);
     }
     return retVal;
 }
-  
+
 }
 

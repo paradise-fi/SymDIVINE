@@ -602,7 +602,7 @@ struct Formula {
         if ( _rpn.size() != snd._rpn.size() )
             return false;
 
-        for ( int i = 0; i < _rpn.size(); ++i ) {
+        for ( size_t i = 0; i < _rpn.size(); ++i ) {
             if ( at(i).kind != snd.at(i).kind )
                 return false;
             

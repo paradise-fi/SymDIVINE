@@ -7563,7 +7563,7 @@ END_MLAPI_EXCLUDE
 
 #ifndef CAMLIDL
 #ifdef __cplusplus
-};
+}
 #endif // __cplusplus
 #else
 }

@@ -410,6 +410,8 @@ class ValueStore : public DataStore {
             case ICmp_Op::ULE:
                 holds = get( a ) <= get( b );
                 break;
+            default:
+                assert(false);
         };
         _empty = _empty || !holds;
     }

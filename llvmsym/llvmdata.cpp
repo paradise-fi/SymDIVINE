@@ -55,7 +55,7 @@ inline void helper_visit_and_collect_values(
     values.push_back( val );
     const llvm::User *us_val = llvm::dyn_cast< llvm::User >( val );
 
-    for ( int i = 0; us_val && i < us_val->getNumOperands(); ++i ) {
+    for ( size_t i = 0; us_val && i < us_val->getNumOperands(); ++i ) {
         if ( llvm::isa< llvm::ConstantExpr >( us_val->getOperand( i ) ) ) {
             helper_visit_and_collect_values(
                     llvm::cast< llvm::User >( us_val->getOperand( i ) ),

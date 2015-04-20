@@ -49,7 +49,7 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
     ++Statistics::getCounter( STAT_SUBSETEQ_CALLS );
     if ( a.definitions == b.definitions ) {
         bool equal_syntax = a.path_condition.size() == b.path_condition.size();
-        for ( int i = 0; equal_syntax && i < a.path_condition.size(); ++i ) {
+        for ( size_t i = 0; equal_syntax && i < a.path_condition.size(); ++i ) {
             if ( a.path_condition[ i ]._rpn != b.path_condition[ i ]._rpn )
                 equal_syntax = false;
         }

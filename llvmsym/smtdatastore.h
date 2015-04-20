@@ -391,7 +391,7 @@ class SMTStore : public DataStore {
         generations.emplace( generations.begin() + id, bit_widths.size(), 0 );
         bitWidths.insert( bitWidths.begin() + id, std::vector< char >( bit_widths.size() ) );
 
-        for ( int i = 0; i < bit_widths.size(); ++i ) {
+        for ( size_t i = 0; i < bit_widths.size(); ++i ) {
             bitWidths[ id ][ i ] = static_cast< char >( bit_widths[ i ] );
         }
 

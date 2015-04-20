@@ -11,7 +11,7 @@ namespace {
         return ( val->getType()->isPointerTy() && !llvm::isa< llvm::Constant >( val ) )
             || llvm::isa< llvm::GlobalVariable >( val );
     }
-};
+}
 
 bool MultivalInfo::visit_value( const llvm::Value *val, const llvm::Function *parent )
 {

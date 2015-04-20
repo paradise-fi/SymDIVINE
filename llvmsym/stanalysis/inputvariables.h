@@ -35,7 +35,7 @@ class MultivalInfo {
 
         void insert( int field )
         {
-            assert( field < fields.size() );
+            assert( (size_t)field < fields.size() );
             fields[ field ] = true;
         }
 
@@ -47,7 +47,7 @@ class MultivalInfo {
             auto iE = indices.end() - 1;
 
             for ( ; it < iE; ++it ) {
-                int subtype_no = *it;
+                size_t subtype_no = *it;
                 assert( subtype_no < current_frame->subtypes.size() );
                 current_frame = &current_frame->subtypes[ subtype_no ];
             }
@@ -57,7 +57,7 @@ class MultivalInfo {
 
         bool present( int field ) const
         {
-            assert( field < fields.size() );
+            assert( (size_t)field < fields.size() );
             return fields[ field ];
         }
 
@@ -206,12 +206,12 @@ class MultivalInfo {
         if ( info_a == info_b )
             return false;
         
-        for ( int f = 0; f < info_a.fields.size(); ++f ) {
+        for ( size_t f = 0; f < info_a.fields.size(); ++f ) {
             info_a.fields[ f ] = info_b.fields[ f ] = info_a.fields[ f ] || info_b.fields[ f ] ;
         }
 
         assert( info_a.subtypes.size() == info_b.subtypes.size() );
-        for ( int subt = 0; subt < info_a.subtypes.size(); ++subt )
+        for ( size_t subt = 0; subt < info_a.subtypes.size(); ++subt )
             mergeMultivalInfo( info_a.subtypes[ subt ], info_b.subtypes[ subt ] );
 
         return true;
@@ -231,7 +231,7 @@ class MultivalInfo {
 
         ValueMultivalInfo *substruct_info = &f->second;
 
-        for ( int index : indices ) {
+        for ( size_t index : indices ) {
             assert( index < substruct_info->subtypes.size() );
             substruct_info = &substruct_info->subtypes[ index ];
         }
