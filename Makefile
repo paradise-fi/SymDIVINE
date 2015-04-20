@@ -4,8 +4,8 @@ LDFLAGS=$(shell llvm-config --libs core jit native) $(shell llvm-config --ldflag
 CFLAGS:=-Wall -O3 -pedantic -g $(CFLAGS)
 CXXFLAGS:=$(CFLAGS) $(LLVM_CXX_FLAGS) -I. -std=c++11 -I`pwd`/extlibs/z3-unstable/src/api -I`pwd`/extlibs/z3-unstable/src/api/c++ $(CXXFLAGS)
 TARGET=reachability
-OBJS=$(shell find llvmsym -name '*.cpp' -a ! -name '*bdd*' -a ! -name "*emptystore*" | sed s\/.cpp\$\/.o\/)
-HEADERS=$(shell find llvmsym -name '*.h')
+OBJS=$(shell find llvmsym toolkit -name '*.cpp' -a ! -name '*bdd*' -a ! -name "*emptystore*" | sed s\/.cpp\$\/.o\/)
+HEADERS=$(shell find llvmsym toolkit -name '*.h')
 
 .PHONY: all clean cscope z3
 

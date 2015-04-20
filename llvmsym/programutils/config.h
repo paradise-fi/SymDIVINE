@@ -15,6 +15,7 @@ struct ConfigStruct {
         dontsimplify("", "dont-simplify", "Disables simplification of formulas", false),
         cheapsimplify("", "cheap-simplify", "Enables only cheap simplification of formulas", false),
         enablecaching("c", "enable-caching", "Enables caching of formulas", false),
+        disabletimout("", "disable-timout", "Disables Z3 timeout", false),
         model("model", "LLVM model for verification", true, "", "Input model in ll format"),
         cmd("SymDiVine", ' ', "Vojta")
     {
@@ -41,6 +42,7 @@ struct ConfigStruct {
     TCLAP::SwitchArg dontsimplify;
     TCLAP::SwitchArg cheapsimplify;
     TCLAP::SwitchArg enablecaching;
+    TCLAP::SwitchArg disabletimout;
     TCLAP::UnlabeledValueArg<std::string> model;
 private:
     TCLAP::CmdLine cmd;

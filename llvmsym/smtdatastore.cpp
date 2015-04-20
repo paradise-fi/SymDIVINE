@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <llvmsym/smtdatastore.h>
+#include <toolkit/z3cache.h>
 
 namespace llvm_sym {
 
@@ -90,20 +92,55 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
 
     z3::params p( c );
     p.set(":mbqi", true);
-    p.set("SOFT_TIMEOUT", timeout);
+    if (!Config.disabletimout.isSet())
+        p.set("SOFT_TIMEOUT", timeout);
     s.set( p );
 
-    z3::expr pc_a = c.bool_val( true );
-    for ( const auto &pc : a.path_condition )
-        pc_a = pc_a && toz3( pc, 'a', c );
-    z3::expr pc_b = c.bool_val( true );
-    for ( const auto &pc : b.path_condition )
-        pc_b = pc_b && toz3( pc, 'b', c );
+    bool is_caching_enabled = Config.enablecaching.isSet();
+    Z3SubsetCall formula; // Structure for caching
 
-    for ( const Definition &def : a.definitions )
-        pc_a = pc_a && toz3( def.to_formula(), 'a', c );
-    for ( const Definition &def : b.definitions )
-        pc_b = pc_b && toz3( def.to_formula(), 'b', c );
+    // Try if the formula is in cache
+    if (is_caching_enabled) {
+        StopWatch s;
+        s.start();
+
+        std::copy(a.path_condition.begin(), a.path_condition.end(),
+            std::back_inserter(formula.pc_a));
+        std::copy(b.path_condition.begin(), b.path_condition.end(),
+            std::back_inserter(formula.pc_b));
+
+        for (const Definition &def : a.definitions)
+            formula.pc_a.push_back(def.to_formula());
+
+        for (const Definition &def : b.definitions)
+            formula.pc_b.push_back(def.to_formula());
+
+        std::copy(to_compare.begin(), to_compare.end(), std::back_inserter(formula.distinct));
+
+        s.stop();
+
+        if (Config.verbose.isSet() || Config.vverbose.isSet())
+            std::cout << "Building formula took " << s.getUs() << " us\n";
+
+        // Test if this formula is in cache or not
+        if (Z3cache.is_cached(formula))
+            return Z3cache.result() == z3::unsat;
+    }
+
+    StopWatch solving_time;
+    solving_time.start();
+
+    z3::expr pc_a = c.bool_val( true );
+    for (const auto &pc : a.path_condition)
+        pc_a = pc_a && toz3(pc, 'a', c);
+    z3::expr pc_b = c.bool_val( true );
+    for (const auto &pc : b.path_condition)
+        pc_b = pc_b && toz3(pc, 'b', c);
+
+    for (const Definition &def : a.definitions)
+        pc_a = pc_a && toz3(def.to_formula(), 'a', c);
+    for (const Definition &def : b.definitions)
+        pc_b = pc_b && toz3(def.to_formula(), 'b', c);
 
     z3::expr distinct = c.bool_val( false );
 
@@ -145,6 +182,11 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
         ++Statistics::getCounter( STAT_SUBSETEQ_UNSAT );
     else
         ++Statistics::getCounter( STAT_SUBSETEQ_UNKNOWN );
+
+    solving_time.stop();
+
+    if (is_caching_enabled)
+        Z3cache.place(formula, ret, solving_time.getUs());
 
     return ret == z3::unsat;
 }
