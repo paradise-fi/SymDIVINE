@@ -95,7 +95,7 @@
       </RequiredLinuxPackages>
     </Toolchain>
     <MainBuildDirectory>$(SourceDir)</MainBuildDirectory>
-    <AbsoluteTargetPath>$(BuildDir)/reachability</AbsoluteTargetPath>
+    <AbsoluteTargetPath>$(BuildDir)/symdivine</AbsoluteTargetPath>
     <AutoUpdateMakefiles>true</AutoUpdateMakefiles>
   </Build>
   <Debug xsi:type="com.visualgdb.debug.remote">

@@ -2160,9 +2160,6 @@
     <ClCompile Include="..\llvmsym\stanalysis\inputvariables.cpp">
       <Filter>Source files\llvmsym\stanalysis</Filter>
     </ClCompile>
-    <ClCompile Include="..\reachability.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
     <ClCompile Include="..\toolkit\query_cache.cpp">
       <Filter>Source files\toolkit</Filter>
     </ClCompile>
@@ -2171,6 +2168,15 @@
     </ClCompile>
     <ClCompile Include="..\toolkit\z3cache.cpp">
       <Filter>Source files\toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\symdivine.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\llvmsym\reachability.tpp">
+      <Filter>Source files\llvmsym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\llvmsym\ltl.tpp">
+      <Filter>Source files\llvmsym</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -4087,6 +4093,12 @@
     </ClInclude>
     <ClInclude Include="..\toolkit\z3cache.h">
       <Filter>Header files\toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\llvmsym\ltl.h">
+      <Filter>Header files\llvmsym</Filter>
+    </ClInclude>
+    <ClInclude Include="..\llvmsym\reachability.h">
+      <Filter>Header files\llvmsym</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

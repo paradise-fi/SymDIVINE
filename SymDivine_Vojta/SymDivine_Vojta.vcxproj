@@ -66,7 +66,8 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="..\reachability.cpp" />
+    <ClCompile Include="..\llvmsym\ltl.tpp" />
+    <ClCompile Include="..\llvmsym\reachability.tpp" />
     <ClCompile Include="..\extlibs\z3-unstable\examples\c\test_capi.c" />
     <ClCompile Include="..\extlibs\z3-unstable\examples\c++\example.cpp" />
     <ClCompile Include="..\extlibs\z3-unstable\examples\maxsat\maxsat.c" />
@@ -659,6 +660,7 @@
     <ClCompile Include="..\llvmsym\programutils\config.cpp" />
     <ClCompile Include="..\llvmsym\programutils\statistics.cpp" />
     <ClCompile Include="..\llvmsym\stanalysis\inputvariables.cpp" />
+    <ClCompile Include="..\symdivine.cpp" />
     <ClCompile Include="..\toolkit\query_cache.cpp" />
     <ClCompile Include="..\toolkit\utils.cpp" />
     <ClCompile Include="..\toolkit\z3cache.cpp" />
@@ -1279,8 +1281,10 @@
     <ClInclude Include="..\llvmsym\graph.h" />
     <ClInclude Include="..\llvmsym\instructiondispatch.h" />
     <ClInclude Include="..\llvmsym\llvmdata.h" />
+    <ClInclude Include="..\llvmsym\ltl.h" />
     <ClInclude Include="..\llvmsym\memorylayout.h" />
     <ClInclude Include="..\llvmsym\properties.h" />
+    <ClInclude Include="..\llvmsym\reachability.h" />
     <ClInclude Include="..\llvmsym\smtdatastore.h" />
     <ClInclude Include="..\llvmsym\thread.h" />
     <ClInclude Include="..\llvmsym\cxa_abi\demangler.h" />

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "toolkit/hash.h"
 #include "llvmsym/smtdatastore.h"
 
