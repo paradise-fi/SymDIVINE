@@ -4,26 +4,15 @@
 #include <memory>
 #include <vector>
 
-#include "evaluator.h"
-#include "datastore.h"
-#include "blobing.h"
-#include "smtdatastore.h"
-#include "programutils/config.h"
-#include "toolkit/z3cache.h"
-
-using namespace llvm_sym;
-
-template <class Store>
-Reachability<Store>::Reachability(const std::string& name) : model_name(name) {
-
+template <class Store, class Hit>
+Reachability<Store, Hit>::Reachability(const std::string& name) : model_name(name) {
+    // ToDo: Check if the file is valid
 }
 
-template <class Store>
-void Reachability<Store>::run() {
+template <class Store, class Hit>
+void Reachability<Store, Hit>::run() {
     std::shared_ptr<BitCode> bc = std::make_shared<BitCode>(model_name);
     Evaluator<Store> eval(bc);
-    Database<Blob, SMTStore, LinearCandidate< SMTStore, SMTSubseteq>, blobHash,
-        blobEqual> knowns;
 
     std::vector<Blob> to_do;
 

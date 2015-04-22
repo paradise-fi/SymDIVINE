@@ -1,6 +1,7 @@
 #include "llvmsym/programutils/config.h"
 #include <iostream>
 
+#include "toolkit/z3cache.h"
 #include "llvmsym/reachability.h"
 #include "llvmsym/ltl.h"
 
@@ -9,7 +10,7 @@ int main( int args, char *argv[] )
     Config.parse_cmd_args(args, argv);
 
     if (Config.reachability.isSet()) {
-        Reachability<SMTStore> reachability(Config.model.getValue());
+        Reachability<SMTStore, SMTSubseteq> reachability(Config.model.getValue());
         reachability.run();
         /**
          * ToDo: Add outputting of statistic data ec.
