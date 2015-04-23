@@ -9,23 +9,23 @@ int main( int args, char *argv[] )
 {
     Config.parse_cmd_args(args, argv);
 
-    if (Config.reachability.isSet()) {
-        Reachability<SMTStore, SMTSubseteq> reachability(Config.model.getValue());
+    if (Config.is_set("reachability")) {
+        Reachability<SMTStore, SMTSubseteq> reachability(Config.get_string("model"));
         reachability.run();
         /**
          * ToDo: Add outputting of statistic data ec.
          */
     }
 
-    if (Config.ltl.isSet()) {
-        Ltl<SMTStore> ltl(Config.model.getValue(), Config.ltl_prop.getValue());
+    if (Config.is_set("ltl")) {
+        Ltl<SMTStore> ltl(Config.get_string("model"), Config.get_string("property"));
         ltl.run();
         /**
          * ToDo: Add outputting of statistic data ec.
          */
     }
 
-    if (Config.statistics.isSet()) {
+    if (Config.is_set("statistics")) {
         std::cout << Statistics::get();
         std::cout << "\n";
         Z3cache.dump_stat(std::cout);

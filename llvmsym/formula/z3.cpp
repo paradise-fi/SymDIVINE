@@ -249,7 +249,7 @@ const Formula fromz3( const z3::expr &expr )
                     case Z3_OP_BLSHR:   return l >> r;
                     case Z3_OP_CONCAT:  return l.buildConcat( r );
                     default:
-                        if ( Config.verbose.isSet() || Config.vverbose.isSet() )
+                        if (Config.is_set("verbose") || Config.is_set("vverbose"))
                             std::cerr << "fromz3: unknown binary expression type "
                                       << std::hex << expr.decl().decl_kind() << " of "
                                       << expr << std::endl;
@@ -265,21 +265,21 @@ const Formula fromz3( const z3::expr &expr )
                     case Z3_OP_NOT:      return !l;
                     case Z3_OP_BNOT:     return l.buildBNot();
                     default:
-                        if (Config.verbose.isSet() || Config.vverbose.isSet())
+                        if (Config.is_set("verbose") || Config.is_set("vverbose"))
                             std::cerr << "fromz3: unknown unary expression type "
                                       << std::hex << expr.decl().decl_kind() << "of "
                                       << expr << std::endl;
                         throw std::exception();
                 }
             }
-            if (Config.verbose.isSet() || Config.vverbose.isSet())
+            if (Config.is_set("verbose") || Config.is_set("vverbose"))
                 std::cerr << "fromz3: unknown expression appl " << expr
                           << " with " << expr.num_args() << " args" << std::endl;
             throw std::exception();
         }
     }
 
-    if (Config.verbose.isSet() || Config.vverbose.isSet())
+    if (Config.is_set("verbose") || Config.is_set("vverbose"))
         std::cerr << "fromz3: unknown expression type of " << expr << std::endl;
     throw std::exception();
 }
@@ -354,7 +354,7 @@ Formula simplify( const Formula &f )
     try {
         return simplify( toz3( f, 'a', ctx ), "ctx-solver-simplify" );
     } catch ( std::exception e ) {
-        if (Config.verbose.isSet() || Config.vverbose.isSet())
+        if (Config.is_set("verbose") || Config.is_set("vverbose"))
             std::cerr << "continuing with non-simplified formula " << f << std::endl;
         return f;
     }
@@ -369,7 +369,7 @@ Formula cheap_simplify( const Formula &f )
     try {
         return simplify( toz3( f, 'a', ctx ), "ctx-simplify" );
     } catch ( std::exception e ) {
-        if (Config.verbose.isSet() || Config.vverbose.isSet())
+        if (Config.is_set("verbose") || Config.is_set("vverbose"))
             std::cerr << "continuing with non-simplified formula " << f << std::endl;
         return f;
     }

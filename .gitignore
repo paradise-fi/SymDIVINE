@@ -8,6 +8,7 @@
 *.ll
 *.so
 *.smv
+*.d
 
 # Build results
 

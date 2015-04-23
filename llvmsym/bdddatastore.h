@@ -274,6 +274,37 @@ struct BDDStore : public DataStore {
   
   virtual void clear() {}
 
+  void implement_urem(Value result_id, Value a_id, Value b_id)
+  {
+      std::cout << "Unimplemented!";
+      std::terminate();
+  }
+
+  void implement_srem(Value result_id, Value a_id, Value b_id)
+  {
+      std::cout << "Unimplemented!";
+      std::terminate();
+  }
+
+  void implement_ZExt(Value result_id, Value a_id, int bw)
+  {
+      std::cout << "Unimplemented!";
+      std::terminate();
+  }
+
+  void implement_SExt(Value result_id, Value a_id, int bw)
+  {
+      std::cout << "Unimplemented!";
+      std::terminate();
+  }
+
+  void implement_Trunc(Value result_id, Value a_id, int bw)
+  {
+      std::cout << "Unimplemented!";
+      std::terminate();
+  }
+
+
 private:
 
   void input_transition( Vnf );

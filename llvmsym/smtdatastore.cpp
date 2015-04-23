@@ -92,11 +92,11 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
 
     z3::params p( c );
     p.set(":mbqi", true);
-    if (!Config.disabletimout.isSet())
+    if (!Config.is_set("disabletimout"))
         p.set("SOFT_TIMEOUT", timeout);
     s.set( p );
 
-    bool is_caching_enabled = Config.enablecaching.isSet();
+    bool is_caching_enabled = Config.is_set("enablecaching");
     Z3SubsetCall formula; // Structure for caching
 
     // Try if the formula is in cache
@@ -119,7 +119,7 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
 
         s.stop();
 
-        if (Config.verbose.isSet() || Config.vverbose.isSet())
+        if (Config.is_set("verbose") || Config.is_set("vverbose"))
             std::cout << "Building formula took " << s.getUs() << " us\n";
 
         // Test if this formula is in cache or not
@@ -168,8 +168,8 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
     z3::check_result ret = s.check();
     if ( ret == z3::unknown ) {
         ++unknown_instances;
-        if (Config.verbose.isSet() || Config.vverbose.isSet()) {
-            if ( Config.vverbose.isSet() )
+        if (Config.is_set("verbose") || Config.is_set("vverbose")) {
+            if (Config.is_set("vverbose"))
                 std::cerr << "while checking:\n" << s;
             std::cerr << "\ngot 'unknown', reason: " << s.reason_unknown() << std::endl;
             std::cerr << "\ttimeout = " << timeout << std::endl;
