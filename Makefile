@@ -1,22 +1,20 @@
-LLVM_CXX_FLAGS=$(shell llvm-config --cppflags) -UNDEBUG
-
-CXX := clang++
+CXX := g++
 
 OPT_LVL := -O0
 DBG_LVL := -g3
 
 N_JOBS  := $(shell echo $$((2 * `grep -c "^processor" /proc/cpuinfo`)))
 
-LDFLAGS := $(shell llvm-config --ldflags --libs core irreader) -lz3 -lbdd
+LDFLAGS := -lz3 -lbdd $(shell llvm-config --libs core irreader) $(shell llvm-config --ldflags)
 INCLUDE := -I`pwd`/extlibs/z3-unstable/src/api -I`pwd`/extlibs/z3-unstable/src/api/c++ -I`pwd`/libs
-CFLAGS := -Wall -pedantic -g $(OPT_LVL) $(DBG_LVL) -ferror-limit=5
-CXXFLAGS := $(CFLAGS) $(LLVM_CXX_FLAGS) -I. --std=c++11 --stdlib=libc++ $(CXXFLAGS) $(INCLUDE)
+CFLAGS := -UNDEBUG-Wall -pedantic -g $(OPT_LVL) $(DBG_LVL)
+CXXFLAGS := --std=c++11 $(shell llvm-config --cppflags) $(CFLAGS) -I. $(INCLUDE)
 TARGET := symdivine
 
 PROJECT_DIRS := llvmsym toolkit libs
 OBJS := $(shell find $(PROJECT_DIRS) -name '*.cpp' | sed s\/.cpp\$\/.o\/)
 OBJS := $(filter-out $(TARGET).cpp,$(OBJS))
-DEPENDS   := $(OBJS:.o=.d)
+DEPENDS := $(OBJS:.o=.d)
 
 TO_DEL_O := $(addsuffix /*.o, $(PROJECT_DIRS))
 TO_DEL_D := $(addsuffix /*.d, $(PROJECT_DIRS))
@@ -45,8 +43,9 @@ $(TARGET):	$(TARGET).cpp $(OBJS)
 
 clean:
 	@echo Cleaning...
-	@rm -rf $(TARGET) $(TO_DEL_D) $(TO_DEL_O)
-
+	@find . -name "*.o" -type f -delete
+	@find . -name "*.d" -type f -delete
+	@echo Done.
 echo:
+	g++ -v
 	@echo $(PROJECT_DIRS)
-	@echo $(TO_DEL_D)

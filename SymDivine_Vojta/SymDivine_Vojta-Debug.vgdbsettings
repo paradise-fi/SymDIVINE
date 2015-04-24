@@ -133,7 +133,7 @@
     <LaunchGDBSettings xsi:type="GDBLaunchParametersNewInstance">
       <DebuggedProgram>$(TargetPath)</DebuggedProgram>
       <GDBServerPort>2000</GDBServerPort>
-      <ProgramArguments>--enable-caching -s ./test_programs/threads/model_op.ll</ProgramArguments>
+      <ProgramArguments>reachability ./test_programs/threads/model_op.ll</ProgramArguments>
       <WorkingDirectory>$(BuildDir)</WorkingDirectory>
     </LaunchGDBSettings>
     <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>

@@ -934,7 +934,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                     state.layout.setMultival( deref( ptr_to_global ), false );
                     state.explicitData.implement_store( deref( ptr_to_global ), initializer );
                 } else {
-                    if (Config.is_set("verbose") || Config.is_set("vverbose")) {
+                    if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
                         std::cerr << "initializer for "; g_var_it->dump();
                         std::cerr << " not recognized. Skipping." << std::endl;
                     }
@@ -1016,7 +1016,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
             while( !to_do.empty() ) {
                 State snapshot = to_do.top();
                 state = std::move( to_do.top() );
-                if (Config.is_set("vverbose"))
+                if (Config.is_set("--vverbose"))
                     std::cerr << "---------\nin state:\n" << toString() << std::endl;
                 to_do.pop();
 
@@ -1063,7 +1063,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
          * changes done on this state - therefore, we need to do 'effect' after
          * each yield() call
          */
-        if (Config.is_set("vverbose")) {
+        if (Config.is_set("--vverbose")) {
             std::cerr << "executing instruction " << std::string( functions[state.control.getPC(tid).function].llvm_fun->getName() )
                 << "." << state.control.getPC( tid ).basicblock
                 << "." << state.control.getPC( tid ).instruction << std::endl;

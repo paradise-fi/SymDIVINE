@@ -31,7 +31,7 @@ unsigned get_verbosity_level() {
 }
 
 void register_verbosity_level(ini_params & p) {
-    p.register_unsigned_param("VERBOSE", g_verbosity_level, "be verbose, where the value is the verbosity level", true);
+    p.register_unsigned_param("--verbose", g_verbosity_level, "be verbose, where the value is the verbosity level", true);
 }
 
 static std::ostream* g_verbose_stream = &std::cerr;

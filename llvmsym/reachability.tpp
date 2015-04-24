@@ -41,7 +41,7 @@ void Reachability<Store, Hit>::run() {
             }
 
             if (knowns.insertCheck(newSucc)) {
-                if (Config.is_set("verbose") || Config.is_set("vverbose")) {
+                if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
                     static int succs_total = 0;
                     std::cerr << ++succs_total << " states so far.\n";
                 }
@@ -56,7 +56,7 @@ void Reachability<Store, Hit>::run() {
     if (!error_found)
         std::cout << "Safe." << std::endl;
 
-    if (Config.is_set("statistics")) {
+    if (Config.is_set("--statistics")) {
         std::cout << knowns.size() << " states generated" << std::endl;
     }
 }

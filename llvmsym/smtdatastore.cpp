@@ -119,7 +119,7 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
 
         s.stop();
 
-        if (Config.is_set("verbose") || Config.is_set("vverbose"))
+        if (Config.is_set("--verbose") || Config.is_set("--vverbose"))
             std::cout << "Building formula took " << s.getUs() << " us\n";
 
         // Test if this formula is in cache or not
@@ -168,8 +168,8 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
     z3::check_result ret = s.check();
     if ( ret == z3::unknown ) {
         ++unknown_instances;
-        if (Config.is_set("verbose") || Config.is_set("vverbose")) {
-            if (Config.is_set("vverbose"))
+        if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
+            if (Config.is_set("--vverbose"))
                 std::cerr << "while checking:\n" << s;
             std::cerr << "\ngot 'unknown', reason: " << s.reason_unknown() << std::endl;
             std::cerr << "\ttimeout = " << timeout << std::endl;
