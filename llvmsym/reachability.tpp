@@ -40,7 +40,7 @@ void Reachability<Store, Hit>::run() {
                 error_found = true;
             }
 
-            if (knowns.insertCheck(newSucc)) {
+            if (knowns.insertCheck(newSucc).first) {
                 if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
                     static int succs_total = 0;
                     std::cerr << ++succs_total << " states so far.\n";

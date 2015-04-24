@@ -926,7 +926,8 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                         ++ptr_to_global_aux.content.offset;
                     }
 
-                    llvm::isa< llvm::ConstantAggregateZero >( g_var_it->getInitializer() );
+                    // ToDo: There is a statement with no effect!
+                    // llvm::isa< llvm::ConstantAggregateZero >( g_var_it->getInitializer() );
                 } else if ( g_var_it->getInitializer()->getType()->isIntegerTy() ) {
                     Value initializer = deref( g_var_it->getInitializer(), -1 );
                     assert( initializer.type == Value::Type::Constant );
@@ -1023,9 +1024,9 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                 bool last_check = false;
                 auto restoringYield = [&to_do, &last_check, this, &snapshot, &yield]( bool is_observable,
                                                                          bool is_empty,
-                                                                         bool last = false )
+                                                                         bool last = false)
                 {
-                    assert( !last_check );
+                    assert(!last_check);
                     if ( !is_empty ) {
                         if ( is_observable || isError() ) {
                             yield();
