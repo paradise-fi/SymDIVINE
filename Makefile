@@ -34,6 +34,11 @@ all: $(TARGET)
 # their header changes
 -include $(DEPENDS)
 
+#This is the rule for creating the dependency files
+%.d: %.cpp
+	@echo Creating dependecy for $@
+	@$(CXX) $(CXXFLAGS) -MM -MT '$(patsubst %.cpp,%.o,$<)' $< -MF $@
+
 $(TARGET):	$(TARGET).cpp $(OBJS)
 	@echo Building main binary: $(TARGET)
 	@$(CXX) $(TARGET).cpp $(OBJS) $(CXXFLAGS) -MMD -o $(TARGET) $(LDFLAGS)
