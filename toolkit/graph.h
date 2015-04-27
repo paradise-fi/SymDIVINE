@@ -74,11 +74,12 @@ public:
     void add_edge(VertexId from, VertexId to, Args...args) {
         try {
             Vertex& info = vertices.at(from);
-            info.neighbors.push_back(id);
+            info.neighbors.push_back(to);
             info.edge_info.push_back(EdgeInfo(args...));
         }
-        catch (std::out_of_range&)
+        catch (std::out_of_range&) {
             throw GraphException("From vertex does not exist!");
+        }
     }
 
     /**
@@ -97,7 +98,7 @@ public:
         if (vertices.find(to) == vertices.end())
             return false;
         Vertex& info = res.second;
-        info.neighbors.push_back(id);
+        info.neighbors.push_back(to);
         info.edge_info.push_back(EdgeInfo(args...));
     }
 
@@ -126,15 +127,17 @@ public:
 
         Vertex& info = res->second;
 
-        if (v_info.empty())
+        if (v_info.empty()) {
             for (const auto& s : succ)
                 add_vertex(s);
-        else
-            for (auto id = succ.begin(), auto info = v_info.begin();
+        }
+        else {
+            for (auto id = succ.begin(), info = v_info.begin();
                 id != succ.end(); ++id, ++info)
             {
                 add_vertex(*id, *info);
             }
+        }
         std::copy(succ.begin(), succ.end(), std::back_inserter(info.neigbors));
 
         for (size_t i = 0; e_info.empty() && i != succ.size(); i++)

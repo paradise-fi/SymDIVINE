@@ -95,7 +95,7 @@
       </RequiredLinuxPackages>
     </Toolchain>
     <MainBuildDirectory>$(SourceDir)</MainBuildDirectory>
-    <AbsoluteTargetPath>$(BuildDir)/symdivine</AbsoluteTargetPath>
+    <AbsoluteTargetPath>$(BuildDir)/tests</AbsoluteTargetPath>
     <AutoUpdateMakefiles>true</AutoUpdateMakefiles>
   </Build>
   <Debug xsi:type="com.visualgdb.debug.remote">
@@ -133,7 +133,7 @@
     <LaunchGDBSettings xsi:type="GDBLaunchParametersNewInstance">
       <DebuggedProgram>$(TargetPath)</DebuggedProgram>
       <GDBServerPort>2000</GDBServerPort>
-      <ProgramArguments>reachability ./test_programs/threads/model_op.ll</ProgramArguments>
+      <ProgramArguments>[ltl2ba]</ProgramArguments>
       <WorkingDirectory>$(BuildDir)</WorkingDirectory>
     </LaunchGDBSettings>
     <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>

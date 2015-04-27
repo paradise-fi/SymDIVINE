@@ -82,9 +82,12 @@
     <ClCompile Include="..\llvmsym\programutils\statistics.cpp" />
     <ClCompile Include="..\llvmsym\stanalysis\inputvariables.cpp" />
     <ClCompile Include="..\symdivine.cpp" />
+    <ClCompile Include="..\tests.cpp" />
+    <ClCompile Include="..\toolkit\ltl2ba.cpp" />
     <ClCompile Include="..\toolkit\query_cache.cpp" />
     <ClCompile Include="..\toolkit\utils.cpp" />
     <ClCompile Include="..\toolkit\z3cache.cpp" />
+    <ClCompile Include="..\unit_tests\test_ltl2ba.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\llvmsym\bdddatastore.h" />
@@ -121,6 +124,7 @@
     <ClInclude Include="..\toolkit\graph.h" />
     <ClInclude Include="..\toolkit\hash.h" />
     <ClInclude Include="..\toolkit\jenkins.h" />
+    <ClInclude Include="..\toolkit\ltl2ba.h" />
     <ClInclude Include="..\toolkit\query_cache.h" />
     <ClInclude Include="..\toolkit\utils.h" />
     <ClInclude Include="..\toolkit\z3cache.h" />
