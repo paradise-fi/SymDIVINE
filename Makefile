@@ -51,11 +51,11 @@ all: $(TARGET) $(TESTS)
 
 $(TARGET):	$(TARGET).cpp $(OBJS) $(PARSERS_OBJS)
 	@echo Building main binary: $(TARGET)
-	@$(CXX) $(TARGET).cpp $(OBJS) $(CXXFLAGS) -MMD -o $(TARGET) $(LDFLAGS)
+	@$(CXX) $(TARGET).cpp $(OBJS) $(PARSERS_OBJS) $(CXXFLAGS) -MMD -o $(TARGET) $(LDFLAGS)
 
-$(TESTS): $(TESTS).cpp $(TEST_OBJS)
+$(TESTS): $(TESTS).cpp $(TEST_OBJS) $(PARSERS_OBJS) $(OBJS)
 	@echo Building tests: $(TARGET)
-	@$(CXX) $(TESTS).cpp $(TEST_OBJS) $(CXXFLAGS) -MMD -o $(TESTS) $(LDFLAGS)
+	@$(CXX) $(TESTS).cpp $(TEST_OBJS) $(PARSERS_OBJS) $(OBJS) $(CXXFLAGS) -MMD -o $(TESTS) $(LDFLAGS)
 
 $(PARSERS_DIR)/ltl_parser.h: $(PARSERS_DIR)/ltl_parser.cpp
 
