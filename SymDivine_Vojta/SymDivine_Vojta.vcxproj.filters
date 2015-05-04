@@ -52,6 +52,9 @@
     <Filter Include="Source files\unit_tests">
       <UniqueIdentifier>{fea3a400-8f59-4bad-8019-0f6f70c1829b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\parsers">
+      <UniqueIdentifier>{20526ae4-1dc8-4ee8-a337-0a22b0a88534}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\llvmsym\bdddatastore.cpp">
@@ -236,5 +239,13 @@
     <ClInclude Include="..\toolkit\graph.h">
       <Filter>Header files\toolkit</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\parsers\ltl_parser.y">
+      <Filter>Source files\parsers</Filter>
+    </None>
+    <None Include="..\parsers\ltl_tokens.l">
+      <Filter>Source files\parsers</Filter>
+    </None>
   </ItemGroup>
 </Project>

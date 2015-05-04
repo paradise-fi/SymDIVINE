@@ -61,6 +61,8 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\parsers\ltl_parser.y" />
+    <None Include="..\parsers\ltl_tokens.l" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

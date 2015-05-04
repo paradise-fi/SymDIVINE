@@ -78,7 +78,7 @@ public:
         if (res != 0)
             throw SpotException(dot);
 
-        if (Config.is_set("vverbose"))
+        if (Config.is_set("--vverbose"))
             std::cout << "Spot output:\n" << dot << std::endl;
 
         // Convert graphviz to graph
@@ -108,7 +108,7 @@ public:
                 start_point = id;
             ba.add_vertex(id, count == 2);
 
-            if (Config.is_set("vverbose"))
+            if (Config.is_set("--vverbose"))
                 std::cout << id << ": " << label << ", " << count << std::endl;
         }
 
@@ -120,7 +120,7 @@ public:
 
             ba.add_edge(from, to, ap_translator, label);
 
-            if (Config.is_set("vverbose"))
+            if (Config.is_set("--vverbose"))
                 std::cout << "(" << from << ", " << to << "): " << label << std::endl;
         }
     }
@@ -175,7 +175,7 @@ public:
 		YY_BUFFER_STATE s = yy_scan_string(formula.c_str());
 		yyparse();
 		yy_delete_buffer(s);
-		/* if (Config.is_set("verbose") || Config.is_set("vverbose")) */ {
+	    if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
 			std::cout << "Input formula: " << formula << "\n";
 			std::cout << "Parsed formula: " << res_formula << "\n";
 			for (size_t i = 0; i != formulas.size(); i++) {

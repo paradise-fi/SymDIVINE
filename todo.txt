@@ -1,0 +1,1 @@
+- Fix ambigouity in grammar for parsing LTL formulas

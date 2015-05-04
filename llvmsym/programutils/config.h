@@ -71,6 +71,14 @@ struct ConfigStruct {
         return res->second.asStringList();
     }
 
+    /**
+     * Sets an value for argument (useful for testing)
+     */
+    template <class T>
+    void set(const std::string& name, T val) {
+        args[name] = (docopt::value)val;
+    }
+
 private:
     std::map<std::string, docopt::value> args;
 };
