@@ -1,5 +1,5 @@
 LLVM_CXX_FLAGS=$(shell llvm-config --cppflags) -UNDEBUG
-LDFLAGS=$(shell llvm-config --libs core jit native) $(shell llvm-config --ldflags --libs all) -ltinfo # -lbdd
+LDFLAGS=$(shell llvm-config --libs core jit native) $(shell llvm-config --ldflags --libs all) -ltinfo -ldl -lpthread # -lbdd
 
 CFLAGS:=-Wall -O3 -pedantic -g $(CFLAGS)
 CXXFLAGS:=$(CFLAGS) $(LLVM_CXX_FLAGS) -I. -std=c++11 -I`pwd`/extlibs/z3-unstable/src/api -I`pwd`/extlibs/z3-unstable/src/api/c++ $(CXXFLAGS)
