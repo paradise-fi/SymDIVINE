@@ -176,11 +176,11 @@ class SMTStore : public DataStore {
         for ( Formula &pc : path_condition )
             conj = conj && pc;
 
-        if (Config.is_set("cheapsimplify")) {
+        if (Config.is_set("--cheapsimplify")) {
             auto simplified = cheap_simplify( conj );
             path_condition.resize( 1 );
             path_condition.back() = simplified;
-        } else if (!Config.is_set("dontsimplify")) {
+        } else if (!Config.is_set("--dontsimplify")) {
             // regular, full, expensive simplify
             auto simplified = llvm_sym::simplify( conj );
             path_condition.resize( 1 );
@@ -240,7 +240,17 @@ class SMTStore : public DataStore {
         assert( segments_mapping.size() == generations.size() );
         assert( segments_mapping.size() == bitWidths.size() );
     }
-    
+
+    void pushPropGuard(const Formula &g) {
+        Formula f = g;
+        std::vector<Formula::Ident> ids;
+        for (auto &i : f._rpn) {
+            if (i.kind == Formula::Item::Kind::Identifier)
+                i.id.gen = getGeneration(i.id.seg, i.id.off, false);
+        }
+        pushCondition(f);
+    }
+
     virtual void implement_add( Value result_id, Value a_id, Value b_id )
     {
         Formula a_expr = build_expression( a_id );

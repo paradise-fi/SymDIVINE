@@ -30,9 +30,9 @@ struct ConfigStruct {
                 true              // show help if requested
             );
         // Uncomment for debugging
-        /*for (auto const& arg : args) {
+        for (auto const& arg : args) {
             std::cout << arg.first << ": " << arg.second << std::endl;
-        }*/
+        }
     }
 
     bool is_set(const std::string& name) {

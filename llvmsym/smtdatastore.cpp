@@ -92,11 +92,11 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
 
     z3::params p( c );
     p.set(":mbqi", true);
-    if (!Config.is_set("disabletimout"))
+    if (!Config.is_set("--disabletimout"))
         p.set("SOFT_TIMEOUT", timeout);
     s.set( p );
 
-    bool is_caching_enabled = Config.is_set("enablecaching");
+    bool is_caching_enabled = Config.is_set("--enablecaching");
     Z3SubsetCall formula; // Structure for caching
 
     // Try if the formula is in cache

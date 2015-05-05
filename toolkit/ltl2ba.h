@@ -16,9 +16,9 @@
 #include "../llvmsym/programutils/config.h"
 #include "../parsers/ltl_tokens.h"
 
-class LtlException : public std::runtime_error {
+class LtlConvException : public std::runtime_error {
 public:
-    LtlException(const std::string& msg) : runtime_error(msg) { }
+    LtlConvException(const std::string& msg) : runtime_error(msg) { }
 };
 
 class SpotException : public std::runtime_error {
@@ -69,7 +69,7 @@ public:
         std::string query = "ltl2tgba --ba -f \"" + formula + "\" 2>&1";
         FILE* pipe = popen(query.c_str(), "r");
         if (pipe < 0)
-            throw LtlException(strerror(errno));
+            throw LtlConvException(strerror(errno));
         std::string dot;
         char c;
         while ((c = fgetc(pipe)) != EOF)
@@ -125,7 +125,7 @@ public:
         }
     }
 
-    index_type get_init_vert() {
+    index_type get_init_vert() const {
         return start_point;
     }
 

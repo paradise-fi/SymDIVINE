@@ -2,34 +2,38 @@
 
 #include "toolkit/hash.h"
 #include "llvmsym/smtdatastore.h"
+#include "toolkit/utils.h"
 
 #include <unordered_map>
 #include <set>
 #include <unordered_set>
 #include <vector>
 #include <memory>
+#include <stdexcept>
 
 using namespace llvm_sym;
 
 // reference counting blobs
 struct Blob {
-    int size;
-    char *mem;
-    size_t *refcount;
+    char* getSymb() const { return mem + explicit_size + user_size; }
+    char* getExpl() const { return mem + user_size; }
+    char* getUser() const { return mem; }
 
-    size_t explicit_size;
+    size_t getSymbSize() const { return size - user_size - explicit_size; }
+    size_t getExplSize() const { return explicit_size; }
+    size_t getUserSize() const { return user_size; }
 
-    // Blob getExpl() const { return *this; }
-    char* getSymb() const { return mem + explicit_size; }
+    template <class T>
+    T& user_as() {
+        return *((T*)getUser());
+    }
 
-    Blob() : size(0), mem(nullptr), refcount(nullptr), explicit_size(0) { }
-
-    Blob(size_t s, size_t e_s) : size(s), mem(new char[size]),
-        refcount(new size_t(1)), explicit_size(e_s) {}
+    Blob(size_t s, size_t e_s, size_t user_s = 0) : size(s), mem(new char[s]),
+        refcount(new size_t(1)), explicit_size(e_s), user_size(user_s) {}
 
     Blob(const Blob &snd) : size(snd.size), mem(snd.mem),
-        refcount(snd.refcount),
-        explicit_size(snd.explicit_size) {
+        refcount(snd.refcount), explicit_size(snd.explicit_size), user_size(snd.user_size)
+    {
         ++*refcount;
     }
 
@@ -42,6 +46,8 @@ struct Blob {
             mem = snd.mem;
             refcount = snd.refcount;
             explicit_size = snd.explicit_size;
+            user_size = snd.user_size;
+            size = snd.size;
             ++*refcount;
         }
         return *this;
@@ -68,21 +74,44 @@ struct Blob {
       return false;
       return SMTStore::equal( mem + explicit_size, snd.mem + explicit_size );
       }*/
+private:
+    char *mem;
+    size_t *refcount;
+    size_t size;
+    size_t user_size;
+    size_t explicit_size;
 };
 
-struct blobHash {
+struct blobHashExplicitPart {
     size_t operator()(const Blob &b) const {
-        hash128_t h = spookyHash(reinterpret_cast<void*>(b.mem),
-            b.explicit_size, 0, 0);
+        hash128_t h = spookyHash(reinterpret_cast<void*>(b.getExpl()),
+            b.getExplSize(), 0, 0);
         return h.first ^ h.second;
     }
 };
 
-struct blobEqual {
+struct blobEqualExplicitPart {
     bool operator()(const Blob &b1, const Blob &b2) const {
-        if (b1.explicit_size != b2.explicit_size)
+        if (b1.getExplSize() != b2.getExplSize())
             return false;
-        return memcmp(b1.mem, b2.mem, b1.explicit_size) == 0;
+        return memcmp(b1.getExpl(), b2.getExpl(), b1.getExplSize()) == 0;
+    }
+};
+
+struct blobHashExplicitUserPart {
+    size_t operator()(const Blob &b) const {
+        hash128_t h = spookyHash(reinterpret_cast<void*>(b.getUser()),
+            b.getExplSize() + b.getUserSize(), 0, 0);
+        return h.first ^ h.second;
+    }
+};
+
+struct blobEqualExplicitUserPart {
+    bool operator()(const Blob &b1, const Blob &b2) const {
+        if (b1.getExplSize() != b2.getExplSize()
+         || b1.getUserSize() != b2.getUserSize())
+            return false;
+        return memcmp(b1.getUser(), b2.getUser(), b1.getExplSize() + b2.getUserSize()) == 0;
     }
 };
 
@@ -94,6 +123,47 @@ struct StateId {
 
     IdType exp_id; // Identifies id of the explicit part
     IdType sym_id; // Identifies id of the symbolic part
+
+    StateId(IdType exp_id = 0, IdType sym_id = 0) : exp_id(exp_id), sym_id(sym_id) { }
+    bool operator==(const StateId& id) const {
+        return exp_id == id.exp_id && sym_id == id.sym_id;
+    }
+    
+    bool operator!=(const StateId& id) const {
+        return exp_id != id.exp_id || sym_id != id.sym_id;
+    }
+};
+
+static inline std::ostream& operator<<(std::ostream& o, const StateId& i) {
+    return (o << "<" << i.exp_id << ", " << i.sym_id << ">");
+}
+
+namespace std {
+    /**
+     * Support hashing for StateId in the general way
+     */
+    template<>
+    struct hash<StateId> {
+        typedef typename StateId::IdType IdType;
+        size_t operator()(const StateId& id) const {
+            return hash_comb(hash<IdType>()(id.exp_id), hash<IdType>()(id.sym_id));
+        }
+    };
+
+    /**
+     * Support StateId equality in the general way
+     */
+    template<>
+    struct equal_to<StateId> {
+        bool operator()(const StateId& a, const StateId& b) const {
+            return a == b;
+        }
+    };
+}
+
+class DatabaseException : public std::runtime_error {
+public:
+    DatabaseException(const std::string& msg) : std::runtime_error(msg) { }
 };
 
 template<typename ExplState, typename SymbState,  typename SymbContainer,
@@ -116,10 +186,10 @@ public:
     }
 
     bool seen(StateId id) {
-        auto got = is_table.find(id.exp_id);
+        auto got = is_table.find(id);
         if (got == is_table.end())
             return false;
-        return got->second.seend(id.sym_id);
+        return true;
     }
 
     //assume st is not yet stored
@@ -131,9 +201,9 @@ public:
             fillSym(sst, st);
             StateId id;
             id.sym_id = sc.insert(sst);
-            si_table[st] = std::make_pair(++id_counter,sc);
+            si_table.insert(std::make_pair(st, std::make_pair(++id_counter, sc)));
             id.exp_id = id_counter - 1;
-            is_table[id.exp_id] = st;
+            is_table.insert(std::make_pair(id, st));
             return id;
         }
         else {
@@ -142,6 +212,7 @@ public:
             StateId id;
             id.exp_id = got->second.first;
             id.sym_id = got->second.second.insert(sst);
+            is_table.insert(std::make_pair(id, st));
             return id;
         }
     }
@@ -154,9 +225,9 @@ public:
             fillSym(sst, st);
             StateId id;
             id.sym_id = sc.insert(sst);
-            si_table[st] = std::make_pair(++id_counter, sc);
+            si_table.insert(std::make_pair(st, std::make_pair(++id_counter, sc)));
             id.exp_id = id_counter - 1;
-            is_table[id.exp_id] = st;
+            is_table.insert(std::make_pair(id, st));
             return std::make_pair(true, id);
         }
         else {
@@ -166,6 +237,8 @@ public:
             id.exp_id = got->second.first;
             std::pair<bool, IdType> ret = got->second.second.insertCheck(sst);
             id.sym_id = ret.second;
+            if (ret.first)
+                is_table.insert(std::make_pair(id, st));
             return std::make_pair(ret.first, id);
         }
     }
@@ -183,12 +256,26 @@ public:
         return retVal;
     }
 
+    Blob getState(StateId id) {
+        auto res = is_table.find(id);
+        if (res == is_table.end()) {
+            std::cout << "Table content: ";
+            for(const auto& item : is_table)
+                std::cout << item.first;
+            std::cout << "\n";
+            throw DatabaseException("Cannot find state <"
+                    + std::to_string(id.exp_id) + ", "
+                    + std::to_string(id.sym_id) + ">");
+        }
+        return res->second;
+    }
+
 private:
     // Table from explicit state -> <id, Symbolic>
     std::unordered_map<
         ExplState, std::pair<IdType, SymbContainer>, ExplHasher, ExplEqual> si_table;
     // Table from id to explicit state
-    std::unordered_map<IdType, ExplState> is_table;
+    std::unordered_map<StateId, ExplState> is_table;
 
     IdType id_counter; // Holds next free id
 };

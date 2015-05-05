@@ -1,1 +1,2 @@
 - Fix ambigouity in grammar for parsing LTL formulas
+- Add atomic propositions for local variables (keep translation table function name - segment)

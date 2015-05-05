@@ -34,6 +34,8 @@ template <class VertexId, class VertexInfo = NoInfo, class EdgeInfo = NoInfo,
     class VertexHasher = std::hash<VertexId>, class VertexEq = std::equal_to<VertexId> >
 class Graph {
 public:
+    Graph() : last_check_valid(false), last_res(vertices.end()) { }
+
     /**
      * Inserts new vertex into graph.
      * @param id id of the new vertex
@@ -42,11 +44,12 @@ public:
      */
     template <class... Args>
     bool add_vertex(VertexId id, Args...args) {
+        last_check_valid = false;
         auto res = vertices.find(id);
         if (res != vertices.end())
             return false;
         Vertex v{ VertexInfo(args...), std::vector<VertexId>(), std::vector<EdgeInfo>() };
-        vertices[id] = v;
+        vertices.insert(std::make_pair(id, v));
         return true;
     }
 
@@ -56,6 +59,7 @@ public:
      * @return true if the removal was successful
      */
     bool remove_vertex(VertexId id) {
+        last_check_valid = false;
         auto res = vertices.find(id);
         if (res == vertices.end())
             return false;
@@ -121,6 +125,8 @@ public:
         assert((v_info.empty() && e_info.empty()) ||
             (succ.size() == v_info.size() && succ.size() == e_info.size()));
 
+        last_check_valid = false;
+
         auto res = vertices.find(from);
         if (res == vertices.end())
             return false;
@@ -138,7 +144,7 @@ public:
                 add_vertex(*id, *info);
             }
         }
-        std::copy(succ.begin(), succ.end(), std::back_inserter(info.neigbors));
+	    std::copy(succ.begin(), succ.end(), std::back_inserter(info.neighbors));
 
         for (size_t i = 0; e_info.empty() && i != succ.size(); i++)
             info.edge_info.push_back(EdgeInfo());
@@ -152,10 +158,54 @@ public:
      * Returns all successors of the given vertex
      */
     const std::vector<VertexId>& get_successors(VertexId id) {
+        if ((!last_check_valid || last_check != id) && !exists(id))
+            throw GraphException("No such vertex!");
+        if (last_res != vertices.end())
+            return last_res->second.neighbors;
+        throw GraphException("No such vertex!");
+    }
+
+    const std::vector<VertexId>& get_successors(VertexId id) const {
         auto res = vertices.find(id);
         if (res == vertices.end())
             throw GraphException("No such vertex!");
         return res->second.neighbors;
+    }
+
+    /**
+     * Returns corresponding edge info for successors
+     */
+    const std::vector<EdgeInfo>& get_successors_edges(VertexId id) {
+        if ((!last_check_valid || last_check != id) && !exists(id))
+            throw GraphException("No such vertex!");
+        if (last_res != vertices.end())
+            return last_res->second.edge_info;
+        throw GraphException("No such vertex!");
+    }
+
+    const std::vector<EdgeInfo>& get_successors_edges(VertexId id) const {
+        auto res = vertices.find(id);
+        if (res == vertices.edn())
+            throw GraphException("No such vertex!");
+        return res->second.edge_info;
+    }
+
+    /**
+     * Return true if given vertex exists
+     */
+    bool exists(VertexId id) {
+        last_check_valid = true;
+        last_check = id;
+        last_res = vertices.find(id);
+        return last_res != vertices.end();
+    }
+
+    VertexInfo& get_vertex_info(VertexId id) {
+        if ((!last_check_valid || last_check != id) && !exists(id))
+            throw GraphException("No such vertex!");
+        if (last_res != vertices.end())
+            return last_res->second.vertex_info;
+        throw GraphException("No such vertex!");
     }
 
     // ToDo: Implement other operations including BATCH!
@@ -171,4 +221,8 @@ private:
     };
 
     std::unordered_map<VertexId, Vertex, VertexHasher, VertexEq> vertices;
+
+    bool last_check_valid;
+    VertexId last_check;
+    typename std::unordered_map<VertexId, Vertex, VertexHasher, VertexEq>::iterator last_res;
 };

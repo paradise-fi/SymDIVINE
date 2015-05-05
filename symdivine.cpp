@@ -18,7 +18,7 @@ int main( int args, char *argv[] )
     }
 
     if (Config.is_set("ltl")) {
-        Ltl<SMTStore> ltl(Config.get_string("<model>"), Config.get_string("<property>"));
+        Ltl<SMTStore, SMTSubseteq> ltl(Config.get_string("<model>"), Config.get_string("<property>"));
         ltl.run();
         /**
          * ToDo: Add outputting of statistic data ec.

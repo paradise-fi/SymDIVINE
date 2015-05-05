@@ -6,7 +6,7 @@ R"(SymDiVine.
       symdivine reachability [options] <model>
       symdivine ltl [options] <property> <model>
       symdivine (-h | --help)
-      dymdivine --version
+      symdivine --version
     Options:
       -h --help             Show this screen.
       --version             Show version.

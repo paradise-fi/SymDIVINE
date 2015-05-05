@@ -19,8 +19,8 @@ public:
     void run();
 private:
     std::string model_name;
-    Database<Blob, Store, LinearCandidate<Store, Hit>, blobHash,
-        blobEqual> knowns;
+    Database<Blob, Store, LinearCandidate<Store, Hit>, blobHashExplicitPart,
+        blobEqualExplicitPart> knowns;
 };
 
 #include "reachability.tpp"

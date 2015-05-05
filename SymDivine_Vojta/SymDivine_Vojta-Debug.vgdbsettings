@@ -95,7 +95,7 @@
       </RequiredLinuxPackages>
     </Toolchain>
     <MainBuildDirectory>$(SourceDir)</MainBuildDirectory>
-    <AbsoluteTargetPath>$(BuildDir)/tests</AbsoluteTargetPath>
+    <AbsoluteTargetPath>$(BuildDir)/symdivine</AbsoluteTargetPath>
     <AutoUpdateMakefiles>true</AutoUpdateMakefiles>
   </Build>
   <Debug xsi:type="com.visualgdb.debug.remote">
@@ -133,7 +133,7 @@
     <LaunchGDBSettings xsi:type="GDBLaunchParametersNewInstance">
       <DebuggedProgram>$(TargetPath)</DebuggedProgram>
       <GDBServerPort>2000</GDBServerPort>
-      <ProgramArguments>[ltl2ba]</ProgramArguments>
+      <ProgramArguments>ltl "G 1=1" ./test_programs/simple/model_op.ll </ProgramArguments>
       <WorkingDirectory>$(BuildDir)</WorkingDirectory>
     </LaunchGDBSettings>
     <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>
@@ -161,4 +161,7 @@
     <ShowMessageAfterExecuting>true</ShowMessageAfterExecuting>
   </CustomShortcuts>
   <UserDefinedVariables />
+  <CodeSense>
+    <Enabled>Unknown</Enabled>
+  </CodeSense>
 </VisualGDBProjectSettings2>

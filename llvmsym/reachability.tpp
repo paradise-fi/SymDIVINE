@@ -17,7 +17,7 @@ void Reachability<Store, Hit>::run() {
     std::vector<Blob> to_do;
 
     Blob initial(eval.getSize(), eval.getExplicitSize());
-    eval.write(initial.mem);
+    eval.write(initial.getExpl());
 
     knowns.insert(initial);
     to_do.push_back(initial);
@@ -29,10 +29,10 @@ void Reachability<Store, Hit>::run() {
 
         std::vector< Blob > successors;
 
-        eval.read(b.mem);
+        eval.read(b.getExpl());
         eval.advance([&]() {
             Blob newSucc(eval.getSize(), eval.getExplicitSize());
-            eval.write(newSucc.mem);
+            eval.write(newSucc.getExpl());
 
             if (eval.isError()) {
                 std::cout << "Error state:\n" << eval.toString() << "is reachable."
