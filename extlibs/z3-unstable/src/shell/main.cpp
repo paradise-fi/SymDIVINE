@@ -111,7 +111,7 @@ public:
 
     virtual void register_params(ini_params & p) {
         datalog_params::register_params(p);
-        p.register_bool_param("--statistics", m_statistics, "display statistics");
+        p.register_bool_param("STATISTICS", m_statistics, "display statistics");
     }
 };
 
