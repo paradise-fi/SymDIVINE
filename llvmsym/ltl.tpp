@@ -103,5 +103,9 @@ void Ltl<Store, Hit>::run_nested_dfs(Evaluator<Store>& eval, StateId start_verte
 			// Backtrack
 			// ToDo: Run inner DFS!
 		}
+		else if (info.outer_color == VertexColor::BLACK) {
+			// Vertex was put multiple times onto stack
+			to_process.pop();
+		}
 	}
 }

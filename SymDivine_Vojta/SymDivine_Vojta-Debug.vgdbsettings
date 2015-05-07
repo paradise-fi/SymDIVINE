@@ -133,7 +133,7 @@
     <LaunchGDBSettings xsi:type="GDBLaunchParametersNewInstance">
       <DebuggedProgram>$(TargetPath)</DebuggedProgram>
       <GDBServerPort>2000</GDBServerPort>
-      <ProgramArguments>reachability final_tests/bitvector/byte_add_1_true.ll</ProgramArguments>
+      <ProgramArguments>ltl --verbose --disabletimout "(G 5=5) || G 8 = 8" final_tests/bitvector/byte_add_1_true.ll</ProgramArguments>
       <WorkingDirectory>$(BuildDir)</WorkingDirectory>
     </LaunchGDBSettings>
     <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>

@@ -1,9 +1,11 @@
 CXX := g++
 
-OPT_LVL := -O0
+OPT_LVL := -O3
 DBG_LVL := -g3
 
 N_JOBS  := $(shell echo $$((2 * `grep -c "^processor" /proc/cpuinfo`)))
+
+WD := `pwd`
 
 LDFLAGS := -lz3 -lbdd -lboost_regex -lboost_graph $(shell llvm-config --libs core irreader) $(shell llvm-config --ldflags) -ltinfo -ldl -lpthread
 INCLUDE := -I`pwd`/extlibs/z3-unstable/src/api -I`pwd`/extlibs/z3-unstable/src/api/c++ -I`pwd`/libs
@@ -49,13 +51,21 @@ all: $(TARGET) $(TESTS)
 	@echo Creating dependecy for $@
 	@$(CXX) $(CXXFLAGS) -MM -MT '$(patsubst %.cpp,%.o,$<)' $< -MF $@
 
-$(TARGET):	$(TARGET).cpp $(OBJS) $(PARSERS_OBJS)
+$(TARGET):	$(TARGET).cpp $(OBJS) $(PARSERS_OBJS) 
 	@echo Building main binary: $(TARGET)
 	@$(CXX) $(TARGET).cpp $(OBJS) $(PARSERS_OBJS) $(CXXFLAGS) -MMD -o $(TARGET) $(LDFLAGS)
 
 $(TESTS): $(TESTS).cpp $(TEST_OBJS) $(PARSERS_OBJS) $(OBJS)
 	@echo Building tests: $(TARGET)
 	@$(CXX) $(TESTS).cpp $(TEST_OBJS) $(PARSERS_OBJS) $(OBJS) $(CXXFLAGS) -MMD -o $(TESTS) $(LDFLAGS)
+
+$(WD)/$(PARSERS_DIR)/ltl_parser.h: $(PARSERS_DIR)/ltl_parser.cpp
+
+$(WD)/$(PARSERS_DIR)/ltl_tokens.h: $(PARSERS_DIR)/ltl_tokens.cpp
+
+$(WD)/$(PARSERS_DIR)/ltl_parser.cpp: $(PARSERS_DIR)/ltl_parser.cpp
+
+$(WD)/$(PARSERS_DIR)/ltl_tokens.cpp: $(PARSERS_DIR)/ltl_tokens.cpp
 
 $(PARSERS_DIR)/ltl_parser.h: $(PARSERS_DIR)/ltl_parser.cpp
 
@@ -69,10 +79,17 @@ $(PARSERS_DIR)/ltl_tokens.cpp: $(PARSERS_DIR)/ltl_tokens.l
 	@echo Generating ltl_tokens
 	@flex -o $(PARSERS_DIR)/ltl_tokens.cpp --header-file=$(PARSERS_DIR)/ltl_tokens.h $(PARSERS_DIR)/ltl_tokens.l
 
-
 %.o: %.cpp
 	@echo Building $@
 	@$(CXX) -c $(CXXFLAGS) -MMD -o $@ $<
+
+extlibs/z3-unstable/build/libz3.a:
+	cd extlibs/z3-unstable && \
+		autoconf && \
+		./configure --with-python=`which python2` && \
+		python2 scripts/mk_make.py && \
+		$(MAKE) -C build/
+	cd extlibs/z3-unstable/build && find . -name "*.o" | xargs ar rs libz3.a
 
 clean:
 	@echo Cleaning...
@@ -83,6 +100,7 @@ clean:
 	@find $(PARSERS_DIR) -name "*.hpp" -type f -delete
 	@echo Done.
 echo:
+	@echo $(WD)
 	@echo $(DEPENDS)
 	@echo $(PROJECT_DIRS)
 	@echo $(PARSERS_OBJS)
