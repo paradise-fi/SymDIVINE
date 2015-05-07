@@ -191,6 +191,25 @@ public:
     }
 
     /**
+     * Returns corresponding vertex info for succesros
+     */
+    std::vector<VertexInfo> get_successors_info(VertexId id) {
+        std::vector<VertexInfo> ret;
+        auto succ = get_successors(id);
+        for (const auto& s : succ)
+            ret.push_back(get_vertex_info(s));
+        return ret;
+    }
+
+    std::vector<VertexInfo> get_successors_info(VertexId id) const {
+        std::vector<VertexInfo> ret;
+        auto succ = get_successors(id);
+        for (const auto& s : succ)
+            ret.push_back(get_vertex_info(s));
+        return ret;
+    }
+
+    /**
      * Return true if given vertex exists
      */
     bool exists(VertexId id) {
@@ -206,6 +225,13 @@ public:
         if (last_res != vertices.end())
             return last_res->second.vertex_info;
         throw GraphException("No such vertex!");
+    }
+    
+    const VertexInfo& get_vertex_info(VertexId id) const {
+        auto res = vertices.find(id);
+        if (res == vertices.end())
+            throw GraphException("No such vertex!");
+        return res->second.vertex_info;
     }
 
     // ToDo: Implement other operations including BATCH!

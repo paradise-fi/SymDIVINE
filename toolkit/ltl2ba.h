@@ -42,7 +42,7 @@ public:
 
     struct Accepting {
         Accepting(bool val = false) : acc(val) {}
-        operator bool() { return acc; }
+        operator bool() const { return acc; }
         bool acc;
     };
 

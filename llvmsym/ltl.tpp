@@ -100,12 +100,66 @@ void Ltl<Store, Hit>::run_nested_dfs(Evaluator<Store>& eval, StateId start_verte
 				<< vertex_id.sym_id << ", " << b.user_as<index_type>() << ">\n";
 			info.outer_color = VertexColor::BLACK;
 			to_process.pop();
+
 			// Backtrack
-			// ToDo: Run inner DFS!
+			// Check if state is accepting
+			index_type ba_vertex = b.user_as<index_type>();
+			if (ba.get_ba().get_vertex_info(ba_vertex))
+				accepting_found |= run_inner_dfs(vertex_id);
+			if (accepting_found)
+				break;
 		}
 		else if (info.outer_color == VertexColor::BLACK) {
 			// Vertex was put multiple times onto stack
 			to_process.pop();
 		}
 	}
+
+	if (accepting_found)
+		std::cout << "Property violated!\n";
+	else
+		std::cout << "Property holds!\n";
+}
+
+template <class Store, class Hit>
+bool Ltl<Store, Hit>::run_inner_dfs(StateId start_vertex) {
+	if (!graph.exists(start_vertex))
+		throw LtlException("Initial vertex not found!");
+
+	std::cout << "Running inner DFS for vertex " << start_vertex << "\n";
+
+	std::stack<StateId> to_process;
+	to_process.push(start_vertex);
+	to_process.push(start_vertex);
+	bool accepting_found = false;
+
+	while (!to_process.empty()) {
+		auto vertex_id = to_process.top();
+		VertexInfo& info = graph.get_vertex_info(vertex_id);
+		if (info.inner_color == VertexColor::WHITE) {
+			auto succ = graph.get_successors(vertex_id);
+			auto succ_info = graph.get_successors_info(vertex_id);
+
+			for (size_t i = 0; i != succ.size(); i++) {
+				if (succ_info[i].inner_color == VertexColor::GRAY
+					|| start_vertex == succ[i])
+				{
+					std::cout << "Cycle from accepting state found!\n";
+					accepting_found = true;
+				}
+				if (succ_info[i].inner_color == VertexColor::WHITE)
+					to_process.push(succ[i]);
+			}
+
+			info.inner_color = VertexColor::GRAY;
+		}
+		else if (info.inner_color == VertexColor::GRAY) {
+			info.inner_color == VertexColor::BLACK;
+			to_process.pop();
+		}
+		else if (info.inner_color == VertexColor::BLACK) {
+			to_process.pop();
+		}
+	}
+	return accepting_found;
 }

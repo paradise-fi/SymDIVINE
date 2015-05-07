@@ -36,12 +36,17 @@ private:
     Database<Blob, Store, LinearCandidate<Store, Hit>, blobHashExplicitUserPart,
         blobEqualExplicitUserPart> knowns; // Database of the states
     Graph<StateId, VertexInfo> graph; // Graph of the state space
-        // Id is create from StateId and state of BA
 
     /**
      * Runs nested DFS with given initial state
      */
     void run_nested_dfs(Evaluator<Store>& eval, StateId start_vertex);
+
+    /**
+     * Run inner pass of nested DFS
+     * @return true if accepting cycle is found
+     */
+    bool run_inner_dfs(StateId start_vertex);
 };
 
 #include "ltl.tpp"
