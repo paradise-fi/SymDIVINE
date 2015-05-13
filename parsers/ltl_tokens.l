@@ -13,6 +13,8 @@
 
 [ \t\n]                 ;
 [0-9]+                  SAVE_TOKEN; return TINTEGER;
+"["						return TOKEN(TSLPAREN);
+"]"						return TOKEN(TSRPAREN);
 "_"						return TOKEN(TUND);
 "seg"					return TOKEN(TSEG);
 "off"					return TOKEN(TOFF);

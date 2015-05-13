@@ -133,7 +133,7 @@
     <LaunchGDBSettings xsi:type="GDBLaunchParametersNewInstance">
       <DebuggedProgram>$(TargetPath)</DebuggedProgram>
       <GDBServerPort>2000</GDBServerPort>
-      <ProgramArguments>ltl --verbose --disabletimout "(G 5=6) || G 8 = 7" final_tests/bitvector/byte_add_1_true.ll</ProgramArguments>
+      <ProgramArguments>ltl --verbose "G ([seg1_off1 != 0(32)] =&gt; F [seg1_off0 != 0(32)])" ../SymDivine_Vilik/examples/win1/model_op.ll</ProgramArguments>
       <WorkingDirectory>$(BuildDir)</WorkingDirectory>
     </LaunchGDBSettings>
     <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>

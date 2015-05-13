@@ -218,7 +218,7 @@ private:
      * Translates given ap to its formula representation
      */
     llvm_sym::Formula translate_ap(const std::string& ap) {
-        if (ap.empty())
+        if (ap.empty() || ap[0] == '1')
             return llvm_sym::Formula::buildBoolVal(true);
 
         if ((ap[0] != 'a' || ap[1] != 'p') && (ap[0] != '!' || ap[1] != 'a' || ap[2] != 'p')) {

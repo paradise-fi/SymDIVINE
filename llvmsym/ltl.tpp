@@ -2,7 +2,7 @@
 
 template <class Store, class Hit>
 Ltl<Store, Hit>::Ltl(const std::string& model, const std::string& prop)
-	: model_name(model), ba(prop)
+	: model_name(model), ba("! (" + prop + ")")
 {
 	// ToDo: Check if the file is valid
 }
@@ -141,10 +141,12 @@ bool Ltl<Store, Hit>::run_inner_dfs(StateId start_vertex) {
 			auto succ_info = graph.get_successors_info(vertex_id);
 
 			for (size_t i = 0; i != succ.size(); i++) {
-				if (succ_info[i].inner_color == VertexColor::GRAY
-					|| start_vertex == succ[i])
+				if (/*succ_info[i].inner_color == VertexColor::GRAY
+					|| */start_vertex == succ[i])
 				{
 					std::cout << "Cycle from accepting state found!\n";
+					if (start_vertex == succ[i])
+						std::cout << "Original vertex found!\n";
 					accepting_found = true;
 				}
 				if (succ_info[i].inner_color == VertexColor::WHITE)

@@ -187,6 +187,8 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
 
     if (is_caching_enabled)
         Z3cache.place(formula, ret, solving_time.getUs());
+    
+    // ;std::cout << "Model: " << s.get_model() << "\n";
 
     return ret == z3::unsat;
 }

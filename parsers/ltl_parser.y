@@ -85,6 +85,7 @@
 %token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TDOT
 %token <token> TPLUS TMINUS TMUL TDIV TSEG TOFF TUND TAND TOR TIMP
 %token <token> TNEG TRSHIFT TLSHIFT TFUT TGLOB TUNTIL TREL TWEAK
+%token <token> TSLPAREN TSRPAREN
 
 %type <formula> formula arexpr ident arterm arfactor lexpr lterm ltlformula lnterm
 %type <token> binary_ar_oper_low binary_ar_oper_high binary_la_oper binary_ll_oper
@@ -172,7 +173,7 @@ lexpr
   ;
 
 ltl
-  : formula               { $$ = new std::string("ap" + std::to_string(formulas.size())); }
+  : TSLPAREN formula TSRPAREN { $$ = new std::string("ap" + std::to_string(formulas.size())); }
   | TFUT ltl              { $$ = new std::string("(F " + *$2 + ")"); delete $2; }
   | TGLOB ltl             { $$ = new std::string("(G " + *$2 + ")"); delete $2; }
   | ltl TUNTIL ltl        { $$ = new std::string("(" + *$1 + " U " + *$3 + ")"); delete $1; delete $3; }
@@ -181,6 +182,7 @@ ltl
   | TNEG ltl              { $$ = new std::string("! " + *$2); delete $2; }
   | ltl TAND ltl          { $$ = new std::string(*$1 + " && " + *$3); delete $1; delete $3; }
   | ltl TOR ltl           { $$ = new std::string(*$1 + " || " + *$3); delete $1; delete $3; }
+  | ltl TIMP ltl          { $$ = new std::string("(" + *$1 + ") => (" + *$3 + ")"); delete $1; delete $3;}
   | TLPAREN ltl TRPAREN   { $$ = new std::string("(" + *$2 + ")"); delete $2; }
   ;
 

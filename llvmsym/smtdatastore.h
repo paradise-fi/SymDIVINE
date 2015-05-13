@@ -245,8 +245,10 @@ class SMTStore : public DataStore {
         Formula f = g;
         std::vector<Formula::Ident> ids;
         for (auto &i : f._rpn) {
-            if (i.kind == Formula::Item::Kind::Identifier)
+            if (i.kind == Formula::Item::Kind::Identifier) {
                 i.id.gen = getGeneration(i.id.seg, i.id.off, false);
+                i.id.bw = bitWidths[i.id.seg][i.id.off];
+            }
         }
         pushCondition(f);
     }
