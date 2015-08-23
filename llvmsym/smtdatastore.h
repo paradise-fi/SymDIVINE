@@ -6,6 +6,9 @@
 #include <llvmsym/programutils/statistics.h>
 #include <llvmsym/programutils/config.h>
 #include <vector>
+#include <list>
+#include <map>
+#include <set>
 
 #define STAT_SUBSETEQ_CALLS "SMT calls Subseteq()"
 #define STAT_EMPTY_CALLS "SMT calls Empty()"
@@ -19,12 +22,27 @@
 namespace llvm_sym {
 
 class SMTStore : public DataStore {
-    std::vector< short unsigned > segments_mapping;
-    std::vector< std::vector< short unsigned > > generations;
-    std::vector< std::vector< char > > bitWidths;
-
-    std::vector< Formula > path_condition;
-    std::vector< Definition > definitions;
+    std::vector<short unsigned> segments_mapping;
+    std::vector<std::vector<short unsigned>> generations;
+    std::vector<std::vector<char>> bitWidths;
+    
+    struct dependency_info {
+        // Create short names to iterators (aka "pointers)
+        using path_cond_it = std::list<std::vector<Formula>>::iterator;
+        using definition_it = std::list<std::vector<Definition>>::iterator;
+        using depend_group_it = std::set<std::vector<Formula::Ident>>::iterator;
+        
+        path_cond_it pc;
+        definition_it def;
+        depend_group_it dep;
+    };
+    
+    std::map<Formula::Ident, dependency_info> dependency_map;
+    std::set<std::vector<Formula::Ident>> dependency_groups;
+    // Both path_condition and definitions are grouped by dependencies
+    std::list<std::vector<Formula>> path_condition;
+    std::list<std::vector<Definition>> definitions;
+    
     int fst_unused_id = 0;
     static unsigned unknown_instances;
 
@@ -93,70 +111,138 @@ class SMTStore : public DataStore {
 
         return g;
     }
-    int getGeneration( Value val, bool advance_generation = false )
+    
+    int getGeneration(Value val, bool advance_generation = false)
     {
         assert( val.type == Value::Type::Variable );
         return getGeneration( val.variable.segmentId, val.variable.offset, advance_generation );
     }
+    
+    dependency_info resolve_dependency(const std::vector<Formula::Ident>& deps) {
+        assert(!deps.empty());
+        
+        std::set<dependency_info> to_join;
+        for (const auto& var : deps) {
+            auto res = dependency_map.find(var);
+            if (res == dependency_map.end()) {
+                // This variable doesn't exist - create it!
+                dependency_info inf;
+                inf.dep = dependency_groups.insert({ var }).first;
+                definitions.push_back({});
+                inf.def = --definitions.end();
+                path_condition.push_back({});
+                inf.pc = --path_condition.end();
+                
+                dependency_map.insert({ var, inf });
+                to_join.insert(inf);
+            }
+            else {
+                to_join.insert(res->second);
+            }
+        }
+        assert(!to_join.empty());
+        
+        // Merge!
+        dependency_info res = *(to_join.begin());
+        for (auto it = ++to_join.begin(); it != to_join.end(); it++) {
+            // Copy elements
+            std::copy(it->pc->begin(), it->pc->end(), std::back_inserter(*res.pc));
+            std::copy(it->def->begin(), it->def->end(), std::back_inserter(*res.def));
+            std::copy(it->dep->begin(), it->dep->end(), std::inserter(*res.dep, res.dep->end()));
+            
+            // Update
+            for (const auto& var : *(it->dep)) {
+                dependency_map[var] = res;
+            }
+            // Erase
+            path_condition.erase(it->pc);
+            definitions.erase(it->def);
+            dependency_groups.erase(it->dep);
+        }
+        
+        return res;
+    }
 
-    void pushCondition( const Formula &f )
+    void pushCondition(const Formula &f)
     {
-        path_condition.push_back( f );
+        // Solve dependencies
+        std::vector<Formula::Ident> deps;
+        f.collectVariables(deps);
+        
+        dependency_info info = resolve_dependency(deps);
+        
+        info.pc->push_back(f);
         simplify();
     }
 
-    void pushDefinition( Value symbol_id, const Formula &def )
+    void pushDefinition(Value symbol_id, const Formula &def)
     {
-        assert( def.sane() );
-        assert( !def._rpn.empty() );
-        int segment_mapped_to = segments_mapping[ symbol_id.variable.segmentId ];
-        auto ident = Formula::Ident (
+        assert(def.sane());
+        assert(!def._rpn.empty());
+        int segment_mapped_to = segments_mapping[symbol_id.variable.segmentId];
+        auto ident = Formula::Ident(
                         segment_mapped_to,
                         symbol_id.variable.offset,
-                        getGeneration( symbol_id.variable.segmentId, symbol_id.variable.offset, true ),
-                        bitWidths[ symbol_id.variable.segmentId ][ symbol_id.variable.offset ]
+                        getGeneration(symbol_id.variable.segmentId, symbol_id.variable.offset, true),
+                        bitWidths[symbol_id.variable.segmentId][symbol_id.variable.offset]
                 );
-        const Definition whole_def = Definition( ident, def );
-        auto it = std::upper_bound( definitions.begin(), definitions.end(), whole_def );
-        definitions.insert( it, whole_def );
+        const Definition whole_def = Definition(ident, def);
+        
+        std::vector<Formula::Ident> deps;
+        whole_def.collectVariables(deps);
+        
+        dependency_info info = resolve_dependency(deps);
+        
+        auto it = std::upper_bound(info.def->begin(),info.def->end(), whole_def);
+        info.def->insert(it, whole_def);
     }
 
     std::vector< Formula::Ident > collectVaribles() const
     {
-        std::vector< Formula::Ident > ret;
+        std::vector<Formula::Ident> ret;
 
-        for ( const auto &pc : path_condition )
-            pc.collectVaribles( ret );
-        for ( const auto &def : definitions )
-            def.to_formula().collectVaribles( ret );
+        for (const auto &pc_group : path_condition) {
+            for (const auto& pc : pc_group)
+                pc.collectVariables(ret);
+        }
+        
+        for (const auto &def_group : definitions) {
+            for (const auto& def : def_group)
+                def.collectVariables(ret);
+        }
 
         return ret;
     }
 
-    bool dependsOn( Value symbol_id ) const
+    bool dependsOn(Value symbol_id) const
     {
-        int segment_mapped_to = segments_mapping[ symbol_id.variable.segmentId ];
+        int segment_mapped_to = segments_mapping[symbol_id.variable.segmentId];
         int offset = symbol_id.variable.offset;
 
-        int gen = getGeneration( symbol_id.variable.segmentId, offset );
+        int gen = getGeneration(symbol_id.variable.segmentId, offset);
 
-        return dependsOn( segment_mapped_to, offset, gen );
+        return dependsOn(segment_mapped_to, offset, gen);
     }
 
-    bool dependsOn( int seg, int offset, int generation ) const
+    bool dependsOn(int seg, int offset, int generation) const
     {
+        // ToDo: Rewrite
         bool defs_depends = false;
-        for ( auto &def : definitions )
-            defs_depends = defs_depends
-                || def.dependsOn( seg, offset, generation );
+        for (auto &def_group : definitions) {
+            for (auto &def : def_group)
+                defs_depends = defs_depends
+                    || def.dependsOn(seg, offset, generation);
+        }
 
-        if ( defs_depends )
+        if (defs_depends)
             return true;
 
         bool pc_depends = false;
-        for ( auto &pc : path_condition )
-            pc_depends = pc_depends
-                || pc.dependsOn( seg, offset, generation );
+        for (auto &pc_group : path_condition) {
+            for (auto& pc : pc_group)
+                pc_depends = pc_depends
+                    || pc.dependsOn(seg, offset, generation);
+        }
 
         return pc_depends;
     }
@@ -165,80 +251,86 @@ class SMTStore : public DataStore {
 
     void simplify()
     {
-        ++Statistics::getCounter( STAT_SMT_SIMPLIFY_CALLS );
-        if ( path_condition.empty() )
+        // ToDo: Add dependency simplification
+        ++Statistics::getCounter(STAT_SMT_SIMPLIFY_CALLS);
+        if (path_condition.empty())
             return;
-        if ( unknown_instances <= 4 )
+        if (unknown_instances <= 4)
             // instances are very easy (solving time < 10ms), it is a waste to simplify
             return;
 
-        Formula conj;
-        for ( Formula &pc : path_condition )
-            conj = conj && pc;
+        for (auto& pc_group : path_condition) {
+            Formula conj;
+            for (Formula &pc : pc_group)
+                conj = conj && pc;
 
-        if (Config.is_set("--cheapsimplify")) {
-            auto simplified = cheap_simplify( conj );
-            path_condition.resize( 1 );
-            path_condition.back() = simplified;
-        } else if (!Config.is_set("--dontsimplify")) {
-            // regular, full, expensive simplify
-            auto simplified = llvm_sym::simplify( conj );
-            path_condition.resize( 1 );
-            path_condition.back() = simplified;
+            if (Config.is_set("--cheapsimplify")) {
+                auto simplified = cheap_simplify(conj);
+                pc_group.resize(1);
+                pc_group.back() = simplified;
+            }
+            else if (!Config.is_set("--dontsimplify")) {
+                // regular, full, expensive simplify
+                auto simplified = llvm_sym::simplify(conj);
+                pc_group.resize(1);
+                pc_group.back() = simplified;
+            }
         }
     }
 
     virtual size_t getSize() const
     {
-        int size = representation_size( segments_mapping, generations, bitWidths, fst_unused_id );
-        size += sizeof( size_t );
+        int size = representation_size(segments_mapping, generations, bitWidths, fst_unused_id);
+        
+        for(const auto& )
+        size += sizeof(size_t);
         for ( const Definition &f : definitions ) {
-            size += representation_size( f.symbol );
-            size += representation_size( f.def._rpn );
+            size += representation_size(f.symbol);
+            size += representation_size(f.def._rpn);
         }
-        size += sizeof( size_t );
-        for ( const Formula &pc : path_condition ) {
-            size += representation_size( pc._rpn );
+        size += sizeof(size_t);
+        for (const Formula &pc : path_condition) {
+            size += representation_size(pc._rpn);
         }
 
         return size;
     }
 
-    virtual void writeData( char *&mem ) const
+    virtual void writeData(char *&mem) const
     {
-        blobWrite( mem, segments_mapping, generations, bitWidths, fst_unused_id );
+        blobWrite(mem, segments_mapping, generations, bitWidths, fst_unused_id);
 
-        blobWrite( mem, definitions.size() );
-        for ( const Definition &f : definitions ) {
-            blobWrite( mem, f.symbol );
-            blobWrite( mem, f.def._rpn );
+        blobWrite(mem, definitions.size());
+        for (const Definition &f : definitions) {
+            blobWrite(mem, f.symbol);
+            blobWrite(mem, f.def._rpn);
         }
-        blobWrite( mem, path_condition.size() );
-        for ( const Formula &pc : path_condition ) {
-            blobWrite( mem, pc._rpn );
+        blobWrite(mem, path_condition.size());
+        for (const Formula &pc : path_condition) {
+            blobWrite(mem, pc._rpn);
         }
     }
     
-    virtual void readData( const char * &mem )
+    virtual void readData(const char * &mem)
     {
-        blobRead( mem, segments_mapping, generations, bitWidths, fst_unused_id );
+        blobRead(mem, segments_mapping, generations, bitWidths, fst_unused_id);
 
         size_t definitions_size;
-        blobRead( mem, definitions_size );
-        definitions.resize( definitions_size );
-        for ( unsigned i = 0; i < definitions_size; ++i ) {
-            blobRead( mem, definitions[i].symbol );
-            blobRead( mem, definitions[i].def._rpn );
+        blobRead(mem, definitions_size);
+        definitions.resize(definitions_size);
+        for (unsigned i = 0; i < definitions_size; ++i) {
+            blobRead(mem, definitions[i].symbol);
+            blobRead(mem, definitions[i].def._rpn);
         }
         size_t pc_size;
-        blobRead( mem, pc_size );
-        path_condition.resize( pc_size );
-        for ( unsigned i = 0; i < pc_size; ++i ) {
-            blobRead( mem, path_condition[i]._rpn );
+        blobRead(mem, pc_size);
+        path_condition.resize(pc_size);
+        for (unsigned i = 0; i < pc_size; ++i) {
+            blobRead(mem, path_condition[i]._rpn);
         }
 
-        assert( segments_mapping.size() == generations.size() );
-        assert( segments_mapping.size() == bitWidths.size() );
+        assert(segments_mapping.size() == generations.size());
+        assert(segments_mapping.size() == bitWidths.size());
     }
 
     void pushPropGuard(const Formula &g) {

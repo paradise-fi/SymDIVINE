@@ -48,6 +48,7 @@ bool SMTStore::empty() const
 
 bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
 {
+    std::cout << "Subseteq called!\n";
     ++Statistics::getCounter( STAT_SUBSETEQ_CALLS );
     if ( a.definitions == b.definitions ) {
         bool equal_syntax = a.path_condition.size() == b.path_condition.size();
@@ -61,6 +62,7 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
         }
     }
 
+    // Choose variables which the state depends on
     std::map< Formula::Ident, Formula::Ident > to_compare;
     for ( unsigned s = 0; s < a.generations.size(); ++s ) {
         assert( a.generations[ s ].size() == b.generations[ s ].size() );
@@ -82,6 +84,12 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
 
     if ( to_compare.empty() )
         return true;
+    
+    // Build sets of dependent variables
+    std::vector<std::set<std::map<Formula::Ident, Formula::Ident>>> dep_units;
+    for (const auto& item : to_compare) {
+        
+    }
 
     // pc_b && foreach(a).(!pc_a || a!=b)
     // (sat iff not _b_ subseteq _a_)
@@ -92,8 +100,10 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
 
     z3::params p( c );
     p.set(":mbqi", true);
-    if (!Config.is_set("--disabletimout"))
+    if (!Config.is_set("--disabletimout")) {
         p.set("SOFT_TIMEOUT", timeout);
+        std::cout << "Setting timeout\n";
+    }
     s.set( p );
 
     bool is_caching_enabled = Config.is_set("--enablecaching");
@@ -123,8 +133,11 @@ bool SMTStore::subseteq( const SMTStore &b, const SMTStore &a )
             std::cout << "Building formula took " << s.getUs() << " us\n";
 
         // Test if this formula is in cache or not
-        if (Z3cache.is_cached(formula))
+        if (Z3cache.is_cached(formula)) {
+            if (Config.is_set("--verbose") || Config.is_set("--vverbose"))
+                std::cout << "Formula found in cache\n";
             return Z3cache.result() == z3::unsat;
+        }
     }
 
     StopWatch solving_time;

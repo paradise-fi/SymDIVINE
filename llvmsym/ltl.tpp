@@ -70,6 +70,7 @@ void Ltl<Store, Hit>::run_nested_dfs(Evaluator<Store>& eval, StateId start_verte
 						eval.write(newSucc.getExpl());
 						newSucc.user_as<index_type>() = ba_succ[i]; // Update BA state
 
+						std::cout << "New succ produced\n";
 						auto result = knowns.insertCheck(newSucc);
 						if (result.first) {
 							if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
