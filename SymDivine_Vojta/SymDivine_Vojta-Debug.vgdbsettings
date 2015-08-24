@@ -33,6 +33,7 @@
       </FileMasks>
       <TransferNewFilesOnly>true</TransferNewFilesOnly>
       <IncludeSubdirectories>true</IncludeSubdirectories>
+      <SelectedDirectories />
     </MainSourceTransferCommand>
     <MountInfo>
       <Mode>UserProvidedMount</Mode>
@@ -188,7 +189,10 @@
   </CustomShortcuts>
   <UserDefinedVariables />
   <CodeSense>
-    <Enabled>Unknown</Enabled>
+    <Enabled>True</Enabled>
+    <CFLAGS />
+    <CXXFLAGS />
+    <ExternalSourceFileList />
     <ExtraSettings>
       <HideErrorsInSystemHeaders>false</HideErrorsInSystemHeaders>
     </ExtraSettings>

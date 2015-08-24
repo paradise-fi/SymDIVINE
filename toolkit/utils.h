@@ -137,3 +137,77 @@ namespace std {
         }
     };
 }
+
+// ToDo: Implement zip iterator
+template <class A, class B>
+class ZipIterator {
+public:
+private:
+    typename A::iterator a_it;
+    typename B::iterator b_it;
+};
+
+/**
+ * Class for zipping two containers together for range based loops
+ */
+template <class A, class B>
+class Zip {
+public:
+    
+private:
+    A& a;
+    B& b;
+};
+
+template<class T>
+class iter_less {
+public:
+    bool operator()(const T& a, const T& b) {
+        return (*a) < (*b);
+    }
+};
+
+// Expand STL algorithms to output items from both lists
+template<class InputIt1, class InputIt2, class OutputIt, class Compare>
+void set_intersection_diff(InputIt1 first1, InputIt1 last1,
+                            InputIt2 first2, InputIt2 last2,
+                            OutputIt d_first, OutputIt d_second, Compare comp) {
+    while (first1 != last1 && first2 != last2) {
+        if (comp(*first1, *first2)) {
+            ++first1;
+        }
+        else {
+            if (!comp(*first2, *first1)) {
+                *d_first++ = *first1++;
+                *d_second++ = *first2;
+            }
+            ++first2;
+        }
+    }
+}
+
+template<class InputIt1, class InputIt2,
+         class OutputIt, class Compare>
+void set_symmetric_difference_diff(InputIt1 first1, InputIt1 last1,
+                                  InputIt2 first2, InputIt2 last2,
+                                  OutputIt d_first, OutputIt d_second, Compare comp)
+{
+    while (first1 != last1) {
+        if (first2 == last2) {
+            std::copy(first1, last1, d_first);
+            return;
+        }
+ 
+        if (comp(*first1, *first2)) {
+            *d_first++ = *first1++;
+        } else {
+            if (comp(*first2, *first1)) {
+                *d_second++ = *first2;
+            } else {
+                ++first1;
+            }
+            ++first2;
+        }
+    }
+    std::copy(first2, last2, d_second);
+}

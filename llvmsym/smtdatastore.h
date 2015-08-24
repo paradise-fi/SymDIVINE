@@ -9,6 +9,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <toolkit/utils.h>
 
 #define STAT_SUBSETEQ_CALLS "SMT calls Subseteq()"
 #define STAT_EMPTY_CALLS "SMT calls Empty()"
@@ -26,22 +27,35 @@ class SMTStore : public DataStore {
     std::vector<std::vector<short unsigned>> generations;
     std::vector<std::vector<char>> bitWidths;
     
-    struct dependency_info {
-        // Create short names to iterators (aka "pointers)
-        using path_cond_it = std::list<std::vector<Formula>>::iterator;
-        using definition_it = std::list<std::vector<Definition>>::iterator;
-        using depend_group_it = std::set<std::vector<Formula::Ident>>::iterator;
+    struct dependency_group {
+        std::set<Formula::Ident> group; // ToDo: Think about using std::vector for speed increase
+        std::vector<Formula> path_condition;
+        std::vector<Definition> definitions;
         
-        path_cond_it pc;
-        definition_it def;
-        depend_group_it dep;
+        dependency_group(const std::set<Formula::Ident>& g = {},
+            const std::vector<Formula>& pc = {}, const std::vector<Definition>& d = {})
+        : group(g), path_condition(pc), definitions(d) {}
+        
+        bool operator<(const dependency_group& g) const {
+            return group < g.group;
+        }
+        
+        bool operator==(const dependency_group& g) const {
+            return group == g.group;
+        }
+        
+        void append(const dependency_group& g) {
+            std::copy(g.group.cbegin(), g.group.cend(), std::inserter(group, group.end()));
+            std::copy(g.path_condition.cbegin(), g.path_condition.cend(), std::back_inserter(path_condition));
+            std::copy(g.definitions.cbegin(), g.definitions.cend(), std::back_inserter(definitions));
+        }
     };
     
-    std::map<Formula::Ident, dependency_info> dependency_map;
-    std::set<std::vector<Formula::Ident>> dependency_groups;
-    // Both path_condition and definitions are grouped by dependencies
-    std::list<std::vector<Formula>> path_condition;
-    std::list<std::vector<Definition>> definitions;
+    using dep_pointer = std::list<dependency_group>::iterator;
+    using dep_pointer_const = std::list<dependency_group>::const_iterator;
+    
+    std::map<Formula::Ident, dep_pointer> dependency_map; // Identifier map
+    std::list<dependency_group> sym_data; // path_condition & definition
     
     int fst_unused_id = 0;
     static unsigned unknown_instances;
@@ -118,23 +132,21 @@ class SMTStore : public DataStore {
         return getGeneration( val.variable.segmentId, val.variable.offset, advance_generation );
     }
     
-    dependency_info resolve_dependency(const std::vector<Formula::Ident>& deps) {
+    dep_pointer resolve_dependency(const std::vector<Formula::Ident>& deps) {
         assert(!deps.empty());
         
-        std::set<dependency_info> to_join;
+        std::set<dep_pointer, iter_less<dep_pointer>> to_join;
         for (const auto& var : deps) {
             auto res = dependency_map.find(var);
             if (res == dependency_map.end()) {
                 // This variable doesn't exist - create it!
-                dependency_info inf;
-                inf.dep = dependency_groups.insert({ var }).first;
-                definitions.push_back({});
-                inf.def = --definitions.end();
-                path_condition.push_back({});
-                inf.pc = --path_condition.end();
+                dependency_group inf({var}, {}, {});
+                sym_data.push_back(inf);
                 
-                dependency_map.insert({ var, inf });
-                to_join.insert(inf);
+                auto it = --sym_data.end();
+                
+                dependency_map.insert({var, it});
+                to_join.insert(it);
             }
             else {
                 to_join.insert(res->second);
@@ -143,21 +155,12 @@ class SMTStore : public DataStore {
         assert(!to_join.empty());
         
         // Merge!
-        dependency_info res = *(to_join.begin());
+        dep_pointer res = *(to_join.begin());
         for (auto it = ++to_join.begin(); it != to_join.end(); it++) {
-            // Copy elements
-            std::copy(it->pc->begin(), it->pc->end(), std::back_inserter(*res.pc));
-            std::copy(it->def->begin(), it->def->end(), std::back_inserter(*res.def));
-            std::copy(it->dep->begin(), it->dep->end(), std::inserter(*res.dep, res.dep->end()));
-            
-            // Update
-            for (const auto& var : *(it->dep)) {
-                dependency_map[var] = res;
-            }
-            // Erase
-            path_condition.erase(it->pc);
-            definitions.erase(it->def);
-            dependency_groups.erase(it->dep);
+            res->append(**it);
+            for (const auto& var : (*it)->group)
+                dependency_map[var] = res;            
+            sym_data.erase(*it);
         }
         
         return res;
@@ -169,9 +172,9 @@ class SMTStore : public DataStore {
         std::vector<Formula::Ident> deps;
         f.collectVariables(deps);
         
-        dependency_info info = resolve_dependency(deps);
+        dep_pointer group = resolve_dependency(deps);
         
-        info.pc->push_back(f);
+        group->path_condition.push_back(f);
         simplify();
     }
 
@@ -191,23 +194,20 @@ class SMTStore : public DataStore {
         std::vector<Formula::Ident> deps;
         whole_def.collectVariables(deps);
         
-        dependency_info info = resolve_dependency(deps);
+        dep_pointer info = resolve_dependency(deps);
         
-        auto it = std::upper_bound(info.def->begin(),info.def->end(), whole_def);
-        info.def->insert(it, whole_def);
+        auto it = std::upper_bound(info->definitions.begin(),info->definitions.end(), whole_def);
+        info->definitions.insert(it, whole_def);
     }
 
     std::vector< Formula::Ident > collectVaribles() const
     {
         std::vector<Formula::Ident> ret;
-
-        for (const auto &pc_group : path_condition) {
-            for (const auto& pc : pc_group)
-                pc.collectVariables(ret);
-        }
         
-        for (const auto &def_group : definitions) {
-            for (const auto& def : def_group)
+        for (const auto& group : sym_data) {
+            for (const auto& pc : group.path_condition)
+                pc.collectVariables(ret);
+            for (const auto& def : group.definitions)
                 def.collectVariables(ret);
         }
 
@@ -226,25 +226,16 @@ class SMTStore : public DataStore {
 
     bool dependsOn(int seg, int offset, int generation) const
     {
-        // ToDo: Rewrite
-        bool defs_depends = false;
-        for (auto &def_group : definitions) {
-            for (auto &def : def_group)
-                defs_depends = defs_depends
-                    || def.dependsOn(seg, offset, generation);
+        for (auto& group : sym_data) {
+            for (const auto& pc : group.path_condition) {
+                if (pc.dependsOn(seg, offset, generation))
+                    return true;
+            }
+            for (const auto& def : group.definitions) {
+                if (def.dependsOn(seg, offset, generation))
+                    return true;
+            }
         }
-
-        if (defs_depends)
-            return true;
-
-        bool pc_depends = false;
-        for (auto &pc_group : path_condition) {
-            for (auto& pc : pc_group)
-                pc_depends = pc_depends
-                    || pc.dependsOn(seg, offset, generation);
-        }
-
-        return pc_depends;
     }
 
     public:
@@ -253,27 +244,28 @@ class SMTStore : public DataStore {
     {
         // ToDo: Add dependency simplification
         ++Statistics::getCounter(STAT_SMT_SIMPLIFY_CALLS);
-        if (path_condition.empty())
-            return;
+        
         if (unknown_instances <= 4)
-            // instances are very easy (solving time < 10ms), it is a waste to simplify
+                // instances are very easy (solving time < 10ms), it is a waste to simplify
             return;
 
-        for (auto& pc_group : path_condition) {
+        for (auto& group : sym_data) {
+            if (group.path_condition.empty())
+                continue;
             Formula conj;
-            for (Formula &pc : pc_group)
+            for (Formula &pc : group.path_condition)
                 conj = conj && pc;
 
             if (Config.is_set("--cheapsimplify")) {
                 auto simplified = cheap_simplify(conj);
-                pc_group.resize(1);
-                pc_group.back() = simplified;
+                group.path_condition.resize(1);
+                group.path_condition.back() = simplified;
             }
             else if (!Config.is_set("--dontsimplify")) {
                 // regular, full, expensive simplify
                 auto simplified = llvm_sym::simplify(conj);
-                pc_group.resize(1);
-                pc_group.back() = simplified;
+                group.path_condition.resize(1);
+                group.path_condition.back() = simplified;
             }
         }
     }
@@ -282,15 +274,29 @@ class SMTStore : public DataStore {
     {
         int size = representation_size(segments_mapping, generations, bitWidths, fst_unused_id);
         
-        for(const auto& )
+        // Sym data
         size += sizeof(size_t);
-        for ( const Definition &f : definitions ) {
-            size += representation_size(f.symbol);
-            size += representation_size(f.def._rpn);
+        for (const auto& group : sym_data) {
+            size += sizeof(size_t);
+            for ( const Definition &f : group.definitions ) {
+                size += representation_size(f.symbol);
+                size += representation_size(f.def._rpn);
+            }
+            size += sizeof(size_t);
+            for (const Formula &pc : group.path_condition) {
+                size += representation_size(pc._rpn);
+            }
+            size += sizeof(size_t);
+            for (const Formula::Ident& i : group.group) {
+                size += representation_size(i);
+            }
         }
+        
+        // Dependency map
         size += sizeof(size_t);
-        for (const Formula &pc : path_condition) {
-            size += representation_size(pc._rpn);
+        for (const auto& item : dependency_map) {
+            size += representation_size(item.first);
+            size += sizeof(size_t); // Index
         }
 
         return size;
@@ -299,15 +305,30 @@ class SMTStore : public DataStore {
     virtual void writeData(char *&mem) const
     {
         blobWrite(mem, segments_mapping, generations, bitWidths, fst_unused_id);
-
-        blobWrite(mem, definitions.size());
-        for (const Definition &f : definitions) {
-            blobWrite(mem, f.symbol);
-            blobWrite(mem, f.def._rpn);
+        
+        blobWrite(mem, sym_data.size());
+        for (const auto& group : sym_data) {
+            blobWrite(mem, group.definitions.size());
+            for (const Definition &f : group.definitions) {
+                blobWrite(mem, f.symbol);
+                blobWrite(mem, f.def._rpn);
+            }
+            blobWrite(mem, group.path_condition.size());
+            for (const Formula &pc : group.path_condition) {
+                blobWrite(mem, pc._rpn);
+            }
+            
+            blobWrite(mem, group.group.size());
+            for (const Formula::Ident &id : group.group) {
+                blobWrite(mem, id);
+            }
         }
-        blobWrite(mem, path_condition.size());
-        for (const Formula &pc : path_condition) {
-            blobWrite(mem, pc._rpn);
+        
+        blobWrite(mem, dependency_map.size());
+        for (const auto& item : dependency_map) {
+            blobWrite(mem, item.second);
+            blobWrite(mem,
+                std::distance<std::list<dependency_group>::const_iterator>(sym_data.begin(), item.second));
         }
     }
     
@@ -315,19 +336,45 @@ class SMTStore : public DataStore {
     {
         blobRead(mem, segments_mapping, generations, bitWidths, fst_unused_id);
 
-        size_t definitions_size;
-        blobRead(mem, definitions_size);
-        definitions.resize(definitions_size);
-        for (unsigned i = 0; i < definitions_size; ++i) {
-            blobRead(mem, definitions[i].symbol);
-            blobRead(mem, definitions[i].def._rpn);
+        size_t data_size;
+        blobRead(mem, data_size);
+        sym_data.resize(data_size);
+        for(auto& group : sym_data) {
+            size_t definitions_size;
+            blobRead(mem, definitions_size);
+            group.definitions.resize(definitions_size);
+            for (unsigned i = 0; i < definitions_size; ++i) {
+                blobRead(mem, group.definitions[i].symbol);
+                blobRead(mem, group.definitions[i].def._rpn);
+            }
+            
+            size_t pc_size;
+            blobRead(mem, pc_size);
+            group.path_condition.resize(pc_size);
+            for (unsigned i = 0; i < pc_size; ++i) {
+                blobRead(mem, group.path_condition[i]._rpn);
+            }
+            
+            size_t group_size;
+            blobRead(mem, group_size);
+            for (size_t i = 0; i != group_size; i++) {
+                Formula::Ident id;
+                blobRead(mem, id);
+                group.group.insert(id);
+            }
         }
-        size_t pc_size;
-        blobRead(mem, pc_size);
-        path_condition.resize(pc_size);
-        for (unsigned i = 0; i < pc_size; ++i) {
-            blobRead(mem, path_condition[i]._rpn);
-        }
+        
+        size_t dep_size;
+        blobRead(mem, dep_size);
+        for (size_t i = 0; i != dep_size; i++) {
+            Formula::Ident id;
+            size_t index;
+            blobRead(mem, id);
+            blobRead(mem, index);
+            auto it = sym_data.begin();
+            std::advance(it, index);
+            dependency_map.insert({id, it});
+        }   
 
         assert(segments_mapping.size() == generations.size());
         assert(segments_mapping.size() == bitWidths.size());
@@ -525,37 +572,40 @@ class SMTStore : public DataStore {
     template < typename Predicate >
     void removeDefinitions( Predicate pred )
     {
-        std::vector< Definition > to_remove( definitions.size() );
-        auto it = std::copy_if( definitions.begin(), definitions.end(), to_remove.begin(), pred );
-        to_remove.resize( it - to_remove.begin() );
+        // ToDo: Simplify dependency groups!
+        for (auto& group : sym_data) {
+            std::vector< Definition > to_remove(group.definitions.size());
+            auto it = std::copy_if(group.definitions.begin(), group.definitions.end(), to_remove.begin(), pred);
+            to_remove.resize(it - to_remove.begin());
 
-        it = std::remove_if( definitions.begin(), definitions.end(), pred );
-        definitions.resize( it - definitions.begin() );
+            it = std::remove_if(group.definitions.begin(), group.definitions.end(), pred);
+            group.definitions.resize(it - group.definitions.begin());
 
-        bool change;
-        do {
-            change = false;
-            for ( Formula &pc : path_condition ) {
-                for ( const Definition &def : to_remove ) {
-                    Formula new_pc = pc.substitute( def.getIdent(), def.getDef() );
-                    if ( new_pc._rpn != pc._rpn ) {
-                        change = true;
-                        pc = new_pc;
+            bool change;
+            do {
+                change = false;
+                for (Formula &pc : group.path_condition) {
+                    for (const Definition &def : to_remove) {
+                        Formula new_pc = pc.substitute(def.getIdent(), def.getDef());
+                        if (new_pc._rpn != pc._rpn) {
+                            change = true;
+                            pc = new_pc;
+                        }
                     }
                 }
-            }
 
-            for ( Definition &def : definitions ) {
-                for ( auto def_to_remove = to_remove.crbegin(); def_to_remove != to_remove.crend(); ++def_to_remove ) {
-                    Definition new_def = def.substitute( def_to_remove->getIdent(), def_to_remove->getDef() );
-                    if ( new_def.def._rpn != def.def._rpn ) {
-                        def = def.substitute( def_to_remove->getIdent(), def_to_remove->getDef() );
-                        change = true;
+                for (Definition &def : group.definitions) {
+                    for (auto def_to_remove = to_remove.crbegin(); def_to_remove != to_remove.crend(); ++def_to_remove) {
+                        Definition new_def = def.substitute(def_to_remove->getIdent(), def_to_remove->getDef());
+                        if (new_def.def._rpn != def.def._rpn) {
+                            def = def.substitute(def_to_remove->getIdent(), def_to_remove->getDef());
+                            change = true;
+                        }
                     }
                 }
-            }
-        } while ( change );
-        std::sort( definitions.begin(), definitions.end() );
+            } while (change);
+            std::sort(group.definitions.begin(), group.definitions.end());
+        }
     }
 
     template < typename Predicate >
@@ -563,25 +613,28 @@ class SMTStore : public DataStore {
     {
         // precondition: run removeDefinition( pred ) to be sure that the symbols
         // are not used anywhere else
-        auto it = std::remove_if( path_condition.begin(), path_condition.end(), pred );
-        path_condition.resize( it - path_condition.begin() );
+        for (auto& group : sym_data) {
+            auto it = std::remove_if(group.path_condition.begin(), group.path_condition.end(), pred);
+            group.path_condition.resize(it - group.path_condition.begin());
+        }
     }
 
-    bool equal( const SMTStore &snd )
+	bool equal(const SMTStore &snd)
     {
-        assert( segments_mapping.size() == snd.segments_mapping.size() );
+		assert(segments_mapping.size() == snd.segments_mapping.size());
 
-        return subseteq( *this, snd ) && subseteq( snd, *this );
-    }
+		return subseteq(*this, snd) && subseteq(snd, *this);
+	}
 
     virtual bool empty() const;
 
-    static bool subseteq( const SMTStore &a, const SMTStore &b );
+	static bool subseteq(const SMTStore &a, const SMTStore &b);
+    static bool subseteq(const std::vector<dep_pointer_const>& a_g,
+        const std::vector<dep_pointer_const>& b_g);
 
     void clear()
     {
-        path_condition.clear();
-        definitions.clear();
+        dependency_map.clear();
         segments_mapping.clear();
     }
 
