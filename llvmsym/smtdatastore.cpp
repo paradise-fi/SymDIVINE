@@ -14,11 +14,11 @@ std::ostream & operator<<( std::ostream & o, const SMTStore &v )
     for (const auto& group : v.sym_data) {
         o << "Group " << counter;
         o << "\npath condition:\n";
-        for (const Formula &pc : group.path_condition)
+        for (const Formula &pc : group.second.path_condition)
             o << pc << '\n';
 
         o << "\ndefinitions:\n";
-        for (const Definition &def : group.definitions)
+        for (const Definition &def : group.second.definitions)
             o << def.to_formula() << "\n\n";
         
         counter++;
@@ -36,10 +36,10 @@ bool SMTStore::empty() const
 
     z3::solver s( c );
     for (const auto& group : sym_data) {
-        for (const Definition &def : group.definitions)
+        for (const Definition &def : group.second.definitions)
             s.add(toz3(def.to_formula(), 'a', c));
 
-        for (const Formula &pc : group.path_condition)
+        for (const Formula &pc : group.second.path_condition)
             s.add(toz3(pc, 'a', c));
     }
 
@@ -51,19 +51,20 @@ bool SMTStore::empty() const
     return r == z3::unsat;
 }
 
-bool SMTStore::subseteq(const std::vector<dep_pointer_const>& a_g,
-        const std::vector<dep_pointer_const>& b_g)
+bool SMTStore::subseteq(
+        const std::vector<std::reference_wrapper<const dependency_group>>& a_g,
+        const std::vector<std::reference_wrapper<const dependency_group>>& b_g)
 {
     if (a_g.empty() && b_g.empty())
         return true;
     // Merge dependencies
     dependency_group a_group;
     for (const auto& item : a_g)
-        a_group.append(*item);
+        a_group.append(item.get());
     
     dependency_group b_group;
     for (const auto& item : b_g)
-        b_group.append(*item);
+        b_group.append(item.get());
     
     // Test for syntax equality
     if (a_group.definitions == b_group.definitions) {
@@ -172,26 +173,26 @@ bool SMTStore::subseteq(const std::vector<dep_pointer_const>& a_g,
 bool SMTStore::subseteq(const SMTStore &a, const SMTStore &b) // There were mismatched letters!
 {
     // Let's find the relevant dependency groups
-    std::vector<dep_pointer_const> a_view;
-    std::vector<dep_pointer_const> b_view;
+    std::vector<std::reference_wrapper<const dependency_group>> a_view;
+    std::vector<std::reference_wrapper<const dependency_group>> b_view;
     
     for(auto i = a.sym_data.cbegin(); i != a.sym_data.cend(); i++)
-        a_view.push_back(i);
+        a_view.push_back(i->second);
     for (auto i = b.sym_data.cbegin(); i != b.sym_data.cend(); i++)
-        a_view.push_back(i);
+        b_view.push_back(i->second);
     
-    std::vector<dep_pointer_const> intersection_a;
-    std::vector<dep_pointer_const> intersection_b;
-    std::vector<dep_pointer_const> difference_a;
-    std::vector<dep_pointer_const> difference_b;
+    std::vector<std::reference_wrapper<const dependency_group>> intersection_a;
+    std::vector<std::reference_wrapper<const dependency_group>> intersection_b;
+    std::vector<std::reference_wrapper<const dependency_group>> difference_a;
+    std::vector<std::reference_wrapper<const dependency_group>> difference_b;
     
     set_intersection_diff(a_view.begin(), a_view.end(),
         b_view.begin(), b_view.end(), std::back_inserter(intersection_a),
-        std::back_inserter(intersection_b), iter_less<dep_pointer_const>());
+        std::back_inserter(intersection_b), ref_less<std::reference_wrapper<const dependency_group>>());
     
     set_symmetric_difference_diff(a_view.begin(), a_view.end(),
         b_view.begin(), b_view.end(), std::back_inserter(difference_a),
-        std::back_inserter(difference_b), iter_less<dep_pointer_const>());
+        std::back_inserter(difference_b), ref_less<std::reference_wrapper<const dependency_group>>());
     
     // Run all subset operations
     for (auto a_it = intersection_a.begin(), b_it = intersection_b.begin();

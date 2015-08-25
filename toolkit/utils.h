@@ -167,6 +167,14 @@ public:
     }
 };
 
+template<class T>
+class ref_less {
+public:
+    bool operator()(const T& a, const T& b) {
+        return a.get() < b.get();
+    }
+};
+
 // Expand STL algorithms to output items from both lists
 template<class InputIt1, class InputIt2, class OutputIt, class Compare>
 void set_intersection_diff(InputIt1 first1, InputIt1 last1,
@@ -211,3 +219,81 @@ void set_symmetric_difference_diff(InputIt1 first1, InputIt1 last1,
     }
     std::copy(first2, last2, d_second);
 }
+
+template <class T, class Id = size_t>
+class IdContainer {
+public:
+    IdContainer() :
+        unused({ 1 })
+    { }
+    
+    typename std::map<Id, T>::const_iterator begin() const {
+        return values.begin();
+    }
+    typename std::map<Id, T>::iterator begin() {
+        return values.begin();
+    }
+    typename std::map<Id, T>::const_iterator cbegin() const {
+        return values.cbegin();
+    }
+    typename std::map<Id, T>::const_iterator end() const {
+        return values.end();
+    }
+    typename std::map<Id, T>::iterator end() {
+        return values.end();
+    }
+    typename std::map<Id, T>::const_iterator cend() const {
+        return values.cend();
+    }
+    
+    size_t size() const {
+        return values.size();
+    }
+    
+    T& insert(Id id, const T& item) {
+        return values.insert({ id, item }).first->second;
+    }
+    
+    Id insert(const T& item) {
+        auto i = unused.back();
+        unused.pop_back();
+        if (unused.empty())
+            unused.push_back(i + 1);
+        values.insert( {i, item});
+        return i;
+    }
+    
+    void erase(typename std::map<Id, T>::iterator& it) {
+        unused.push_back(it->first);
+        values.erase(it);
+    }
+    
+    void erase(Id i) {
+        unused.push_back(i);
+        values.erase(values.find(i));
+    }
+    
+    const std::vector<Id>& free_idx() const {
+        return unused;
+    }
+    
+    std::vector<Id>& free_idx() {
+        return unused;
+    }
+    
+    const T& get(Id id) const {
+        return values[id];
+    }
+    
+    T& get(Id id) {
+        return values[id];
+    }
+    
+    void clear() {
+        values.clear();
+        unused = { 0 };
+    }
+private:
+    std::map<Id, T> values;
+    std::vector<Id> unused;
+};

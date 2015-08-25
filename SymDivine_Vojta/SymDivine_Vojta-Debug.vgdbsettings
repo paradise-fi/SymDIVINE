@@ -159,7 +159,7 @@
     <LaunchGDBSettings xsi:type="GDBLaunchParametersNewInstance">
       <DebuggedProgram>$(TargetPath)</DebuggedProgram>
       <GDBServerPort>2000</GDBServerPort>
-      <ProgramArguments>ltl --enablecaching "! G ([seg1_off1 != 0(32)] =&gt; F [seg1_off0 != 0(32)])" ../SymDivine_Vilik/examples/win1/model_op.ll</ProgramArguments>
+      <ProgramArguments>reachability --statistics --disabletimeout --verbose --enablecaching test_programs/threads_advanced/model_op.ll</ProgramArguments>
       <WorkingDirectory>$(BuildDir)</WorkingDirectory>
     </LaunchGDBSettings>
     <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>

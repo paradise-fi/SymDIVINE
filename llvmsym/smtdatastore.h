@@ -54,8 +54,8 @@ class SMTStore : public DataStore {
     using dep_pointer = std::list<dependency_group>::iterator;
     using dep_pointer_const = std::list<dependency_group>::const_iterator;
     
-    std::map<Formula::Ident, dep_pointer> dependency_map; // Identifier map
-    std::list<dependency_group> sym_data; // path_condition & definition
+    std::map<Formula::Ident, size_t> dependency_map; // Identifier map
+    IdContainer<dependency_group> sym_data; // path_condition & definition
     
     int fst_unused_id = 0;
     static unsigned unknown_instances;
@@ -132,19 +132,17 @@ class SMTStore : public DataStore {
         return getGeneration( val.variable.segmentId, val.variable.offset, advance_generation );
     }
     
-    dep_pointer resolve_dependency(const std::vector<Formula::Ident>& deps) {
+    dependency_group& resolve_dependency(const std::vector<Formula::Ident>& deps) {
         assert(!deps.empty());
         
-        std::set<dep_pointer, iter_less<dep_pointer>> to_join;
+        std::set<size_t> to_join;
         for (const auto& var : deps) {
             auto res = dependency_map.find(var);
             if (res == dependency_map.end()) {
                 // This variable doesn't exist - create it!
                 dependency_group inf({var}, {}, {});
-                sym_data.push_back(inf);
-                
-                auto it = --sym_data.end();
-                
+                size_t it = sym_data.insert(inf);
+
                 dependency_map.insert({var, it});
                 to_join.insert(it);
             }
@@ -155,13 +153,15 @@ class SMTStore : public DataStore {
         assert(!to_join.empty());
         
         // Merge!
-        dep_pointer res = *(to_join.begin());
-        for (auto it = ++to_join.begin(); it != to_join.end(); it++) {
-            res->append(**it);
-            for (const auto& var : (*it)->group)
-                dependency_map[var] = res;            
-            sym_data.erase(*it);
-        }
+        dependency_group& res = sym_data.get(*to_join.begin());
+        size_t res_id = *to_join.begin();
+        for_each(++to_join.begin(), to_join.end(), [&](size_t i) {
+            auto& group = sym_data.get(i);
+            res.append(group);
+            for (const auto& var : group.group)
+                dependency_map[var] = res_id;            
+            sym_data.erase(i);
+        });
         
         return res;
     }
@@ -172,9 +172,9 @@ class SMTStore : public DataStore {
         std::vector<Formula::Ident> deps;
         f.collectVariables(deps);
         
-        dep_pointer group = resolve_dependency(deps);
+        auto& group = resolve_dependency(deps);
         
-        group->path_condition.push_back(f);
+        group.path_condition.push_back(f);
         simplify();
     }
 
@@ -194,10 +194,10 @@ class SMTStore : public DataStore {
         std::vector<Formula::Ident> deps;
         whole_def.collectVariables(deps);
         
-        dep_pointer info = resolve_dependency(deps);
+        auto& info = resolve_dependency(deps);
         
-        auto it = std::upper_bound(info->definitions.begin(),info->definitions.end(), whole_def);
-        info->definitions.insert(it, whole_def);
+        auto it = std::upper_bound(info.definitions.begin(),info.definitions.end(), whole_def);
+        info.definitions.insert(it, whole_def);
     }
 
     std::vector< Formula::Ident > collectVaribles() const
@@ -205,9 +205,9 @@ class SMTStore : public DataStore {
         std::vector<Formula::Ident> ret;
         
         for (const auto& group : sym_data) {
-            for (const auto& pc : group.path_condition)
+            for (const auto& pc : group.second.path_condition)
                 pc.collectVariables(ret);
-            for (const auto& def : group.definitions)
+            for (const auto& def : group.second.definitions)
                 def.collectVariables(ret);
         }
 
@@ -227,11 +227,11 @@ class SMTStore : public DataStore {
     bool dependsOn(int seg, int offset, int generation) const
     {
         for (auto& group : sym_data) {
-            for (const auto& pc : group.path_condition) {
+            for (const auto& pc : group.second.path_condition) {
                 if (pc.dependsOn(seg, offset, generation))
                     return true;
             }
-            for (const auto& def : group.definitions) {
+            for (const auto& def : group.second.definitions) {
                 if (def.dependsOn(seg, offset, generation))
                     return true;
             }
@@ -250,22 +250,22 @@ class SMTStore : public DataStore {
             return;
 
         for (auto& group : sym_data) {
-            if (group.path_condition.empty())
+            if (group.second.path_condition.empty())
                 continue;
             Formula conj;
-            for (Formula &pc : group.path_condition)
+            for (Formula &pc : group.second.path_condition)
                 conj = conj && pc;
 
             if (Config.is_set("--cheapsimplify")) {
                 auto simplified = cheap_simplify(conj);
-                group.path_condition.resize(1);
-                group.path_condition.back() = simplified;
+                group.second.path_condition.resize(1);
+                group.second.path_condition.back() = simplified;
             }
             else if (!Config.is_set("--dontsimplify")) {
                 // regular, full, expensive simplify
                 auto simplified = llvm_sym::simplify(conj);
-                group.path_condition.resize(1);
-                group.path_condition.back() = simplified;
+                group.second.path_condition.resize(1);
+                group.second.path_condition.back() = simplified;
             }
         }
     }
@@ -277,26 +277,30 @@ class SMTStore : public DataStore {
         // Sym data
         size += sizeof(size_t);
         for (const auto& group : sym_data) {
+            size += representation_size(group.first); // Size of group ID
+            
             size += sizeof(size_t);
-            for ( const Definition &f : group.definitions ) {
+            for ( const Definition &f : group.second.definitions ) {
                 size += representation_size(f.symbol);
                 size += representation_size(f.def._rpn);
             }
             size += sizeof(size_t);
-            for (const Formula &pc : group.path_condition) {
+            for (const Formula &pc : group.second.path_condition) {
                 size += representation_size(pc._rpn);
             }
             size += sizeof(size_t);
-            for (const Formula::Ident& i : group.group) {
-                size += representation_size(i);
+            for (const Formula::Ident& id : group.second.group) {
+                size += representation_size(id);
             }
         }
+        
+        size += representation_size(sym_data.free_idx());
         
         // Dependency map
         size += sizeof(size_t);
         for (const auto& item : dependency_map) {
             size += representation_size(item.first);
-            size += sizeof(size_t); // Index
+            size += representation_size(item.second);
         }
 
         return size;
@@ -308,27 +312,29 @@ class SMTStore : public DataStore {
         
         blobWrite(mem, sym_data.size());
         for (const auto& group : sym_data) {
-            blobWrite(mem, group.definitions.size());
-            for (const Definition &f : group.definitions) {
+            blobWrite(mem, group.first);
+            
+            blobWrite(mem, group.second.definitions.size());
+            for (const Definition &f : group.second.definitions) {
                 blobWrite(mem, f.symbol);
                 blobWrite(mem, f.def._rpn);
             }
-            blobWrite(mem, group.path_condition.size());
-            for (const Formula &pc : group.path_condition) {
+            blobWrite(mem, group.second.path_condition.size());
+            for (const Formula &pc : group.second.path_condition) {
                 blobWrite(mem, pc._rpn);
             }
             
-            blobWrite(mem, group.group.size());
-            for (const Formula::Ident &id : group.group) {
+            blobWrite(mem, group.second.group.size());
+            for (const Formula::Ident &id : group.second.group) {
                 blobWrite(mem, id);
             }
         }
+        blobWrite(mem, sym_data.free_idx());
         
-        blobWrite(mem, dependency_map.size());
+        blobWrite(mem, dependency_map.size());       
         for (const auto& item : dependency_map) {
+            blobWrite(mem, item.first);
             blobWrite(mem, item.second);
-            blobWrite(mem,
-                std::distance<std::list<dependency_group>::const_iterator>(sym_data.begin(), item.second));
         }
     }
     
@@ -336,10 +342,14 @@ class SMTStore : public DataStore {
     {
         blobRead(mem, segments_mapping, generations, bitWidths, fst_unused_id);
 
+        sym_data.clear();
         size_t data_size;
         blobRead(mem, data_size);
-        sym_data.resize(data_size);
-        for(auto& group : sym_data) {
+        for (size_t i = 0; i != data_size; i++) {
+            size_t id;
+            blobRead(mem, id);
+            dependency_group& group = sym_data.insert(id, dependency_group());
+            
             size_t definitions_size;
             blobRead(mem, definitions_size);
             group.definitions.resize(definitions_size);
@@ -363,7 +373,10 @@ class SMTStore : public DataStore {
                 group.group.insert(id);
             }
         }
+        sym_data.free_idx().clear();
+        blobRead(mem, sym_data.free_idx());
         
+        dependency_map.clear();
         size_t dep_size;
         blobRead(mem, dep_size);
         for (size_t i = 0; i != dep_size; i++) {
@@ -371,11 +384,9 @@ class SMTStore : public DataStore {
             size_t index;
             blobRead(mem, id);
             blobRead(mem, index);
-            auto it = sym_data.begin();
-            std::advance(it, index);
-            dependency_map.insert({id, it});
+            dependency_map.insert({id, index});
         }   
-
+        
         assert(segments_mapping.size() == generations.size());
         assert(segments_mapping.size() == bitWidths.size());
     }
@@ -574,17 +585,17 @@ class SMTStore : public DataStore {
     {
         // ToDo: Simplify dependency groups!
         for (auto& group : sym_data) {
-            std::vector< Definition > to_remove(group.definitions.size());
-            auto it = std::copy_if(group.definitions.begin(), group.definitions.end(), to_remove.begin(), pred);
+            std::vector< Definition > to_remove(group.second.definitions.size());
+            auto it = std::copy_if(group.second.definitions.begin(), group.second.definitions.end(), to_remove.begin(), pred);
             to_remove.resize(it - to_remove.begin());
 
-            it = std::remove_if(group.definitions.begin(), group.definitions.end(), pred);
-            group.definitions.resize(it - group.definitions.begin());
+            it = std::remove_if(group.second.definitions.begin(), group.second.definitions.end(), pred);
+            group.second.definitions.resize(it - group.second.definitions.begin());
 
             bool change;
             do {
                 change = false;
-                for (Formula &pc : group.path_condition) {
+                for (Formula &pc : group.second.path_condition) {
                     for (const Definition &def : to_remove) {
                         Formula new_pc = pc.substitute(def.getIdent(), def.getDef());
                         if (new_pc._rpn != pc._rpn) {
@@ -594,7 +605,7 @@ class SMTStore : public DataStore {
                     }
                 }
 
-                for (Definition &def : group.definitions) {
+                for (Definition &def : group.second.definitions) {
                     for (auto def_to_remove = to_remove.crbegin(); def_to_remove != to_remove.crend(); ++def_to_remove) {
                         Definition new_def = def.substitute(def_to_remove->getIdent(), def_to_remove->getDef());
                         if (new_def.def._rpn != def.def._rpn) {
@@ -604,7 +615,7 @@ class SMTStore : public DataStore {
                     }
                 }
             } while (change);
-            std::sort(group.definitions.begin(), group.definitions.end());
+            std::sort(group.second.definitions.begin(), group.second.definitions.end());
         }
     }
 
@@ -614,8 +625,9 @@ class SMTStore : public DataStore {
         // precondition: run removeDefinition( pred ) to be sure that the symbols
         // are not used anywhere else
         for (auto& group : sym_data) {
-            auto it = std::remove_if(group.path_condition.begin(), group.path_condition.end(), pred);
-            group.path_condition.resize(it - group.path_condition.begin());
+            auto it = std::remove_if(group.second.path_condition.begin(),
+                group.second.path_condition.end(), pred);
+            group.second.path_condition.resize(it - group.second.path_condition.begin());
         }
     }
 
@@ -629,8 +641,9 @@ class SMTStore : public DataStore {
     virtual bool empty() const;
 
 	static bool subseteq(const SMTStore &a, const SMTStore &b);
-    static bool subseteq(const std::vector<dep_pointer_const>& a_g,
-        const std::vector<dep_pointer_const>& b_g);
+    static bool subseteq(
+        const std::vector<std::reference_wrapper<const dependency_group>>& a_g,
+        const std::vector<std::reference_wrapper<const dependency_group>>& b_g);
 
     void clear()
     {
