@@ -308,8 +308,9 @@ struct SMTEqual {
     }
 };
 
+template <class Store>
 struct SMTSubseteq {
-    bool operator()(const SMTStore &a, const SMTStore &b) const {
+    bool operator()(const Store &a, const Store &b) const {
         //assert( a.segments_mapping.size() == b.segments_mapping.size() );
         return a.subseteq(a, b);
     }

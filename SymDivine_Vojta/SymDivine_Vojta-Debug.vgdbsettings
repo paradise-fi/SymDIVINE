@@ -159,7 +159,7 @@
     <LaunchGDBSettings xsi:type="GDBLaunchParametersNewInstance">
       <DebuggedProgram>$(TargetPath)</DebuggedProgram>
       <GDBServerPort>2000</GDBServerPort>
-      <ProgramArguments>reachability --statistics --disabletimeout --verbose --enablecaching test_programs/threads_advanced/model_op.ll</ProgramArguments>
+      <ProgramArguments>reachability --statistics --disabletimeout --verbose --enablecaching ../test/symdivine_vojta/test_programs/threads_advanced/model_op.ll</ProgramArguments>
       <WorkingDirectory>$(BuildDir)</WorkingDirectory>
     </LaunchGDBSettings>
     <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>

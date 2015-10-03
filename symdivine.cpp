@@ -10,15 +10,24 @@ int main( int args, char *argv[] )
     Config.parse_cmd_args(args, argv);
 
     if (Config.is_set("reachability")) {
-        Reachability<SMTStore, SMTSubseteq> reachability(Config.get_string("<model>"));
-        reachability.run();
+        if (Config.is_set("--partialstore")) {
+            Reachability<SMTStorePartial, SMTSubseteq<SMTStorePartial>>
+                reachability(Config.get_string("<model>"));
+            reachability.run();
+        }
+        else {
+            Reachability<SMTStore, SMTSubseteq<SMTStore>>
+                reachability(Config.get_string("<model>"));
+            reachability.run();
+        }
         /**
          * ToDo: Add outputting of statistic data ec.
          */
     }
 
     if (Config.is_set("ltl")) {
-        Ltl<SMTStore, SMTSubseteq> ltl(Config.get_string("<model>"), Config.get_string("<property>"));
+        Ltl<SMTStore, SMTSubseteq<SMTStore>>
+            ltl(Config.get_string("<model>"), Config.get_string("<property>"));
         ltl.run();
         /**
          * ToDo: Add outputting of statistic data ec.

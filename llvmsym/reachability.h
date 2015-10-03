@@ -5,6 +5,7 @@
 #include "datastore.h"
 #include "blobing.h"
 #include "smtdatastore.h"
+#include "smtdatastore_partial.h"
 #include "programutils/config.h"
 
 using namespace llvm_sym; // This is weird, can't compile with direct usage of namespace
