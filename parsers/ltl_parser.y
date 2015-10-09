@@ -1,5 +1,5 @@
 %{
-    #include "../llvmsym/Formula/rpn.h"
+    #include "../llvmsym/formula/rpn.h"
     #include <stdexcept>
     #include <memory>
     #include <vector>
