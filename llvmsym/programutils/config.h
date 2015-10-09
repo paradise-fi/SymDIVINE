@@ -9,12 +9,12 @@
 
 extern const char USAGE[];
 
-class ArgNotFoundException : std::runtime_error {
+class ArgNotFoundException : public std::runtime_error {
 public:
     ArgNotFoundException(const std::string& msg) : runtime_error(msg) {}
 };
 
-class ArgTypeException : std::runtime_error {
+class ArgTypeException : public std::runtime_error {
 public:
     ArgTypeException(const std::string& msg) : runtime_error(msg) {}
 };
@@ -30,9 +30,9 @@ struct ConfigStruct {
                 true              // show help if requested
             );
         // Uncomment for debugging
-        /*for (auto const& arg : args) {
+        for (auto const& arg : args) {
             std::cout << arg.first << ": " << arg.second << std::endl;
-        }*/
+        }
     }
 
     bool is_set(const std::string& name) {

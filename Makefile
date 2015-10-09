@@ -7,7 +7,7 @@ N_JOBS  := $(shell echo $$((2 * `grep -c "^processor" /proc/cpuinfo`)))
 
 WD := `pwd`
 
-LDFLAGS := -lz3 -lbdd -lboost_regex -lboost_graph $(shell llvm-config --libs core irreader) $(shell llvm-config --ldflags) -ltinfo -ldl -lpthread
+LDFLAGS := -lz3 -lboost_regex -lboost_graph $(shell llvm-config --libs core irreader) $(shell llvm-config --ldflags) -ltinfo -ldl -lpthread
 INCLUDE := -I`pwd`/extlibs/z3-unstable/src/api -I`pwd`/extlibs/z3-unstable/src/api/c++ -I`pwd`/libs
 CFLAGS := -UNDEBUG-Wall -pedantic -g $(OPT_LVL) $(DBG_LVL)
 CXXFLAGS := --std=c++11 $(shell llvm-config --cppflags) $(CFLAGS) -I. $(INCLUDE)

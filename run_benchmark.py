@@ -16,6 +16,7 @@ Options:
     -v --verbose          Enable verbose mode
     -w --vverbose         Enable extended verbose mode
     -o                    level of optimalizations [default: 2]
+    --timeout             timeout in seconds [default: 900]
 """
 
 import sys
@@ -24,7 +25,7 @@ import signal
 import os
 import atexit
 import resource
-import docopt
+# import docopt
 
 from time import sleep
 from tempfile import mkdtemp
@@ -47,9 +48,9 @@ def stop_timeout():
 def run_symdivine(symdivine_location, benchmark, symdivine_params = None):
     cmd = [os.path.join(symdivine_location, "symdivine")]
     cmd.append('reachability')
-    cmd.append(benchmark)
     if symdivine_params:
         cmd = cmd + symdivine_params
+    cmd.append(benchmark)
 
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return p
@@ -109,6 +110,28 @@ def sigpipe_handler(signum, data):
     signal_childs(signal.SIGKILL)
 
 def parse_args():
+    args = sys.argv
+
+    if len(args) < 3 or args[1].startswith("-") or args[2].startswith("-"):
+        print(__doc__)
+        sys.exit(1)
+    opt = "-o2"
+    loc = args[1]
+    benchmark = args[2]
+    timeout = 900
+    res = []
+
+    for arg in args[3:]:
+        if arg.startswith("-o"):
+            opt = arg
+        elif arg.startswith("--timeout="):
+            timeout = int(arg.split('=')[1])
+        else:
+            res.append(arg)
+    print res        
+    return (loc, benchmark, opt, timeout, res)
+
+def parse_args_docopt():
     arguments = docopt.docopt(__doc__)
 
     arguments = {k: v for k, v in arguments.items() if v}
@@ -167,6 +190,7 @@ if __name__ == "__main__":
             else:
                 print("UNKNOWN")
         if not err is None:
+            print(out)
             print(err)
 
         sys.stdout.flush()
