@@ -1,0 +1,5139 @@
+algorithm: reachability
+ap: no
+cheap-simplify: no
+container: smt
+dont-explicate: no
+dont-simplify: no
+ltl: no
+model: ./test_programs/formulae_expr/model_op.ll
+nusmv-ouput: no
+statistics: no
+verbose: no
+vverbose: yes
+adding 0 vars to segment 0
+globals are:
+adding 0 vars to segment 1
+adding 7 vars to segment 2
+BA Graph: 
+0:NACC
+[{}, 0]
+number of collisions: 0
+making known: 0
+---------
+full-init state:
+Control:
+thread 0
+{0, 0, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 1 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+
+definitions:
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 0, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 1 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+
+definitions:
+
+executing instruction main.0.0
+	  br label %1
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 1 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+
+definitions:
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 1 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+
+definitions:
+
+executing instruction main.1.0
+	  %2 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 1 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+
+definitions:
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 1 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+
+definitions:
+
+executing instruction main.1.1
+	  %3 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 1 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+
+definitions:
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 1 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+
+definitions:
+
+executing instruction main.1.2
+	  %4 = add nsw i32 %3, %2
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 1 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 1 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+executing instruction main.1.3
+	  %5 = icmp slt i32 %4, 1
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= a_seg2_off3_gen1)
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+1(32) <= a_seg2_off3_gen1
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+1(32) <= a_seg2_off3_gen1
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+empty state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+1(32) <= a_seg2_off3_gen1
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+1(32) <= a_seg2_off3_gen1
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+1(32) <= a_seg2_off3_gen1
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+executing instruction main.2.0
+	  ret i32 1
+
+---------
+to state:
+exit
+number of collisions: 1
+number of collisions: 0
+--------------------------------------------------
+1 is known.
+--------------------------------------------------
+successor 1 NACC
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= a_seg2_off3_gen1)
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+to state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= a_seg2_off3_gen1)
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+number of collisions: 1
+number of collisions: 0
+--------------------------------------------------
+2 is known.
+--------------------------------------------------
+successor 2 NACC
+---------
+empty state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= a_seg2_off3_gen1)
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+=================================================================
+========================== Round end ============================
+=================================================================
+making known: 1
+---------
+full-init state:
+exit
+=================================================================
+========================== Round end ============================
+=================================================================
+making known: 2
+---------
+full-init state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= a_seg2_off3_gen1)
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= a_seg2_off3_gen1)
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+executing instruction main.1.0
+	  %2 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= a_seg2_off3_gen1)
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= a_seg2_off3_gen1)
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+executing instruction main.1.1
+	  %3 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= a_seg2_off3_gen1)
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= a_seg2_off3_gen1)
+
+definitions:
+a_seg2_off3_gen1 == (a_seg2_off2_gen1 + a_seg2_off1_gen1)
+
+
+executing instruction main.1.2
+	  %4 = add nsw i32 %3, %2
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1))
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1))
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+executing instruction main.1.3
+	  %5 = icmp slt i32 %4, 1
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && (1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && (1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+empty state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && (1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && (1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && (1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+executing instruction main.2.0
+	  ret i32 1
+
+---------
+to state:
+exit
+number of collisions: 1
+number of collisions: 1
+successor 1 NACC
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+to state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+number of collisions: 1
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 b_seg2_off3_gen2))
+       (= b_seg2_off3_gen2 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+  (forall ((a_seg2_off3_gen1 (_ BitVec 32))
+           (a_seg2_off3_gen1!1 (_ BitVec 32))
+           (a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32)))
+    (let ((a!1 (not (and true
+                         (not (bvsle #x00000001 a_seg2_off3_gen1!1))
+                         (= a_seg2_off3_gen1!1
+                            (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1))))))
+      (or a!1
+          false
+          (distinct a_seg2_off1_gen1 b_seg2_off1_gen2)
+          (distinct a_seg2_off2_gen1 b_seg2_off2_gen2)
+          (distinct a_seg2_off3_gen1!1 b_seg2_off3_gen2)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 1
+number of collisions: 1
+It took me 0.0129498 seconds.
+--------------------------------------------------
+3 is known.
+--------------------------------------------------
+successor 3 NACC
+---------
+empty state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+=================================================================
+========================== Round end ============================
+=================================================================
+making known: 3
+---------
+full-init state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+executing instruction main.1.0
+	  %2 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+executing instruction main.1.1
+	  %3 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= a_seg2_off3_gen2)
+
+definitions:
+a_seg2_off3_gen2 == (a_seg2_off2_gen2 + a_seg2_off1_gen2)
+
+
+executing instruction main.1.2
+	  %4 = add nsw i32 %3, %2
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+executing instruction main.1.3
+	  %5 = icmp slt i32 %4, 1
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && (1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && (1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+empty state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && (1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && (1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && (1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+executing instruction main.2.0
+	  ret i32 1
+
+---------
+to state:
+exit
+number of collisions: 1
+number of collisions: 1
+successor 1 NACC
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+to state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+number of collisions: 1
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 b_seg2_off3_gen3))
+       (= b_seg2_off3_gen3 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off3_gen2 (_ BitVec 32))
+           (a_seg2_off3_gen2!1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen2!1))
+                    (= a_seg2_off3_gen2!1
+                       (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen2 b_seg2_off1_gen3)
+          (distinct a_seg2_off2_gen2 b_seg2_off2_gen3)
+          (distinct a_seg2_off3_gen2!1 b_seg2_off3_gen3)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 1
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 b_seg2_off3_gen3))
+       (= b_seg2_off3_gen3 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+  (forall ((a_seg2_off3_gen1 (_ BitVec 32))
+           (a_seg2_off3_gen1!1 (_ BitVec 32))
+           (a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32)))
+    (let ((a!1 (not (and true
+                         (not (bvsle #x00000001 a_seg2_off3_gen1!1))
+                         (= a_seg2_off3_gen1!1
+                            (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1))))))
+      (or a!1
+          false
+          (distinct a_seg2_off1_gen1 b_seg2_off1_gen3)
+          (distinct a_seg2_off2_gen1 b_seg2_off2_gen3)
+          (distinct a_seg2_off3_gen1!1 b_seg2_off3_gen3)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 1
+number of collisions: 2
+It took me 0.0280626 seconds.
+--------------------------------------------------
+4 is known.
+--------------------------------------------------
+successor 4 NACC
+---------
+empty state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+=================================================================
+========================== Round end ============================
+=================================================================
+making known: 4
+---------
+full-init state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+executing instruction main.1.0
+	  %2 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+executing instruction main.1.1
+	  %3 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= a_seg2_off3_gen3)
+
+definitions:
+a_seg2_off3_gen3 == (a_seg2_off2_gen3 + a_seg2_off1_gen3)
+
+
+executing instruction main.1.2
+	  %4 = add nsw i32 %3, %2
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+executing instruction main.1.3
+	  %5 = icmp slt i32 %4, 1
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && (1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && (1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+empty state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && (1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && (1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && (1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+executing instruction main.2.0
+	  ret i32 1
+
+---------
+to state:
+exit
+number of collisions: 1
+number of collisions: 1
+successor 1 NACC
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+to state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+number of collisions: 1
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 b_seg2_off3_gen4))
+       (= b_seg2_off3_gen4 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off3_gen3 (_ BitVec 32))
+           (a_seg2_off3_gen3!1 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen3!1))
+                    (= a_seg2_off3_gen3!1
+                       (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen3 b_seg2_off1_gen4)
+          (distinct a_seg2_off2_gen3 b_seg2_off2_gen4)
+          (distinct a_seg2_off3_gen3!1 b_seg2_off3_gen4)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 1
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 b_seg2_off3_gen4))
+       (= b_seg2_off3_gen4 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off3_gen2 (_ BitVec 32))
+           (a_seg2_off3_gen2!1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen2!1))
+                    (= a_seg2_off3_gen2!1
+                       (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen2 b_seg2_off1_gen4)
+          (distinct a_seg2_off2_gen2 b_seg2_off2_gen4)
+          (distinct a_seg2_off3_gen2!1 b_seg2_off3_gen4)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 1
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 b_seg2_off3_gen4))
+       (= b_seg2_off3_gen4 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+  (forall ((a_seg2_off3_gen1 (_ BitVec 32))
+           (a_seg2_off3_gen1!1 (_ BitVec 32))
+           (a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32)))
+    (let ((a!1 (not (and true
+                         (not (bvsle #x00000001 a_seg2_off3_gen1!1))
+                         (= a_seg2_off3_gen1!1
+                            (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1))))))
+      (or a!1
+          false
+          (distinct a_seg2_off1_gen1 b_seg2_off1_gen4)
+          (distinct a_seg2_off2_gen1 b_seg2_off2_gen4)
+          (distinct a_seg2_off3_gen1!1 b_seg2_off3_gen4)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 2
+number of collisions: 3
+It took me 0.039519 seconds.
+--------------------------------------------------
+5 is known.
+--------------------------------------------------
+successor 5 NACC
+---------
+empty state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+=================================================================
+========================== Round end ============================
+=================================================================
+making known: 5
+---------
+full-init state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+executing instruction main.1.0
+	  %2 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+executing instruction main.1.1
+	  %3 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= a_seg2_off3_gen4)
+
+definitions:
+a_seg2_off3_gen4 == (a_seg2_off2_gen4 + a_seg2_off1_gen4)
+
+
+executing instruction main.1.2
+	  %4 = add nsw i32 %3, %2
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+executing instruction main.1.3
+	  %5 = icmp slt i32 %4, 1
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && (1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && (1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+empty state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && (1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && (1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && (1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+executing instruction main.2.0
+	  ret i32 1
+
+---------
+to state:
+exit
+number of collisions: 1
+number of collisions: 1
+successor 1 NACC
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+to state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+number of collisions: 1
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 b_seg2_off3_gen5))
+       (= b_seg2_off3_gen5 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off3_gen4 (_ BitVec 32))
+           (a_seg2_off3_gen4!1 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen4!1))
+                    (= a_seg2_off3_gen4!1
+                       (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen4 b_seg2_off1_gen5)
+          (distinct a_seg2_off2_gen4 b_seg2_off2_gen5)
+          (distinct a_seg2_off3_gen4!1 b_seg2_off3_gen5)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 2
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 b_seg2_off3_gen5))
+       (= b_seg2_off3_gen5 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off3_gen3 (_ BitVec 32))
+           (a_seg2_off3_gen3!1 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen3!1))
+                    (= a_seg2_off3_gen3!1
+                       (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen3 b_seg2_off1_gen5)
+          (distinct a_seg2_off2_gen3 b_seg2_off2_gen5)
+          (distinct a_seg2_off3_gen3!1 b_seg2_off3_gen5)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 2
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 b_seg2_off3_gen5))
+       (= b_seg2_off3_gen5 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off3_gen2 (_ BitVec 32))
+           (a_seg2_off3_gen2!1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen2!1))
+                    (= a_seg2_off3_gen2!1
+                       (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen2 b_seg2_off1_gen5)
+          (distinct a_seg2_off2_gen2 b_seg2_off2_gen5)
+          (distinct a_seg2_off3_gen2!1 b_seg2_off3_gen5)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 2
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 b_seg2_off3_gen5))
+       (= b_seg2_off3_gen5 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+  (forall ((a_seg2_off3_gen1 (_ BitVec 32))
+           (a_seg2_off3_gen1!1 (_ BitVec 32))
+           (a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32)))
+    (let ((a!1 (not (and true
+                         (not (bvsle #x00000001 a_seg2_off3_gen1!1))
+                         (= a_seg2_off3_gen1!1
+                            (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1))))))
+      (or a!1
+          false
+          (distinct a_seg2_off1_gen1 b_seg2_off1_gen5)
+          (distinct a_seg2_off2_gen1 b_seg2_off2_gen5)
+          (distinct a_seg2_off3_gen1!1 b_seg2_off3_gen5)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 2
+number of collisions: 4
+It took me 0.0621691 seconds.
+--------------------------------------------------
+6 is known.
+--------------------------------------------------
+successor 6 NACC
+---------
+empty state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+=================================================================
+========================== Round end ============================
+=================================================================
+making known: 6
+---------
+full-init state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+executing instruction main.1.0
+	  %2 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+executing instruction main.1.1
+	  %3 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= a_seg2_off3_gen5)
+
+definitions:
+a_seg2_off3_gen5 == (a_seg2_off2_gen5 + a_seg2_off1_gen5)
+
+
+executing instruction main.1.2
+	  %4 = add nsw i32 %3, %2
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+executing instruction main.1.3
+	  %5 = icmp slt i32 %4, 1
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && (1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && (1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+empty state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && (1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && (1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && (1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+executing instruction main.2.0
+	  ret i32 1
+
+---------
+to state:
+exit
+number of collisions: 1
+number of collisions: 1
+successor 1 NACC
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+to state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+number of collisions: 1
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 b_seg2_off3_gen6))
+       (= b_seg2_off3_gen6 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32))
+           (a_seg2_off3_gen5 (_ BitVec 32))
+           (a_seg2_off3_gen5!1 (_ BitVec 32))
+           (a_seg2_off2_gen5 (_ BitVec 32))
+           (a_seg2_off1_gen5 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen5!1))
+                    (= a_seg2_off3_gen5!1
+                       (bvadd a_seg2_off2_gen5 a_seg2_off1_gen5)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen5 b_seg2_off1_gen6)
+          (distinct a_seg2_off2_gen5 b_seg2_off2_gen6)
+          (distinct a_seg2_off3_gen5!1 b_seg2_off3_gen6)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 4
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 b_seg2_off3_gen6))
+       (= b_seg2_off3_gen6 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off3_gen4 (_ BitVec 32))
+           (a_seg2_off3_gen4!1 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen4!1))
+                    (= a_seg2_off3_gen4!1
+                       (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen4 b_seg2_off1_gen6)
+          (distinct a_seg2_off2_gen4 b_seg2_off2_gen6)
+          (distinct a_seg2_off3_gen4!1 b_seg2_off3_gen6)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 4
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 b_seg2_off3_gen6))
+       (= b_seg2_off3_gen6 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off3_gen3 (_ BitVec 32))
+           (a_seg2_off3_gen3!1 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen3!1))
+                    (= a_seg2_off3_gen3!1
+                       (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen3 b_seg2_off1_gen6)
+          (distinct a_seg2_off2_gen3 b_seg2_off2_gen6)
+          (distinct a_seg2_off3_gen3!1 b_seg2_off3_gen6)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 4
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 b_seg2_off3_gen6))
+       (= b_seg2_off3_gen6 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off3_gen2 (_ BitVec 32))
+           (a_seg2_off3_gen2!1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen2!1))
+                    (= a_seg2_off3_gen2!1
+                       (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen2 b_seg2_off1_gen6)
+          (distinct a_seg2_off2_gen2 b_seg2_off2_gen6)
+          (distinct a_seg2_off3_gen2!1 b_seg2_off3_gen6)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 4
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 b_seg2_off3_gen6))
+       (= b_seg2_off3_gen6 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+  (forall ((a_seg2_off3_gen1 (_ BitVec 32))
+           (a_seg2_off3_gen1!1 (_ BitVec 32))
+           (a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32)))
+    (let ((a!1 (not (and true
+                         (not (bvsle #x00000001 a_seg2_off3_gen1!1))
+                         (= a_seg2_off3_gen1!1
+                            (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1))))))
+      (or a!1
+          false
+          (distinct a_seg2_off1_gen1 b_seg2_off1_gen6)
+          (distinct a_seg2_off2_gen1 b_seg2_off2_gen6)
+          (distinct a_seg2_off3_gen1!1 b_seg2_off3_gen6)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 4
+number of collisions: 5
+It took me 0.102722 seconds.
+--------------------------------------------------
+7 is known.
+--------------------------------------------------
+successor 7 NACC
+---------
+empty state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+=================================================================
+========================== Round end ============================
+=================================================================
+making known: 7
+---------
+full-init state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+executing instruction main.1.0
+	  %2 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+executing instruction main.1.1
+	  %3 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= a_seg2_off3_gen6)
+
+definitions:
+a_seg2_off3_gen6 == (a_seg2_off2_gen6 + a_seg2_off1_gen6)
+
+
+executing instruction main.1.2
+	  %4 = add nsw i32 %3, %2
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+executing instruction main.1.3
+	  %5 = icmp slt i32 %4, 1
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && (1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && (1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+empty state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && (1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && (1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && (1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+executing instruction main.2.0
+	  ret i32 1
+
+---------
+to state:
+exit
+number of collisions: 1
+number of collisions: 1
+successor 1 NACC
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+to state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+number of collisions: 1
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 b_seg2_off3_gen7))
+       (= b_seg2_off3_gen7 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32))
+           (a_seg2_off2_gen5 (_ BitVec 32))
+           (a_seg2_off1_gen5 (_ BitVec 32))
+           (a_seg2_off3_gen6 (_ BitVec 32))
+           (a_seg2_off3_gen6!1 (_ BitVec 32))
+           (a_seg2_off2_gen6 (_ BitVec 32))
+           (a_seg2_off1_gen6 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen5 a_seg2_off1_gen5)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen6!1))
+                    (= a_seg2_off3_gen6!1
+                       (bvadd a_seg2_off2_gen6 a_seg2_off1_gen6)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen6 b_seg2_off1_gen7)
+          (distinct a_seg2_off2_gen6 b_seg2_off2_gen7)
+          (distinct a_seg2_off3_gen6!1 b_seg2_off3_gen7)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 8
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 b_seg2_off3_gen7))
+       (= b_seg2_off3_gen7 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32))
+           (a_seg2_off3_gen5 (_ BitVec 32))
+           (a_seg2_off3_gen5!1 (_ BitVec 32))
+           (a_seg2_off2_gen5 (_ BitVec 32))
+           (a_seg2_off1_gen5 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen5!1))
+                    (= a_seg2_off3_gen5!1
+                       (bvadd a_seg2_off2_gen5 a_seg2_off1_gen5)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen5 b_seg2_off1_gen7)
+          (distinct a_seg2_off2_gen5 b_seg2_off2_gen7)
+          (distinct a_seg2_off3_gen5!1 b_seg2_off3_gen7)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 8
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 b_seg2_off3_gen7))
+       (= b_seg2_off3_gen7 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off3_gen4 (_ BitVec 32))
+           (a_seg2_off3_gen4!1 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen4!1))
+                    (= a_seg2_off3_gen4!1
+                       (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen4 b_seg2_off1_gen7)
+          (distinct a_seg2_off2_gen4 b_seg2_off2_gen7)
+          (distinct a_seg2_off3_gen4!1 b_seg2_off3_gen7)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 8
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 b_seg2_off3_gen7))
+       (= b_seg2_off3_gen7 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off3_gen3 (_ BitVec 32))
+           (a_seg2_off3_gen3!1 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen3!1))
+                    (= a_seg2_off3_gen3!1
+                       (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen3 b_seg2_off1_gen7)
+          (distinct a_seg2_off2_gen3 b_seg2_off2_gen7)
+          (distinct a_seg2_off3_gen3!1 b_seg2_off3_gen7)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 8
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 b_seg2_off3_gen7))
+       (= b_seg2_off3_gen7 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off3_gen2 (_ BitVec 32))
+           (a_seg2_off3_gen2!1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen2!1))
+                    (= a_seg2_off3_gen2!1
+                       (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen2 b_seg2_off1_gen7)
+          (distinct a_seg2_off2_gen2 b_seg2_off2_gen7)
+          (distinct a_seg2_off3_gen2!1 b_seg2_off3_gen7)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 8
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 b_seg2_off3_gen7))
+       (= b_seg2_off3_gen7 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+  (forall ((a_seg2_off3_gen1 (_ BitVec 32))
+           (a_seg2_off3_gen1!1 (_ BitVec 32))
+           (a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32)))
+    (let ((a!1 (not (and true
+                         (not (bvsle #x00000001 a_seg2_off3_gen1!1))
+                         (= a_seg2_off3_gen1!1
+                            (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1))))))
+      (or a!1
+          false
+          (distinct a_seg2_off1_gen1 b_seg2_off1_gen7)
+          (distinct a_seg2_off2_gen1 b_seg2_off2_gen7)
+          (distinct a_seg2_off3_gen1!1 b_seg2_off3_gen7)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 16
+number of collisions: 6
+It took me 0.125463 seconds.
+--------------------------------------------------
+8 is known.
+--------------------------------------------------
+successor 8 NACC
+---------
+empty state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+=================================================================
+========================== Round end ============================
+=================================================================
+making known: 8
+---------
+full-init state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+executing instruction main.1.0
+	  %2 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 1}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+executing instruction main.1.1
+	  %3 = tail call i32 @_Z21__VERIFIER_nondet_intv()
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 2}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= a_seg2_off3_gen7)
+
+definitions:
+a_seg2_off3_gen7 == (a_seg2_off2_gen7 + a_seg2_off1_gen7)
+
+
+executing instruction main.1.2
+	  %4 = add nsw i32 %3, %2
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= (a_seg2_off2_gen7 + a_seg2_off1_gen7))
+
+definitions:
+a_seg2_off3_gen8 == (a_seg2_off2_gen8 + a_seg2_off1_gen8)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 3}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+(((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= (a_seg2_off2_gen7 + a_seg2_off1_gen7))
+
+definitions:
+a_seg2_off3_gen8 == (a_seg2_off2_gen8 + a_seg2_off1_gen8)
+
+
+executing instruction main.1.3
+	  %5 = icmp slt i32 %4, 1
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= (a_seg2_off2_gen7 + a_seg2_off1_gen7))) && !(1(32) <= a_seg2_off3_gen8)
+
+definitions:
+a_seg2_off3_gen8 == (a_seg2_off2_gen8 + a_seg2_off1_gen8)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= (a_seg2_off2_gen7 + a_seg2_off1_gen7))) && (1(32) <= a_seg2_off3_gen8)
+
+definitions:
+a_seg2_off3_gen8 == (a_seg2_off2_gen8 + a_seg2_off1_gen8)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= (a_seg2_off2_gen7 + a_seg2_off1_gen7))) && (1(32) <= a_seg2_off3_gen8)
+
+definitions:
+a_seg2_off3_gen8 == (a_seg2_off2_gen8 + a_seg2_off1_gen8)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+empty state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= (a_seg2_off2_gen7 + a_seg2_off1_gen7))) && (1(32) <= a_seg2_off3_gen8)
+
+definitions:
+a_seg2_off3_gen8 == (a_seg2_off2_gen8 + a_seg2_off1_gen8)
+
+
+---------
+by state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= (a_seg2_off2_gen7 + a_seg2_off1_gen7))) && (1(32) <= a_seg2_off3_gen8)
+
+definitions:
+a_seg2_off3_gen8 == (a_seg2_off2_gen8 + a_seg2_off1_gen8)
+
+
+---------
+full-from state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 0 0 0 ]
+data:
+
+path condition:
+((((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= (a_seg2_off2_gen7 + a_seg2_off1_gen7))) && (1(32) <= a_seg2_off3_gen8)
+
+definitions:
+a_seg2_off3_gen8 == (a_seg2_off2_gen8 + a_seg2_off1_gen8)
+
+
+executing instruction main.2.0
+	  ret i32 1
+
+---------
+to state:
+exit
+number of collisions: 1
+number of collisions: 1
+successor 1 NACC
+---------
+full-from state:
+Control:
+thread 0
+{0, 1, 4}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= (a_seg2_off2_gen7 + a_seg2_off1_gen7))) && !(1(32) <= a_seg2_off3_gen8)
+
+definitions:
+a_seg2_off3_gen8 == (a_seg2_off2_gen8 + a_seg2_off1_gen8)
+
+
+executing instruction main.1.4
+	  br i1 %5, label %1, label %6
+
+---------
+to state:
+Control:
+thread 0
+{0, 1, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= (a_seg2_off2_gen7 + a_seg2_off1_gen7))) && !(1(32) <= a_seg2_off3_gen8)
+
+definitions:
+a_seg2_off3_gen8 == (a_seg2_off2_gen8 + a_seg2_off1_gen8)
+
+
+number of collisions: 1
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+       (not (bvsle #x00000001 b_seg2_off3_gen8))
+       (= b_seg2_off3_gen8 (bvadd b_seg2_off2_gen8 b_seg2_off1_gen8)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32))
+           (a_seg2_off2_gen5 (_ BitVec 32))
+           (a_seg2_off1_gen5 (_ BitVec 32))
+           (a_seg2_off2_gen6 (_ BitVec 32))
+           (a_seg2_off1_gen6 (_ BitVec 32))
+           (a_seg2_off3_gen7 (_ BitVec 32))
+           (a_seg2_off3_gen7!1 (_ BitVec 32))
+           (a_seg2_off2_gen7 (_ BitVec 32))
+           (a_seg2_off1_gen7 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen5 a_seg2_off1_gen5)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen6 a_seg2_off1_gen6)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen7!1))
+                    (= a_seg2_off3_gen7!1
+                       (bvadd a_seg2_off2_gen7 a_seg2_off1_gen7)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen7 b_seg2_off1_gen8)
+          (distinct a_seg2_off2_gen7 b_seg2_off2_gen8)
+          (distinct a_seg2_off3_gen7!1 b_seg2_off3_gen8)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 16
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+       (not (bvsle #x00000001 b_seg2_off3_gen8))
+       (= b_seg2_off3_gen8 (bvadd b_seg2_off2_gen8 b_seg2_off1_gen8)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32))
+           (a_seg2_off2_gen5 (_ BitVec 32))
+           (a_seg2_off1_gen5 (_ BitVec 32))
+           (a_seg2_off3_gen6 (_ BitVec 32))
+           (a_seg2_off3_gen6!1 (_ BitVec 32))
+           (a_seg2_off2_gen6 (_ BitVec 32))
+           (a_seg2_off1_gen6 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen5 a_seg2_off1_gen5)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen6!1))
+                    (= a_seg2_off3_gen6!1
+                       (bvadd a_seg2_off2_gen6 a_seg2_off1_gen6)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen6 b_seg2_off1_gen8)
+          (distinct a_seg2_off2_gen6 b_seg2_off2_gen8)
+          (distinct a_seg2_off3_gen6!1 b_seg2_off3_gen8)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 16
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+       (not (bvsle #x00000001 b_seg2_off3_gen8))
+       (= b_seg2_off3_gen8 (bvadd b_seg2_off2_gen8 b_seg2_off1_gen8)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32))
+           (a_seg2_off3_gen5 (_ BitVec 32))
+           (a_seg2_off3_gen5!1 (_ BitVec 32))
+           (a_seg2_off2_gen5 (_ BitVec 32))
+           (a_seg2_off1_gen5 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen5!1))
+                    (= a_seg2_off3_gen5!1
+                       (bvadd a_seg2_off2_gen5 a_seg2_off1_gen5)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen5 b_seg2_off1_gen8)
+          (distinct a_seg2_off2_gen5 b_seg2_off2_gen8)
+          (distinct a_seg2_off3_gen5!1 b_seg2_off3_gen8)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 16
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+       (not (bvsle #x00000001 b_seg2_off3_gen8))
+       (= b_seg2_off3_gen8 (bvadd b_seg2_off2_gen8 b_seg2_off1_gen8)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off3_gen4 (_ BitVec 32))
+           (a_seg2_off3_gen4!1 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen4!1))
+                    (= a_seg2_off3_gen4!1
+                       (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen4 b_seg2_off1_gen8)
+          (distinct a_seg2_off2_gen4 b_seg2_off2_gen8)
+          (distinct a_seg2_off3_gen4!1 b_seg2_off3_gen8)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 16
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+       (not (bvsle #x00000001 b_seg2_off3_gen8))
+       (= b_seg2_off3_gen8 (bvadd b_seg2_off2_gen8 b_seg2_off1_gen8)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off3_gen3 (_ BitVec 32))
+           (a_seg2_off3_gen3!1 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen3!1))
+                    (= a_seg2_off3_gen3!1
+                       (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen3 b_seg2_off1_gen8)
+          (distinct a_seg2_off2_gen3 b_seg2_off2_gen8)
+          (distinct a_seg2_off3_gen3!1 b_seg2_off3_gen8)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 32
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+       (not (bvsle #x00000001 b_seg2_off3_gen8))
+       (= b_seg2_off3_gen8 (bvadd b_seg2_off2_gen8 b_seg2_off1_gen8)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off3_gen2 (_ BitVec 32))
+           (a_seg2_off3_gen2!1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen2!1))
+                    (= a_seg2_off3_gen2!1
+                       (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen2 b_seg2_off1_gen8)
+          (distinct a_seg2_off2_gen2 b_seg2_off2_gen8)
+          (distinct a_seg2_off3_gen2!1 b_seg2_off3_gen8)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 32
+number of collisions: 7
+It took me 0.254661 seconds.
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+       (not (bvsle #x00000001 b_seg2_off3_gen8))
+       (= b_seg2_off3_gen8 (bvadd b_seg2_off2_gen8 b_seg2_off1_gen8)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32))
+           (a_seg2_off2_gen5 (_ BitVec 32))
+           (a_seg2_off1_gen5 (_ BitVec 32))
+           (a_seg2_off2_gen6 (_ BitVec 32))
+           (a_seg2_off1_gen6 (_ BitVec 32))
+           (a_seg2_off3_gen7 (_ BitVec 32))
+           (a_seg2_off3_gen7!1 (_ BitVec 32))
+           (a_seg2_off2_gen7 (_ BitVec 32))
+           (a_seg2_off1_gen7 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen5 a_seg2_off1_gen5)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen6 a_seg2_off1_gen6)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen7!1))
+                    (= a_seg2_off3_gen7!1
+                       (bvadd a_seg2_off2_gen7 a_seg2_off1_gen7)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen7 b_seg2_off1_gen8)
+          (distinct a_seg2_off2_gen7 b_seg2_off2_gen8)
+          (distinct a_seg2_off3_gen7!1 b_seg2_off3_gen8)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 32
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+       (not (bvsle #x00000001 b_seg2_off3_gen8))
+       (= b_seg2_off3_gen8 (bvadd b_seg2_off2_gen8 b_seg2_off1_gen8)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32))
+           (a_seg2_off2_gen5 (_ BitVec 32))
+           (a_seg2_off1_gen5 (_ BitVec 32))
+           (a_seg2_off3_gen6 (_ BitVec 32))
+           (a_seg2_off3_gen6!1 (_ BitVec 32))
+           (a_seg2_off2_gen6 (_ BitVec 32))
+           (a_seg2_off1_gen6 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen5 a_seg2_off1_gen5)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen6!1))
+                    (= a_seg2_off3_gen6!1
+                       (bvadd a_seg2_off2_gen6 a_seg2_off1_gen6)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen6 b_seg2_off1_gen8)
+          (distinct a_seg2_off2_gen6 b_seg2_off2_gen8)
+          (distinct a_seg2_off3_gen6!1 b_seg2_off3_gen8)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 32
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+       (not (bvsle #x00000001 b_seg2_off3_gen8))
+       (= b_seg2_off3_gen8 (bvadd b_seg2_off2_gen8 b_seg2_off1_gen8)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32))
+           (a_seg2_off3_gen5 (_ BitVec 32))
+           (a_seg2_off3_gen5!1 (_ BitVec 32))
+           (a_seg2_off2_gen5 (_ BitVec 32))
+           (a_seg2_off1_gen5 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen5!1))
+                    (= a_seg2_off3_gen5!1
+                       (bvadd a_seg2_off2_gen5 a_seg2_off1_gen5)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen5 b_seg2_off1_gen8)
+          (distinct a_seg2_off2_gen5 b_seg2_off2_gen8)
+          (distinct a_seg2_off3_gen5!1 b_seg2_off3_gen8)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 32
+while checking:
+(solver
+  (and true
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen1 b_seg2_off1_gen1)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen2 b_seg2_off1_gen2)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen3 b_seg2_off1_gen3)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen4 b_seg2_off1_gen4)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen5 b_seg2_off1_gen5)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen6 b_seg2_off1_gen6)))
+       (not (bvsle #x00000001 (bvadd b_seg2_off2_gen7 b_seg2_off1_gen7)))
+       (not (bvsle #x00000001 b_seg2_off3_gen8))
+       (= b_seg2_off3_gen8 (bvadd b_seg2_off2_gen8 b_seg2_off1_gen8)))
+  (forall ((a_seg2_off2_gen1 (_ BitVec 32))
+           (a_seg2_off1_gen1 (_ BitVec 32))
+           (a_seg2_off2_gen2 (_ BitVec 32))
+           (a_seg2_off1_gen2 (_ BitVec 32))
+           (a_seg2_off2_gen3 (_ BitVec 32))
+           (a_seg2_off1_gen3 (_ BitVec 32))
+           (a_seg2_off3_gen4 (_ BitVec 32))
+           (a_seg2_off3_gen4!1 (_ BitVec 32))
+           (a_seg2_off2_gen4 (_ BitVec 32))
+           (a_seg2_off1_gen4 (_ BitVec 32)))
+    (let ((a!1 (and true
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen1 a_seg2_off1_gen1)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen2 a_seg2_off1_gen2)))
+                    (not (bvsle #x00000001
+                                (bvadd a_seg2_off2_gen3 a_seg2_off1_gen3)))
+                    (not (bvsle #x00000001 a_seg2_off3_gen4!1))
+                    (= a_seg2_off3_gen4!1
+                       (bvadd a_seg2_off2_gen4 a_seg2_off1_gen4)))))
+      (or (not a!1)
+          false
+          (distinct a_seg2_off1_gen4 b_seg2_off1_gen8)
+          (distinct a_seg2_off2_gen4 b_seg2_off2_gen8)
+          (distinct a_seg2_off3_gen4!1 b_seg2_off3_gen8)))))
+got 'unknown', reason: smt tactic failed to show goal to be sat/unsat
+	timeout = 64
+successor 4 NACC
+---------
+empty state:
+Control:
+thread 0
+{0, 2, 0}
+Data:
+tid 0 segments:
+2
+s0: 
+s1: 
+s2: 1 1 1 1 0 1 1 
+data:
+stack No. 0:
+[ ]
+stack No. 1:
+[ ]
+stack No. 2:
+[ 0 0 0 0 1 0 0 ]
+data:
+
+path condition:
+((((((!(1(32) <= (a_seg2_off2_gen1 + a_seg2_off1_gen1)) && !(1(32) <= (a_seg2_off2_gen2 + a_seg2_off1_gen2))) && !(1(32) <= (a_seg2_off2_gen3 + a_seg2_off1_gen3))) && !(1(32) <= (a_seg2_off2_gen4 + a_seg2_off1_gen4))) && !(1(32) <= (a_seg2_off2_gen5 + a_seg2_off1_gen5))) && !(1(32) <= (a_seg2_off2_gen6 + a_seg2_off1_gen6))) && !(1(32) <= (a_seg2_off2_gen7 + a_seg2_off1_gen7))) && !(1(32) <= a_seg2_off3_gen8)
+
+definitions:
+a_seg2_off3_gen8 == (a_seg2_off2_gen8 + a_seg2_off1_gen8)
+
+
+=================================================================
+========================== Round end ============================
+=================================================================
+reachability finished.
+Prod Graph: 
+0:
+[{}, 1]
+[{}, 2]
+1:
+2:
+[{}, 1]
+[{}, 3]
+3:
+[{}, 1]
+[{}, 4]
+4:
+[{}, 1]
+[{}, 5]
+5:
+[{}, 1]
+[{}, 6]
+6:
+[{}, 1]
+[{}, 7]
+7:
+[{}, 1]
+[{}, 8]
+8:
+[{}, 1]
+[{}, 4]
+accepting: 
+(9,16,0)

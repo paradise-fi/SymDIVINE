@@ -1,6 +1,6 @@
 %{
 #include <string>
-#include "ltl_parser.hpp"
+#include <parser.hpp>
 
 
 #define SAVE_TOKEN yylval.string = new std::string(yytext, yyleng)
@@ -44,3 +44,31 @@
 .                       printf("Unknown token!\n"); yyterminate();
 
 %%
+
+#include <iostream>
+#include <utility>
+#include <vector>
+#include <string>
+#include <llvmsym/formula/rpn.h>
+#include <memory>
+
+using namespace llvm_sym;
+
+extern std::vector<std::shared_ptr<Formula>> formulas;
+extern std::string res_formula;
+
+std::pair<std::vector<std::shared_ptr<llvm_sym::Formula>>, std::string>
+parse_ltl(const std::string& formula, bool verbose, bool vverbose)
+{
+	YY_BUFFER_STATE s = yy_scan_string(formula.c_str());
+	yyparse();
+	yy_delete_buffer(s);
+    if (verbose || vverbose) {
+		std::cout << "Input formula: " << formula << "\n";
+		std::cout << "Parsed formula: " << res_formula << "\n";
+		for (size_t i = 0; i != formulas.size(); i++) {
+			std::cout << "ap" << i + 1 << ": " << *formulas[i] << "\n";
+		}
+	}
+	return std::make_pair(formulas, res_formula);
+}

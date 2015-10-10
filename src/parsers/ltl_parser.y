@@ -1,10 +1,10 @@
 %{
-    #include "../llvmsym/formula/rpn.h"
+    #include <llvmsym/formula/rpn.h>
     #include <stdexcept>
     #include <memory>
     #include <vector>
-    #include "ltl_parser.hpp"
-    #include "ltl_tokens.h"
+    #include <parser.hpp>
+    #include <ltl_tokens.h>
 
     using namespace llvm_sym;
 

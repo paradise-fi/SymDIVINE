@@ -12,9 +12,8 @@
 #include <boost/graph/graphviz.hpp>
 #include <algorithm>
 #include "graph.h"
-#include "../llvmsym/formula/rpn.h"
-#include "../llvmsym/programutils/config.h"
-#include "../parsers/ltl_tokens.h"
+#include <llvmsym/formula/rpn.h>
+#include <llvmsym/programutils/config.h>
 
 class LtlConvException : public std::runtime_error {
 public:
@@ -161,6 +160,8 @@ public:
     }
 };
 
+extern std::pair<std::vector<std::shared_ptr<llvm_sym::Formula>>, std::string>
+    parse_ltl(const std::string& formula, bool verbose, bool vverbose);
 extern int yyparse(void);
 extern std::vector<std::shared_ptr<llvm_sym::Formula>> formulas;
 extern std::string res_formula;
@@ -172,19 +173,10 @@ public:
 	 * formula with proper substitution.
 	 */
 	std::string preprocess(const std::string& formula) {
-		YY_BUFFER_STATE s = yy_scan_string(formula.c_str());
-		yyparse();
-		yy_delete_buffer(s);
-	    if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
-			std::cout << "Input formula: " << formula << "\n";
-			std::cout << "Parsed formula: " << res_formula << "\n";
-			for (size_t i = 0; i != formulas.size(); i++) {
-				std::cout << "ap" << i + 1 << ": " << *formulas[i] << "\n";
-			}
-		}
+		auto res = parse_ltl(formula, Config.is_set("--verbose"), Config.is_set("--vverbose"));
 
-		aps = formulas;
-		return res_formula;
+		aps = res.first;
+		return res.second;
 	}
 
 	// Takes name of atomic proposition and returns its Formula representation.
