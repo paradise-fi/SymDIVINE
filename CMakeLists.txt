@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(SymDIVINE CXX C)
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-#set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
-
 # Setup packages
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -70,6 +67,3 @@ target_link_libraries(symdivine ${Z3_LIBRARIES})
 set_property(TARGET symdivine PROPERTY CXX_STANDARD 11)
 set_property(TARGET symdivine PROPERTY CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_TYPE Release)
-
-message(STATUS "Z1: " ${Z3_INCLUDE_DIRS})
-message(STATUS "Z2: " ${Z3_LIBRARIES})

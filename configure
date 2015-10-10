@@ -1,0 +1,21 @@
+#!/bin/sh
+die() {
+    echo -e "$@"
+    exit 1
+}
+
+if [ "$1" = "clean" ]; then
+    echo "Cleaning configuration"
+    rm -rf build
+    rm -rf bin
+    echo "Done"
+    exit 0
+fi
+
+test -e build && die "The directory \"build\" already exists, please remove it before reconfiguring (you can call ./configure clean)."
+
+mkdir build || die "Failed to create _build, permission problem?"
+(cd build; cmake .. "$@") || die "Configuration failed."
+
+
+echo -e "Configuration done."
