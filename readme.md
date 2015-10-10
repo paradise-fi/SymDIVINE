@@ -6,6 +6,8 @@ To build SymDIVINE, yout need `cmake`, `make`, `llvm-3.5`, `z3`, `boost`, `flex`
 
 Then just checkout this repo and run `./configure && cd build && cmake && make`. Final binary is `bin/symdivine`.
 
+If you run to problems with `docopt`, run `git submodule update --init --recursive`.
+
 ## How to run it
 See `bin/symdivne help` or use helper script `run_benchmark.py`
 
