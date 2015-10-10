@@ -165,7 +165,10 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 
-# Parsers output
-parsers/*.cpp
-parsers/*.h
-parsers/*.hpp
+# cmake
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
