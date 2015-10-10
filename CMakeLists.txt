@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
 project(SymDIVINE CXX C)
 
-set(CMAKE_VERBOSE_MAKEFILE on)
+set(CMAKE_VERBOSE_MAKEFILE ON)
+#set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
 # Setup packages
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+# Setup directories
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/ltl_parser)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 # Import packages
 find_package(BISON REQUIRED)
@@ -14,13 +19,7 @@ find_package(LLVM REQUIRED)
 find_package(Boost REQUIRED COMPONENTS regex graph) 
 find_package(LIBDL REQUIRED)
 find_package(TERMINFO REQUIRED)
-
-message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
-message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
-message(STATUS "LLVM libs: " ${LLVM_LIBRARIES})
-
-include_directories(${LLVM_INCLUDE_DIRS})
-add_definitions(${LLVM_DEFINITIONS})
+find_package(Z3 REQUIRED)
 
 # Setup C++ sources
 file(GLOB BIN_SOURCES
@@ -36,19 +35,23 @@ set(DOCOPT_SOURCES libs/docopt/docopt.cpp)
 
 
 # Setup Bison/Flex sources
-bison_target(LTL_PARSER src/parsers/ltl_parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp)
-flex_target(LTL_SCANNER src/parsers/ltl_tokens.l ${CMAKE_CURRENT_BINARY_DIR}/tokens.cpp COMPILE_FLAGS --header-file=${CMAKE_CURRENT_BINARY_DIR}/ltl_tokens.h)
+bison_target(LTL_PARSER src/parsers/ltl_parser.y ${CMAKE_CURRENT_BINARY_DIR}/ltl_parser/parser.cpp)
+flex_target(LTL_SCANNER src/parsers/ltl_tokens.l ${CMAKE_CURRENT_BINARY_DIR}/ltl_parser/tokens.cpp COMPILE_FLAGS --header-file=${CMAKE_CURRENT_BINARY_DIR}/ltl_parser/ltl_tokens.h)
 add_flex_bison_dependency(LTL_SCANNER LTL_PARSER)
 
 # Include directories
-include_directories(src extlibs/z3/src/api /extlibs/z3/src/api/c++ libs)
-include_directories(${LLVM_INCLUDE_DIRS_})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(src libs)
+include_directories(${LLVM_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ltl_parser)
 include_directories(${Boost_INCLUDE_DIRS}) 
 include_directories(${LIBDL_INCLUDE_DIRS}) 
+include_directories(${Z3_INCLUDE_DIRS})
 
 # Link directories
-link_directories(${LLVM_LIBRARY_DIRS_})
+link_directories(${LLVM_LIBRARY_DIRS})
+
+# Compiler COMPILE_FLAGS
+add_definitions(${LLVM_DEFINITIONS})
 
 # Setup main binary
 add_executable(symdivine src/symdivine.cpp ${BIN_SOURCES} ${DOCOPT_SOURCES}
@@ -61,14 +64,12 @@ target_link_libraries(symdivine ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(symdivine ${Boost_LIBRARIES})
 target_link_libraries(symdivine ${LIBDL_LIBRARIES})
 target_link_libraries(symdivine ${TERMINFO_LIBRARIES})
+target_link_libraries(symdivine ${Z3_LIBRARIES})
 
 # Set C++11 standard
 set_property(TARGET symdivine PROPERTY CXX_STANDARD 11)
 set_property(TARGET symdivine PROPERTY CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE Release)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LLVM_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -lz3")
-
-
-message(STATUS "Terminfo: " ${TERMINFO_LIBRARIES})
-message(STATUS "Terminfo: " ${LIBDL_LIBRARIES})
+message(STATUS "Z1: " ${Z3_INCLUDE_DIRS})
+message(STATUS "Z2: " ${Z3_LIBRARIES})
