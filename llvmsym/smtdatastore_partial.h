@@ -22,7 +22,7 @@
 
 namespace llvm_sym {
 
-class SMTStore : public DataStore {
+class SMTStorePartial : public DataStore {
     std::vector<short unsigned> segments_mapping;
     std::vector<std::vector<short unsigned>> generations;
     std::vector<std::vector<char>> bitWidths;
@@ -631,7 +631,7 @@ class SMTStore : public DataStore {
         }
     }
 
-	bool equal(const SMTStore &snd)
+	bool equal(const SMTStorePartial &snd)
     {
 		assert(segments_mapping.size() == snd.segments_mapping.size());
 
@@ -640,7 +640,7 @@ class SMTStore : public DataStore {
 
     virtual bool empty() const;
 
-	static bool subseteq(const SMTStore &a, const SMTStore &b);
+	static bool subseteq(const SMTStorePartial &a, const SMTStorePartial &b);
     static bool subseteq(
         const std::vector<std::reference_wrapper<const dependency_group>>& a_g,
         const std::vector<std::reference_wrapper<const dependency_group>>& b_g);
@@ -651,10 +651,10 @@ class SMTStore : public DataStore {
         segments_mapping.clear();
     }
 
-    friend std::ostream & operator<<( std::ostream & o, const SMTStore &v );
+    friend std::ostream & operator<<( std::ostream & o, const SMTStorePartial &v );
 };
 
-std::ostream & operator<<( std::ostream & o, const SMTStore &v );
+std::ostream & operator<<( std::ostream & o, const SMTStorePartial &v );
 
 }
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <llvmsym/llvmwrap/Instructions.h>
 #include <llvmsym/llvmwrap/Module.h>
 #include "llvmsym/programutils/statistics.h"

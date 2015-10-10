@@ -11,6 +11,30 @@
       <Transport>SSH</Transport>
       <UserName>honza</UserName>
     </BuildHost>
+    <MainSourceTransferCommand>
+      <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>
+      <RemoteHost>
+        <HostName>UBUNTU</HostName>
+        <Transport>SSH</Transport>
+        <UserName>honza</UserName>
+      </RemoteHost>
+      <LocalDirectory>$(ProjectDir)</LocalDirectory>
+      <RemoteDirectory>/tmp/VisualGDB/$(ProjectDirUnixStyle)</RemoteDirectory>
+      <FileMasks>
+        <string>*.cpp</string>
+        <string>*.h</string>
+        <string>*.c</string>
+        <string>*.cc</string>
+        <string>*.cxx</string>
+        <string>*.mak</string>
+        <string>Makefile</string>
+        <string>*.txt</string>
+        <string>*.cmake</string>
+      </FileMasks>
+      <TransferNewFilesOnly>true</TransferNewFilesOnly>
+      <IncludeSubdirectories>true</IncludeSubdirectories>
+      <SelectedDirectories />
+    </MainSourceTransferCommand>
     <MountInfo>
       <Mode>UserProvidedMount</Mode>
       <RemoteHost>
@@ -25,6 +49,8 @@
     <SkipBuildIfNoSourceFilesChanged>false</SkipBuildIfNoSourceFilesChanged>
     <IgnoreFileTransferErrors>false</IgnoreFileTransferErrors>
     <RemoveRemoteDirectoryOnClean>false</RemoveRemoteDirectoryOnClean>
+    <SkipDeploymentTests>false</SkipDeploymentTests>
+    <MainSourceDirectoryForLocalBuilds>$(ProjectDir)</MainSourceDirectoryForLocalBuilds>
   </Project>
   <Build xsi:type="com.visualgdb.build.custom">
     <BuildCommand>
@@ -95,7 +121,7 @@
       </RequiredLinuxPackages>
     </Toolchain>
     <MainBuildDirectory>$(SourceDir)</MainBuildDirectory>
-    <AbsoluteTargetPath>$(BuildDir)/reachability</AbsoluteTargetPath>
+    <AbsoluteTargetPath>$(BuildDir)/symdivine</AbsoluteTargetPath>
     <AutoUpdateMakefiles>true</AutoUpdateMakefiles>
   </Build>
   <Debug xsi:type="com.visualgdb.debug.remote">
@@ -133,7 +159,7 @@
     <LaunchGDBSettings xsi:type="GDBLaunchParametersNewInstance">
       <DebuggedProgram>$(TargetPath)</DebuggedProgram>
       <GDBServerPort>2000</GDBServerPort>
-      <ProgramArguments>--enable-caching -s ./test_programs/threads/model_op.ll</ProgramArguments>
+      <ProgramArguments>reachability test_programs/bitvector/model_op.ll </ProgramArguments>
       <WorkingDirectory>$(BuildDir)</WorkingDirectory>
     </LaunchGDBSettings>
     <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>
@@ -154,6 +180,7 @@
   <CustomDebug>
     <PreDebugActions />
     <PostDebugActions />
+    <DebugStopActions />
     <BreakMode>Default</BreakMode>
   </CustomDebug>
   <CustomShortcuts>
@@ -161,4 +188,13 @@
     <ShowMessageAfterExecuting>true</ShowMessageAfterExecuting>
   </CustomShortcuts>
   <UserDefinedVariables />
+  <CodeSense>
+    <Enabled>True</Enabled>
+    <CFLAGS />
+    <CXXFLAGS />
+    <ExternalSourceFileList />
+    <ExtraSettings>
+      <HideErrorsInSystemHeaders>false</HideErrorsInSystemHeaders>
+    </ExtraSettings>
+  </CodeSense>
 </VisualGDBProjectSettings2>

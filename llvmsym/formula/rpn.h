@@ -582,7 +582,7 @@ struct Formula {
         return joinUnary( *this, Item::Not);
     }
    
-    void collectVaribles(  std::vector< Ident > &ret) const
+    void collectVariables(  std::vector< Ident > &ret) const
     {
         for ( const auto &i : _rpn ) {
             if ( i.kind == Item::Kind::Identifier )
@@ -692,6 +692,11 @@ struct Definition {
 
     const Formula &getDef() const {
         return def;
+    }
+    
+    void collectVariables(std::vector<Formula::Ident>& vars) const {
+        def.collectVariables(vars);
+        vars.push_back(symbol);
     }
 
     bool isInSegment( int sid ) const {

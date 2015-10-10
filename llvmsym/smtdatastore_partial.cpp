@@ -1,13 +1,13 @@
 #include <algorithm>
 #include <functional>
-#include <llvmsym/smtdatastore.h>
+#include <llvmsym/smtdatastore_partial.h>
 #include <toolkit/z3cache.h>
 
 namespace llvm_sym {
 
-unsigned SMTStore::unknown_instances = 0;
+unsigned SMTStorePartial::unknown_instances = 0;
 
-std::ostream & operator<<( std::ostream & o, const SMTStore &v )
+std::ostream & operator<<( std::ostream & o, const SMTStorePartial &v )
 {
     o << "data:\n";
     int counter = 0;
@@ -27,7 +27,7 @@ std::ostream & operator<<( std::ostream & o, const SMTStore &v )
     return o;
 }
 
-bool SMTStore::empty() const
+bool SMTStorePartial::empty() const
 {
     ++Statistics::getCounter( STAT_EMPTY_CALLS );
 
@@ -51,7 +51,7 @@ bool SMTStore::empty() const
     return r == z3::unsat;
 }
 
-bool SMTStore::subseteq(
+bool SMTStorePartial::subseteq(
         const std::vector<std::reference_wrapper<const dependency_group>>& a_g,
         const std::vector<std::reference_wrapper<const dependency_group>>& b_g)
 {
@@ -170,7 +170,7 @@ bool SMTStore::subseteq(
     return ret == z3::unsat;
 }
 
-bool SMTStore::subseteq(const SMTStore &a, const SMTStore &b) // There were mismatched letters!
+bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &b) // There were mismatched letters!
 {
     // Let's find the relevant dependency groups
     std::vector<std::reference_wrapper<const dependency_group>> a_view;

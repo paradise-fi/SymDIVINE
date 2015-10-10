@@ -1,28 +1,86 @@
-LLVM_CXX_FLAGS=$(shell llvm-config --cppflags) -UNDEBUG
-LDFLAGS=$(shell llvm-config --libs core jit native) $(shell llvm-config --ldflags --libs all) -ltinfo -ldl -lpthread # -lbdd
+CXX := g++
+OPT_LVL := -O3
+DBG_LVL := -g3
 
-CFLAGS:=-Wall -O3 -pedantic -g $(CFLAGS)
-CXXFLAGS:=$(CFLAGS) $(LLVM_CXX_FLAGS) -I. -std=c++11 -I`pwd`/extlibs/z3-unstable/src/api -I`pwd`/extlibs/z3-unstable/src/api/c++ $(CXXFLAGS)
-TARGET=reachability
-OBJS=$(shell find llvmsym toolkit -name '*.cpp' -a ! -name '*bdd*' -a ! -name "*emptystore*" | sed s\/.cpp\$\/.o\/)
-HEADERS=$(shell find llvmsym toolkit -name '*.h')
+N_JOBS  := $(shell echo $$((2 * `grep -c "^processor" /proc/cpuinfo`)))
 
-.PHONY: all clean cscope z3
+WD := `pwd`
 
-all:		$(TARGET)
+LDFLAGS := -lz3 -lboost_regex -lboost_graph $(shell llvm-config --libs core irreader) $(shell llvm-config --ldflags) -ltinfo -ldl -lpthread
+INCLUDE := -I`pwd`/extlibs/z3-unstable/src/api -I`pwd`/extlibs/z3-unstable/src/api/c++ -I`pwd`/libs
+CFLAGS := -UNDEBUG-Wall -pedantic -g $(OPT_LVL) $(DBG_LVL)
+CXXFLAGS := --std=c++11 $(shell llvm-config --cppflags) $(CFLAGS) -I. $(INCLUDE)
+TARGET := symdivine
+TESTS := tests
 
-$(TARGET):	$(TARGET).cpp $(OBJS) $(HEADERS) extlibs/z3-unstable/build/libz3.a
-	$(CXX) $(TARGET).cpp $(OBJS) extlibs/z3-unstable/build/libz3.a $(CXXFLAGS) $(LDFLAGS) -lrt -fopenmp -o $(TARGET) 
+PROJECT_DIRS := llvmsym toolkit libs
+OBJS := $(shell find $(PROJECT_DIRS) -name '*.cpp' | sed s\/.cpp\$\/.o\/)
+OBJS := $(filter-out $(TARGET).o,$(OBJS))
+DEPENDS := $(OBJS:.o=.d)
+DEPENDS += $(TARGET).d
 
-$(TARGET)_without_z3: $(TARGET).cpp $(OBJS) $(HEADERS)
-	$(CXX) $(TARGET).cpp $(OBJS) $(CXXFLAGS) $(LDFLAGS) -lz3 -o $(TARGET) 
+TEST_DIRS := unit_tests
+TEST_OBJS := $(shell find $(TEST_DIRS) -name '*.cpp' | sed s\/.cpp\$\/.o\/)
+TEST_DEPENDS := $(TEST_OBJS:.o=.d)
+TEST_DEPENDS += $(TESTS).d
 
+PARSERS_DIR := parsers
+PARSERS_OBJS := $(shell find $(PARSERS_DIR) -name '*.l' -o -name '*.y' | sed 's/\(.*\.\)l/\1o/' | sed 's/\(.*\.\)y/\1o/')
 
-metrics:	metrics.cpp $(OBJS) $(HEADERS)
-	$(CXX) metrics.cpp $(OBJS) $(LDFLAGS) $(CXXFLAGS) -o metrics
+TO_DEL_O := $(addsuffix /*.o, $(PROJECT_DIRS))
+TO_DEL_D := $(addsuffix /*.d, $(PROJECT_DIRS))
 
-clean:
-	-rm $(shell find llvmsym -name '*.o') $(TARGET)
+# re-expand variables in subsequent rules
+.SECONDEXPANSION:
+
+.PHONY: all clean
+
+pall:
+	make -j$(N_JOBS) all
+
+all: $(TARGET) $(TESTS)
+
+# include compiler-generated dependencies, so obj files get recompiled when
+# their header changes
+-include $(DEPENDS)
+-include $(TEST_DEPENDS)
+
+#This is the rule for creating the dependency files
+%.d: %.cpp
+	@echo Creating dependecy for $@
+	@$(CXX) $(CXXFLAGS) -MM -MT '$(patsubst %.cpp,%.o,$<)' $< -MF $@
+
+$(TARGET):	$(TARGET).cpp $(OBJS) $(PARSERS_OBJS) 
+	@echo Building main binary: $(TARGET)
+	@$(CXX) $(TARGET).cpp $(OBJS) $(PARSERS_OBJS) $(CXXFLAGS) -MMD -o $(TARGET) $(LDFLAGS)
+
+$(TESTS): $(TESTS).cpp $(TEST_OBJS) $(PARSERS_OBJS) $(OBJS)
+	@echo Building tests: $(TARGET)
+	@$(CXX) $(TESTS).cpp $(TEST_OBJS) $(PARSERS_OBJS) $(OBJS) $(CXXFLAGS) -MMD -o $(TESTS) $(LDFLAGS)
+
+$(WD)/$(PARSERS_DIR)/ltl_parser.h: $(PARSERS_DIR)/ltl_parser.cpp
+
+$(WD)/$(PARSERS_DIR)/ltl_tokens.h: $(PARSERS_DIR)/ltl_tokens.cpp
+
+$(WD)/$(PARSERS_DIR)/ltl_parser.cpp: $(PARSERS_DIR)/ltl_parser.cpp
+
+$(WD)/$(PARSERS_DIR)/ltl_tokens.cpp: $(PARSERS_DIR)/ltl_tokens.cpp
+
+$(PARSERS_DIR)/ltl_parser.h: $(PARSERS_DIR)/ltl_parser.cpp
+
+$(PARSERS_DIR)/ltl_parser.cpp: $(PARSERS_DIR)/ltl_parser.y $(PARSERS_DIR)/ltl_tokens.h
+	@echo Generating ltl_parser
+	@bison -d -o $(PARSERS_DIR)/ltl_parser.cpp $(PARSERS_DIR)/ltl_parser.y
+
+$(PARSERS_DIR)/ltl_tokens.h: $(PARSERS_DIR)/ltl_tokens.cpp
+
+$(PARSERS_DIR)/ltl_tokens.cpp: $(PARSERS_DIR)/ltl_tokens.l
+	@echo Generating ltl_tokens
+	@flex -o $(PARSERS_DIR)/ltl_tokens.cpp --header-file=$(PARSERS_DIR)/ltl_tokens.h $(PARSERS_DIR)/ltl_tokens.l
+
+%.o: %.cpp
+	@echo Building $@
+	@$(CXX) -c $(CXXFLAGS) -MMD -o $@ $<
 
 extlibs/z3-unstable/build/libz3.a:
 	cd extlibs/z3-unstable && \
@@ -30,10 +88,18 @@ extlibs/z3-unstable/build/libz3.a:
 		./configure --with-python=`which python2` && \
 		python2 scripts/mk_make.py && \
 		$(MAKE) -C build/
-	cd extlibs/z3-unstable/build && find . -name "*.o" | xargs ar rs libz3.a 
+	cd extlibs/z3-unstable/build && find . -name "*.o" | xargs ar rs libz3.a
 
-cscope:
-	rm cscope.*
-	find llvmsym -name '*.cpp' -o -name '*.h' > cscope.files
-	cscope -b -q -k
-
+clean:
+	@echo Cleaning...
+	@find . -name "*.o" -type f -delete
+	@find . -name "*.d" -type f -delete
+	@find $(PARSERS_DIR) -name "*.cpp" -type f -delete
+	@find $(PARSERS_DIR) -name "*.h" -type f -delete
+	@find $(PARSERS_DIR) -name "*.hpp" -type f -delete
+	@echo Done.
+echo:
+	@echo $(WD)
+	@echo $(DEPENDS)
+	@echo $(PROJECT_DIRS)
+	@echo $(PARSERS_OBJS)

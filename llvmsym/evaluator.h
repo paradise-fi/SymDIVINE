@@ -371,76 +371,89 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
 
         if ( called_fun->empty() ) {
             std::string fun_name = Demangler::demangle( std::string( called_fun->getName() ) );
-            if ( ignored_functions.count( fun_name ) ) {
-                yield( false, false, true );
+            if (ignored_functions.count(fun_name)) {
+                yield(false, false, true);
                 return;
-            } else if ( isFunctionInput( fun_name ) ) {
-                Value to = deref( ci, tid, false );
-                state.layout.setMultival( to, true );
-                state.data.implement_input( to, getBitWidth( ci->getType() ) );
-                yield( false, false, true );
-            } else if ( isFunctionAssume( fun_name )) {
-                llvm::Value *llvm_cond = ci->getArgOperand( 0 );
-                Value cond = deref( llvm_cond, tid, false );
+            }
+            else if (isFunctionInput(fun_name)) {
+                Value to = deref(ci, tid, false);
+                state.layout.setMultival(to, true);
+                state.data.implement_input(to, getBitWidth(ci->getType()));
+                yield(false, false, true);
+            }
+            else if (isFunctionAssume(fun_name)) {
+                llvm::Value *llvm_cond = ci->getArgOperand(0);
+                Value cond = deref(llvm_cond, tid, false);
                 llvm_sym::DataStore *store;
-                if ( state.layout.isMultival( cond ) )
+                if (state.layout.isMultival(cond))
                     store = &state.data;
                 else
                     store = &state.explicitData;
-                store->prune( cond, Value( 0, getBitWidth( llvm_cond->getType() ) ), ICmp_Op::NE );
-                yield( false, store->empty(), true );
-            } else if ( fun_name == "pthread_create" ) {
-                do_pthread_create( ci->getArgOperand( 2 ), ci->getArgOperand( 0 ), ci->getArgOperand( 3 ), tid );
-                yield( true, false, true );
-            } else if ( fun_name == "pthread_join" ) {
-                const llvm::Value *tid_llvm = ci->getArgOperand( 0 );
-                Value tid_val = deref( tid_llvm, tid );
-                assert( tid_val.type == Value::Type::Constant );
+                store->prune(cond, Value(0, getBitWidth(llvm_cond->getType())), ICmp_Op::NE);
+                yield(false, store->empty(), true);
+            }
+            else if (fun_name == "pthread_create") {
+                do_pthread_create(ci->getArgOperand(2), ci->getArgOperand(0), ci->getArgOperand(3), tid);
+                yield(true, false, true);
+            }
+            else if (fun_name == "pthread_join") {
+                const llvm::Value *tid_llvm = ci->getArgOperand(0);
+                Value tid_val = deref(tid_llvm, tid);
+                assert(tid_val.type == Value::Type::Constant);
 
-                if ( state.control.hasTid( tid_val.constant.value ) )
-                    state.control.advance( tid, -1 );
-                yield( !amILonelyThread(), false, true );
-            } else if ( fun_name == "exit" ) {
-                while ( state.control.threadCount() )
-                    state.control.leave( 0 );
-                assert( state.control.threadCount() == 0 );
-                yield( true, false, true );
-            } else if ( fun_name == "pthread_exit" ) {
-                while ( !state.control.leave( tid ) )
+                if (state.control.hasTid(tid_val.constant.value))
+                    state.control.advance(tid, -1);
+                yield(!amILonelyThread(), false, true);
+            }
+            else if (fun_name == "exit") {
+                while (state.control.threadCount())
+                    state.control.leave(0);
+                assert(state.control.threadCount() == 0);
+                yield(true, false, true);
+            }
+            else if (fun_name == "pthread_exit") {
+                while (!state.control.leave(tid))
                     ;
-                yield( true, false, true );
-            } else if ( fun_name == "assert" || fun_name == "__VERIFIER_assert" ) {
-                llvm::Value *llvm_cond = ci->getArgOperand( 0 );
-                Value cond = deref( llvm_cond, tid, false );
+                yield(true, false, true);
+            }
+            else if (fun_name == "assert" || fun_name == "__VERIFIER_assert") {
+                llvm::Value *llvm_cond = ci->getArgOperand(0);
+                Value cond = deref(llvm_cond, tid, false);
 
                 llvm_sym::DataStore *store;
-                bool multival_arg = state.layout.isMultival( cond );
-                if ( multival_arg )
+                bool multival_arg = state.layout.isMultival(cond);
+                if (multival_arg)
                     store = &state.data;
                 else
                     store = &state.explicitData;
 
                 store->prune(
                         cond,
-                        Value( 0, getBitWidth( llvm_cond->getType() ) ),
-                        ICmp_Op::NE );
-                yield( false, store->empty() );
+                        Value(0, getBitWidth(llvm_cond->getType())),
+                        ICmp_Op::NE);
+                yield(false, store->empty());
 
                 store->prune(
                         cond,
-                        Value( 0, getBitWidth( llvm_cond->getType() ) ),
-                        ICmp_Op::EQ );
-                state.properties.setError( true );
-                yield( true, store->empty(), true );
+                        Value(0, getBitWidth(llvm_cond->getType())),
+                        ICmp_Op::EQ);
+                state.properties.setError(true);
+                yield(true, store->empty(), true);
 
-            } else if ( fun_name == "pthread_mutex_lock" ) {
-                if ( !do_mutex_lock( ci->getArgOperand( 0 ), tid ) )
-                    state.control.advance( tid, -1 );
-                yield( !amILonelyThread(), false, true );
-            } else if ( fun_name == "pthread_mutex_unlock" ) {
-                do_mutex_unlock( ci->getArgOperand( 0 ), tid );
-                yield( !amILonelyThread(), false, true );
-            } else {
+            }
+            else if (fun_name == "pthread_mutex_lock") {
+                if (!do_mutex_lock(ci->getArgOperand(0), tid))
+                    state.control.advance(tid, -1);
+                yield(!amILonelyThread(), false, true);
+            }
+            else if (fun_name == "pthread_mutex_unlock") {
+                do_mutex_unlock(ci->getArgOperand(0), tid);
+                yield(!amILonelyThread(), false, true);
+            }
+            else if (fun_name == "llvm.dbg.declare") {
+                // ignore llvm dbg functions
+            }
+            else {
                 std::cerr << "I don't know what to do with function "
                           << fun_name << std::endl;
                 abort();
@@ -926,7 +939,8 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                         ++ptr_to_global_aux.content.offset;
                     }
 
-                    llvm::isa< llvm::ConstantAggregateZero >( g_var_it->getInitializer() );
+                    // ToDo: There is a statement with no effect!
+                    // llvm::isa< llvm::ConstantAggregateZero >( g_var_it->getInitializer() );
                 } else if ( g_var_it->getInitializer()->getType()->isIntegerTy() ) {
                     Value initializer = deref( g_var_it->getInitializer(), -1 );
                     assert( initializer.type == Value::Type::Constant );
@@ -934,7 +948,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                     state.layout.setMultival( deref( ptr_to_global ), false );
                     state.explicitData.implement_store( deref( ptr_to_global ), initializer );
                 } else {
-                    if ( Config.verbose.isSet() || Config.vverbose.isSet() ) {
+                    if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
                         std::cerr << "initializer for "; g_var_it->dump();
                         std::cerr << " not recognized. Skipping." << std::endl;
                     }
@@ -1016,16 +1030,16 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
             while( !to_do.empty() ) {
                 State snapshot = to_do.top();
                 state = std::move( to_do.top() );
-                if (Config.vverbose.isSet())
+                if (Config.is_set("--vverbose"))
                     std::cerr << "---------\nin state:\n" << toString() << std::endl;
                 to_do.pop();
 
                 bool last_check = false;
                 auto restoringYield = [&to_do, &last_check, this, &snapshot, &yield]( bool is_observable,
                                                                          bool is_empty,
-                                                                         bool last = false )
+                                                                         bool last = false)
                 {
-                    assert( !last_check );
+                    assert(!last_check);
                     if ( !is_empty ) {
                         if ( is_observable || isError() ) {
                             yield();
@@ -1063,7 +1077,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
          * changes done on this state - therefore, we need to do 'effect' after
          * each yield() call
          */
-        if ( Config.vverbose.isSet() ) {
+        if (Config.is_set("--vverbose")) {
             std::cerr << "executing instruction " << std::string( functions[state.control.getPC(tid).function].llvm_fun->getName() )
                 << "." << state.control.getPC( tid ).basicblock
                 << "." << state.control.getPC( tid ).instruction << std::endl;
