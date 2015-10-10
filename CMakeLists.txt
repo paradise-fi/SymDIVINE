@@ -11,6 +11,9 @@ find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 find_package(Threads REQUIRED)
 find_package(LLVM REQUIRED)
+find_package(Boost REQUIRED COMPONENTS regex graph) 
+find_package(LIBDL REQUIRED)
+find_package(TERMINFO REQUIRED)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
@@ -29,9 +32,8 @@ file(GLOB BIN_SOURCES
 	src/toolkit/*.cpp
 	)
 
-file(GLOB LIB_SOURCES
-	libs/docopt/*.cpp
-	)
+set(DOCOPT_SOURCES libs/docopt/docopt.cpp)
+
 
 # Setup Bison/Flex sources
 bison_target(LTL_PARSER src/parsers/ltl_parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp)
@@ -42,22 +44,31 @@ add_flex_bison_dependency(LTL_SCANNER LTL_PARSER)
 include_directories(src extlibs/z3/src/api /extlibs/z3/src/api/c++ libs)
 include_directories(${LLVM_INCLUDE_DIRS_})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${Boost_INCLUDE_DIRS}) 
+include_directories(${LIBDL_INCLUDE_DIRS}) 
 
 # Link directories
 link_directories(${LLVM_LIBRARY_DIRS_})
 
 # Setup main binary
-add_executable(symdivine src/symdivine.cpp ${BIN_SOURCES} ${LIB_SOURCES}
+add_executable(symdivine src/symdivine.cpp ${BIN_SOURCES} ${DOCOPT_SOURCES}
 	${BISON_LTL_PARSER_OUTPUTS} ${FLEX_LTL_SCANNER_OUTPUTS})
 
 # Setup libraries
 target_link_libraries(symdivine ${FLEX_LIBRARIES} ${BISON_LIBRARIES})
 target_link_libraries(symdivine ${LLVM_LIBRARIES})
 target_link_libraries(symdivine ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(symdivine ${Boost_LIBRARIES})
+target_link_libraries(symdivine ${LIBDL_LIBRARIES})
+target_link_libraries(symdivine ${TERMINFO_LIBRARIES})
 
 # Set C++11 standard
 set_property(TARGET symdivine PROPERTY CXX_STANDARD 11)
 set_property(TARGET symdivine PROPERTY CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LLVM_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -lz3 -lboost_regex -lboost_graph -ltinfo -ldl")
+set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -lz3")
+
+
+message(STATUS "Terminfo: " ${TERMINFO_LIBRARIES})
+message(STATUS "Terminfo: " ${LIBDL_LIBRARIES})
