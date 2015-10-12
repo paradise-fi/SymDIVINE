@@ -48,7 +48,7 @@ include_directories(${Z3_INCLUDE_DIRS})
 link_directories(${LLVM_LIBRARY_DIRS})
 
 # Compiler COMPILE_FLAGS
-add_definitions(${LLVM_DEFINITIONS})
+add_definitions(${LLVM_COMPILE_FLAGS})
 
 # Setup main binary
 add_executable(symdivine src/symdivine.cpp ${BIN_SOURCES} ${DOCOPT_SOURCES}
@@ -67,3 +67,5 @@ target_link_libraries(symdivine ${Z3_LIBRARIES})
 set_property(TARGET symdivine PROPERTY CXX_STANDARD 11)
 set_property(TARGET symdivine PROPERTY CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_TYPE Release)
+
+message(STATUS "Compile flags: " ${LLVM_COMPILE_FLAGS})
