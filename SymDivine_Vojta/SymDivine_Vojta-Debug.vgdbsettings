@@ -61,7 +61,8 @@
         <UserName>honza</UserName>
       </RemoteHost>
       <Command>make</Command>
-      <WorkingDirectory>$(BuildDir)</WorkingDirectory>
+      <Arguments>-j2</Arguments>
+      <WorkingDirectory>$(BuildDir)/build</WorkingDirectory>
       <Environment>
         <Records>
           <Record>
@@ -157,9 +158,9 @@
       <EnableNonStopMode>false</EnableNonStopMode>
     </AdditionalGDBSettings>
     <LaunchGDBSettings xsi:type="GDBLaunchParametersNewInstance">
-      <DebuggedProgram>$(TargetPath)</DebuggedProgram>
+      <DebuggedProgram>$(RemoteSourceDir)/bin/symdivine</DebuggedProgram>
       <GDBServerPort>2000</GDBServerPort>
-      <ProgramArguments>reachability test_programs/bitvector/model_op.ll </ProgramArguments>
+      <ProgramArguments>reachability ../sv-comp/sv-benchmarks/c/pthread-lit/fkp2014_true-unreach-call.ll</ProgramArguments>
       <WorkingDirectory>$(BuildDir)</WorkingDirectory>
     </LaunchGDBSettings>
     <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>

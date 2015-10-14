@@ -441,6 +441,11 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                 yield(true, store->empty(), true);
 
             }
+            else if (fun_name == "__VERIFIER_error") {
+                llvm_sym::DataStore *store = &state.data;
+                state.properties.setError(true);
+                yield(true, store->empty(), true);
+            }
             else if (fun_name == "pthread_mutex_lock") {
                 if (!do_mutex_lock(ci->getArgOperand(0), tid))
                     state.control.advance(tid, -1);

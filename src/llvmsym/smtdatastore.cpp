@@ -203,11 +203,7 @@ bool SMTStore::subseteq(const SMTStore &a, const SMTStore &b) // There were mism
     }
     
     bool ret = subseteq(difference_a, difference_b);
-    
-    if (ret)
-        std::cout << "Subset!\n";
-    else
-        std::cout << "No subset!\n";
+
     return ret;
     /*
     std::cout << "Subseteq called!\n";

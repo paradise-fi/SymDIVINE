@@ -13,239 +13,212 @@
       <UniqueIdentifier>{c5ba0c55-03f4-4d44-8f58-5d38efa06cdb}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
-    <Filter Include="Source files\llvmsym">
-      <UniqueIdentifier>{1a7dc9a2-4481-4e00-badf-fd9388b4249f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header files\llvmsym">
-      <UniqueIdentifier>{8e8e97e7-c41f-4b5f-bc03-a6ad697eb71d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header files\llvmsym\cxa_abi">
-      <UniqueIdentifier>{5a226fe4-cb28-4867-80ad-e1a6abc3b4cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source files\llvmsym\formula">
-      <UniqueIdentifier>{e9e5d4d7-634b-4f5f-944a-b0f3f9ed5dd0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header files\llvmsym\formula">
-      <UniqueIdentifier>{c09a98e7-7883-4996-b3de-8ecfedc5144f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header files\llvmsym\llvmwrap">
-      <UniqueIdentifier>{f21cae02-acab-48d2-9c2f-9f3645389243}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source files\llvmsym\programutils">
-      <UniqueIdentifier>{5ffc8ade-0d6a-4290-b29d-21024232a515}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header files\llvmsym\programutils">
-      <UniqueIdentifier>{f3993c70-146e-430e-8f56-465f73327caa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source files\llvmsym\stanalysis">
-      <UniqueIdentifier>{3125cb0f-0f75-4b40-9495-d6db68944bdb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header files\llvmsym\stanalysis">
-      <UniqueIdentifier>{21712677-8569-46a4-b85b-fea2f9e7827d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header files\toolkit">
-      <UniqueIdentifier>{d19cb42e-1df3-49ea-9b25-c93d56f09e58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source files\toolkit">
-      <UniqueIdentifier>{68b00b84-4592-4e99-a3f3-46d1e3e4dfd6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source files\unit_tests">
-      <UniqueIdentifier>{fea3a400-8f59-4bad-8019-0f6f70c1829b}</UniqueIdentifier>
+      <UniqueIdentifier>{814c3913-a5ff-4880-8330-4b82bb35a815}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source files\parsers">
-      <UniqueIdentifier>{20526ae4-1dc8-4ee8-a337-0a22b0a88534}</UniqueIdentifier>
+      <UniqueIdentifier>{ced622d5-2771-411b-9823-523289b8ede7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\llvmsym">
+      <UniqueIdentifier>{62d971c0-7eea-4b4b-b825-690514e0043c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\llvmsym\fomula">
+      <UniqueIdentifier>{ae021f04-3737-443d-9d5a-03aadc903934}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\llvmsym\llvmwrap">
+      <UniqueIdentifier>{04982683-4203-4d0b-9a70-ac6d4125ce3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\llvmsym\programutils">
+      <UniqueIdentifier>{bee86816-dd6c-40dd-9ba2-dfe73c92769d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\llvmsym\stanalysis">
+      <UniqueIdentifier>{3bb1dbae-068d-4ec7-b32b-62a531848404}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\llvmsym\bdddatastore.cpp">
+    <ClCompile Include="..\src\tests.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\symdivine.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\toolkit\utils.cpp">
+      <Filter>Source files\toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\toolkit\z3cache.cpp">
+      <Filter>Source files\toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\toolkit\ltl2ba.cpp">
+      <Filter>Source files\toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\toolkit\query_cache.cpp">
+      <Filter>Source files\toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\llvmsym\smtdatastore_partial.cpp">
       <Filter>Source files\llvmsym</Filter>
     </ClCompile>
-    <ClCompile Include="..\llvmsym\datastore.cpp">
+    <ClCompile Include="..\src\llvmsym\thread.cpp">
       <Filter>Source files\llvmsym</Filter>
     </ClCompile>
-    <ClCompile Include="..\llvmsym\emptydatastore.cpp">
+    <ClCompile Include="..\src\llvmsym\datastore.cpp">
       <Filter>Source files\llvmsym</Filter>
     </ClCompile>
-    <ClCompile Include="..\llvmsym\error.cpp">
+    <ClCompile Include="..\src\llvmsym\emptydatastore.cpp">
       <Filter>Source files\llvmsym</Filter>
     </ClCompile>
-    <ClCompile Include="..\llvmsym\llvmdata.cpp">
+    <ClCompile Include="..\src\llvmsym\error.cpp">
       <Filter>Source files\llvmsym</Filter>
     </ClCompile>
-    <ClCompile Include="..\llvmsym\memorylayout.cpp">
+    <ClCompile Include="..\src\llvmsym\llvmdata.cpp">
       <Filter>Source files\llvmsym</Filter>
     </ClCompile>
-    <ClCompile Include="..\llvmsym\smtdatastore.cpp">
+    <ClCompile Include="..\src\llvmsym\memorylayout.cpp">
       <Filter>Source files\llvmsym</Filter>
     </ClCompile>
-    <ClCompile Include="..\llvmsym\thread.cpp">
+    <ClCompile Include="..\src\llvmsym\smtdatastore.cpp">
       <Filter>Source files\llvmsym</Filter>
     </ClCompile>
-    <ClCompile Include="..\llvmsym\formula\rpn.cpp">
-      <Filter>Source files\llvmsym\formula</Filter>
+    <ClCompile Include="..\src\llvmsym\formula\z3.cpp">
+      <Filter>Source files\llvmsym\fomula</Filter>
     </ClCompile>
-    <ClCompile Include="..\llvmsym\formula\z3.cpp">
-      <Filter>Source files\llvmsym\formula</Filter>
+    <ClCompile Include="..\src\llvmsym\formula\rpn.cpp">
+      <Filter>Source files\llvmsym\fomula</Filter>
     </ClCompile>
-    <ClCompile Include="..\llvmsym\programutils\config.cpp">
+    <ClCompile Include="..\src\llvmsym\programutils\statistics.cpp">
       <Filter>Source files\llvmsym\programutils</Filter>
     </ClCompile>
-    <ClCompile Include="..\llvmsym\programutils\statistics.cpp">
+    <ClCompile Include="..\src\llvmsym\programutils\config.cpp">
       <Filter>Source files\llvmsym\programutils</Filter>
     </ClCompile>
-    <ClCompile Include="..\llvmsym\stanalysis\inputvariables.cpp">
+    <ClCompile Include="..\src\llvmsym\stanalysis\inputvariables.cpp">
       <Filter>Source files\llvmsym\stanalysis</Filter>
     </ClCompile>
-    <ClCompile Include="..\toolkit\query_cache.cpp">
-      <Filter>Source files\toolkit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\toolkit\utils.cpp">
-      <Filter>Source files\toolkit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\toolkit\z3cache.cpp">
-      <Filter>Source files\toolkit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\symdivine.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\llvmsym\reachability.tpp">
-      <Filter>Source files\llvmsym</Filter>
-    </ClCompile>
-    <ClCompile Include="..\llvmsym\ltl.tpp">
-      <Filter>Source files\llvmsym</Filter>
-    </ClCompile>
-    <ClCompile Include="..\toolkit\ltl2ba.cpp">
-      <Filter>Source files\toolkit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\tests.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\unit_tests\test_ltl2ba.cpp">
-      <Filter>Source files\unit_tests</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\llvmsym\bdddatastore.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\toolkit\query_cache.h">
+      <Filter>Source files\toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\blobing.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\toolkit\utils.h">
+      <Filter>Source files\toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\blobutils.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\toolkit\z3cache.h">
+      <Filter>Source files\toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\datastore.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\toolkit\graph.h">
+      <Filter>Source files\toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\emptydatastore.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\toolkit\hash.h">
+      <Filter>Source files\toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\error.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\toolkit\jenkins.h">
+      <Filter>Source files\toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\evaluator.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\toolkit\ltl2ba.h">
+      <Filter>Source files\toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\explicitstore.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\llvmsym\smtdatastore_partial.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\graph.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\llvmsym\thread.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\instructiondispatch.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\llvmsym\blobing.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\llvmdata.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\llvmsym\blobutils.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\memorylayout.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\llvmsym\datastore.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\properties.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\llvmsym\emptydatastore.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\smtdatastore.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\llvmsym\error.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\thread.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\llvmsym\evaluator.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\cxa_abi\demangler.h">
-      <Filter>Header files\llvmsym\cxa_abi</Filter>
+    <ClInclude Include="..\src\llvmsym\explicitstore.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\formula\rpn.h">
-      <Filter>Header files\llvmsym\formula</Filter>
+    <ClInclude Include="..\src\llvmsym\graph.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\formula\z3.h">
-      <Filter>Header files\llvmsym\formula</Filter>
+    <ClInclude Include="..\src\llvmsym\instructiondispatch.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\llvmwrap\Constants.h">
-      <Filter>Header files\llvmsym\llvmwrap</Filter>
+    <ClInclude Include="..\src\llvmsym\llvmdata.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\llvmwrap\Function.h">
-      <Filter>Header files\llvmsym\llvmwrap</Filter>
+    <ClInclude Include="..\src\llvmsym\ltl.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\llvmwrap\GlobalVariable.h">
-      <Filter>Header files\llvmsym\llvmwrap</Filter>
+    <ClInclude Include="..\src\llvmsym\memorylayout.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\llvmwrap\Instructions.h">
-      <Filter>Header files\llvmsym\llvmwrap</Filter>
+    <ClInclude Include="..\src\llvmsym\properties.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\llvmwrap\IRReader.h">
-      <Filter>Header files\llvmsym\llvmwrap</Filter>
+    <ClInclude Include="..\src\llvmsym\reachability.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\llvmwrap\LLVMContext.h">
-      <Filter>Header files\llvmsym\llvmwrap</Filter>
+    <ClInclude Include="..\src\llvmsym\smtdatastore.h">
+      <Filter>Source files\llvmsym</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\llvmwrap\Module.h">
-      <Filter>Header files\llvmsym\llvmwrap</Filter>
+    <ClInclude Include="..\src\llvmsym\formula\rpn.h">
+      <Filter>Source files\llvmsym\fomula</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\llvmwrap\Type.h">
-      <Filter>Header files\llvmsym\llvmwrap</Filter>
+    <ClInclude Include="..\src\llvmsym\formula\z3.h">
+      <Filter>Source files\llvmsym\fomula</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\programutils\config.h">
-      <Filter>Header files\llvmsym\programutils</Filter>
+    <ClInclude Include="..\src\llvmsym\llvmwrap\GlobalVariable.h">
+      <Filter>Source files\llvmsym\llvmwrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\programutils\statistics.h">
-      <Filter>Header files\llvmsym\programutils</Filter>
+    <ClInclude Include="..\src\llvmsym\llvmwrap\Instructions.h">
+      <Filter>Source files\llvmsym\llvmwrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\stanalysis\inputvariables.h">
-      <Filter>Header files\llvmsym\stanalysis</Filter>
+    <ClInclude Include="..\src\llvmsym\llvmwrap\IRReader.h">
+      <Filter>Source files\llvmsym\llvmwrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\toolkit\hash.h">
-      <Filter>Header files\toolkit</Filter>
+    <ClInclude Include="..\src\llvmsym\llvmwrap\LLVMContext.h">
+      <Filter>Source files\llvmsym\llvmwrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\toolkit\jenkins.h">
-      <Filter>Header files\toolkit</Filter>
+    <ClInclude Include="..\src\llvmsym\llvmwrap\Module.h">
+      <Filter>Source files\llvmsym\llvmwrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\toolkit\query_cache.h">
-      <Filter>Header files\toolkit</Filter>
+    <ClInclude Include="..\src\llvmsym\llvmwrap\Type.h">
+      <Filter>Source files\llvmsym\llvmwrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\toolkit\utils.h">
-      <Filter>Header files\toolkit</Filter>
+    <ClInclude Include="..\src\llvmsym\llvmwrap\Constants.h">
+      <Filter>Source files\llvmsym\llvmwrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\toolkit\z3cache.h">
-      <Filter>Header files\toolkit</Filter>
+    <ClInclude Include="..\src\llvmsym\llvmwrap\Function.h">
+      <Filter>Source files\llvmsym\llvmwrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\ltl.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\llvmsym\programutils\statistics.h">
+      <Filter>Source files\llvmsym\programutils</Filter>
     </ClInclude>
-    <ClInclude Include="..\llvmsym\reachability.h">
-      <Filter>Header files\llvmsym</Filter>
+    <ClInclude Include="..\src\llvmsym\programutils\config.h">
+      <Filter>Source files\llvmsym\programutils</Filter>
     </ClInclude>
-    <ClInclude Include="..\toolkit\ltl2ba.h">
-      <Filter>Header files\toolkit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\toolkit\graph.h">
-      <Filter>Header files\toolkit</Filter>
+    <ClInclude Include="..\src\llvmsym\stanalysis\inputvariables.h">
+      <Filter>Source files\llvmsym\stanalysis</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\parsers\ltl_parser.y">
+    <None Include="..\src\parsers\ltl_tokens.l">
       <Filter>Source files\parsers</Filter>
     </None>
-    <None Include="..\parsers\ltl_tokens.l">
+    <None Include="..\src\parsers\ltl_parser.y">
       <Filter>Source files\parsers</Filter>
+    </None>
+    <None Include="..\src\llvmsym\ltl.tpp">
+      <Filter>Source files\llvmsym</Filter>
+    </None>
+    <None Include="..\src\llvmsym\reachability.tpp">
+      <Filter>Source files\llvmsym</Filter>
     </None>
   </ItemGroup>
 </Project>
