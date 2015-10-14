@@ -11,7 +11,7 @@ Reachability<Store, Hit>::Reachability(const std::string& name) : model_name(nam
 
 template <class Store, class Hit>
 void Reachability<Store, Hit>::run() {
-    /*try*/ {
+    try {
         std::shared_ptr<BitCode> bc = std::make_shared<BitCode>(model_name);
         Evaluator<Store> eval(bc);
 
@@ -61,10 +61,10 @@ void Reachability<Store, Hit>::run() {
             std::cout << knowns.size() << " states generated" << std::endl;
         }
     }
-    /*catch (std::exception& e) {
+    catch (std::exception& e) {
         std::cout << "ERROR: uncaught exception: " << e.what() << "\n";
     }
     catch (z3::exception& e) {
         std::cout << "ERROR: uncaught exception: " << e.msg() << "\n";
-    }*/
+    }
 }

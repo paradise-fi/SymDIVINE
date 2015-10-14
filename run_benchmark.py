@@ -25,6 +25,7 @@ import signal
 import os
 import atexit
 import resource
+import compile_to_bitcode
 # import docopt
 
 from time import sleep
@@ -57,11 +58,8 @@ def run_symdivine(symdivine_location, benchmark, symdivine_params = None):
 
 def compile_benchmark(src, opt_level, tmpdir):
     out = os.path.join(tmpdir, "model.ll")
-    cmd = "clang -S -emit-llvm {0} -o {1} {2}".format(opt_level, out, src)
-
-    if os.system(cmd) != 0:
-        print("ERROR")
-        print("Compilation failed")
+    
+    compile_to_bitcode.compile_benchmark(src, [opt_level], out, fix_inline=True)
     return out
 
 def printTimeConsumed():
@@ -145,6 +143,8 @@ def parse_args_docopt():
     opt = "-o" + str(arguments["-o"])
     loc = arguments["<symdivine_dir>"]
     timeout = arguments["--timeout"]
+
+    print timeout
 
     del arguments["-o"]
     del arguments["<benchmark>"]

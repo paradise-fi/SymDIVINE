@@ -151,10 +151,14 @@ class Dispatcher {
             case llvm::Instruction::PtrToInt:
             case llvm::Instruction::IntToPtr:
             case llvm::Instruction::FCmp:
-            default:
+            default: {
                 std::cerr << "unknown instruction " << opcodename << std::endl;
+                inst->dump();
+                auto i = llvm::cast<llvm::Instruction>(inst);
+                std::cerr << i->getParent()->getParent()->getName().str();
                 abort();
                 break;
+            }
         }
     
     }
