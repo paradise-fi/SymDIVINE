@@ -28,11 +28,11 @@ struct Blob {
         return *((T*)getUser());
     }
 
-    Blob(size_t s, size_t e_s, size_t user_s = 0) : size(s), mem(new char[s]),
-        refcount(new size_t(1)), explicit_size(e_s), user_size(user_s) {}
+	Blob(size_t s, size_t e_s, size_t user_s = 0) : mem(new char[s]), refcount(new size_t(1)),
+        size(s), user_size(user_s), explicit_size(e_s) {}
 
-    Blob(const Blob &snd) : size(snd.size), mem(snd.mem),
-        refcount(snd.refcount), explicit_size(snd.explicit_size), user_size(snd.user_size)
+    Blob(const Blob &snd) : mem(snd.mem), refcount(snd.refcount), size(snd.size),
+        user_size(snd.user_size), explicit_size(snd.explicit_size)
     {
         ++*refcount;
     }

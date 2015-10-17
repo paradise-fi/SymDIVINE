@@ -105,11 +105,11 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
 
     llvm::Function *main;
     State state;
-    std::shared_ptr< BitCode > bc;
+    std::shared_ptr<BitCode> bc;
 
-    std::map< const llvm::Function *, int > functionmap;
-    std::map< const llvm::BasicBlock *, PC > blockmap;
-    std::vector< Function > functions;
+    std::map<const llvm::Function *, std::pair<int, std::string>> functionmap; // function -> (id, name)
+    std::map<const llvm::BasicBlock *, PC> blockmap;
+    std::vector<Function> functions;
 
     const std::set< std::string > ignored_functions = {
         "llvm.lifetime.start",
@@ -269,37 +269,38 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         state.layout.switchBB( getBB( state.control.getPC( tid ) ), tid );
     }
 
-    void do_pthread_create( llvm::Value *child_fun_value, const llvm::Value *thread_id,
-                            const llvm::Value *llvm_argument, int tid )
+    void do_pthread_create(llvm::Value *child_fun_value, const llvm::Value *thread_id,
+                            const llvm::Value *llvm_argument, int tid)
     {
-        while ( llvm::isa< llvm::ConstantExpr >( child_fun_value ) ) {
-            auto cexpr = llvm::cast< llvm::ConstantExpr >( child_fun_value );
-            assert( cexpr->getOpcode() ==  llvm::Instruction::BitCast );
-            child_fun_value = cexpr->getOperand( 0 );
-        }
-        const llvm::Function *child_fun = llvm::cast< llvm::Function >( child_fun_value );
+	    while (llvm::isa< llvm::ConstantExpr >(child_fun_value)) {
+		    auto cexpr = llvm::cast< llvm::ConstantExpr >(child_fun_value);
+		    assert(cexpr->getOpcode() ==  llvm::Instruction::BitCast);
+		    child_fun_value = cexpr->getOperand(0);
+	    }
+	    const llvm::Function *child_fun = llvm::cast< llvm::Function >(child_fun_value);
 
-        assert( functionmap.find( child_fun ) != functionmap.end() );
-        int64_t new_tid = startThread( functionmap[ child_fun ] );
-        int t_id_bw = getBitWidth( thread_id->getType() );
+	    assert(functionmap.find(child_fun) != functionmap.end());
+	    int64_t new_tid = startThread(functionmap[child_fun].first);
+	    int t_id_bw = getBitWidth(thread_id->getType());
 
-        Value tid_ptr = deref( thread_id, tid );
-        assert( tid_ptr.type == Value::Type::Constant );
-        Pointer tid_dest = Pointer( tid_ptr.constant.value );
-        state.layout.setMultival( deref( tid_dest ), false );
-        state.explicitData.implement_store( tid_dest, Value( new_tid, t_id_bw ) );
+	    Value tid_ptr = deref(thread_id, tid);
+	    assert(tid_ptr.type == Value::Type::Constant);
+	    Pointer tid_dest = Pointer(tid_ptr.constant.value);
+	    state.layout.setMultival(deref(tid_dest), false);
+	    state.explicitData.implement_store(tid_dest, Value(new_tid, t_id_bw));
 
-        if ( child_fun->arg_begin() != child_fun->arg_end() ) {
-            Value argument = deref( llvm_argument, tid, false );
-            Value argument_dest = deref( child_fun->arg_begin(), state.control.threadCount() - 1 );
+	    if (child_fun->arg_begin() != child_fun->arg_end()) {
+		    Value argument = deref(llvm_argument, tid, false);
+		    Value argument_dest = deref(child_fun->arg_begin(), state.control.threadCount() - 1);
 
-            state.layout.setMultival( argument_dest, state.layout.isMultival( argument ) );
-            if ( state.layout.isMultival( argument ) ) {
-                state.data.implement_store( argument_dest, argument );
-            } else {
-                state.explicitData.implement_store( argument_dest, argument );
-            }
-        }
+		    state.layout.setMultival(argument_dest, state.layout.isMultival(argument));
+		    if (state.layout.isMultival(argument)) {
+			    state.data.implement_store(argument_dest, argument);
+		    }
+		    else {
+			    state.explicitData.implement_store(argument_dest, argument);
+		    }
+	    }
     }
 
     bool do_mutex_lock( const llvm::Value *mutex_id, int tid )
@@ -469,10 +470,14 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
             std::vector< Value > params;
             const llvm::Function *fun_called = ci->getCalledFunction();
             
+            if (is_atomic_function(functionmap[fun_called].second)) {
+                state.control.enter_atomic_section(tid);
+            }
+            
             for ( unsigned arg_no = 0; arg_no < ci->getNumArgOperands(); ++arg_no ) {
                 params.push_back( deref( ci->getArgOperand( arg_no ), tid ) );
             }
-            enterFunction( functionmap[ fun_called ], tid );
+            enterFunction( functionmap[ fun_called ].first, tid );
 
             auto arg = fun_called->arg_begin();
             for ( unsigned arg_no = 0; arg_no < params.size(); ++arg_no, ++arg) {
@@ -529,7 +534,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
 
             assert( ty->isStructTy() || ty->isArrayTy() );
             if ( ty->isStructTy() ) {
-                for ( int i = 0; i < idx_val.constant.value; ++i ) {
+                for ( unsigned i = 0; i < idx_val.constant.value; ++i ) {
                     offset += getElementsWidth( ty->getContainedType( i ) );
                 }
             } else {
@@ -744,10 +749,16 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
     template < typename Yield >
     void do_return( const llvm::ReturnInst *reti, int tid, Yield yield )
     {
+        const llvm::Function* function = llvm::cast<llvm::Function>(reti->getParent()->getParent());
+        if (is_atomic_function(functionmap[function].second)) {
+            state.control.leave_atomic_section(tid);
+        }
+        
         const llvm::Value *returned = reti->getReturnValue();
-        if ( state.control.last( tid ) || !returned || llvm::isa< llvm::UndefValue >( returned ) ) {
-            leave( tid );
-        } else {
+        if (state.control.last(tid) || !returned || llvm::isa< llvm::UndefValue >(returned)) {
+            leave(tid);
+        }
+        else {
             assert( returned && !llvm::isa< llvm::UndefValue >( returned ) );
             PC prev_pc = state.control.getPrevPC( tid );
             // we have advanced after Call, we need to get back
@@ -861,23 +872,24 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
             + state.explicitData.getSize() + state.properties.getSize();
     }
 
-    Evaluator( std::shared_ptr< BitCode > b ) : main( nullptr ), state( b.get()->module.get() ), bc( b )
+	Evaluator(std::shared_ptr< BitCode > b) :
+		main(nullptr), state(b.get()->module.get()), bc(b)
     {
-        bc = b;
+	    bc = b;
         
-        llvm::Module::iterator fun_iter;
-        main = nullptr;
-        for ( fun_iter = bc->module->begin(); fun_iter != bc->module->end(); ++fun_iter ) {
-            functionmap[ fun_iter ] = functions.size();
-            functions.emplace_back( fun_iter );
-            if ( fun_iter->getName() == "main" )
-                main = fun_iter;
-        }
+	    llvm::Module::iterator fun_iter;
+	    main = nullptr;
+	    for (fun_iter = bc->module->begin(); fun_iter != bc->module->end(); ++fun_iter) {
+		    functionmap[fun_iter] = std::make_pair(functions.size(), Demangler::demangle(std::string(fun_iter->getName())));
+		    functions.emplace_back(fun_iter);
+		    if (fun_iter->getName() == "main")
+			    main = fun_iter;
+	    }
 
-        if ( !main ) {
-            std::cerr << "Missing function main." << std::endl;
-            abort();
-        }
+	    if (!main) {
+		    std::cerr << "Missing function main." << std::endl;
+		    abort();
+	    }
 
         for ( short unsigned i = 0; i < functions.size(); ++i ) {
             int bb_id = 0;
@@ -965,9 +977,9 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
             state.explicitData.implement_store( global_ptr, ptr_content );
         }
 
-        assert( functionmap.count( main ) > 0 );
+	    assert(functionmap.count(main) > 0);
 
-        startThread( functionmap[ main ] );
+	    startThread(functionmap[main].first);
     }
 
     int startThread( unsigned short fun_id )
@@ -1024,9 +1036,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
 
     void advance( const std::function<void ()> yield )
     {
-        std::string readS, writeS;
-        int threads = state.control.threadCount();
-        for ( int tid = 0; tid < threads; ++tid) {
+	    for (size_t tid : state.control.get_allowed_threads()) {
             std::stack< State > to_do;
             to_do.push( std::move( state ) );
 
@@ -1114,6 +1124,14 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         ss << state.data;
 
         return ss.str();
+    }
+    
+    /**
+     * Returns true if the function is specified as atomic (using SV comp rules)
+     */
+    static bool is_atomic_function(std::string name) {
+        static const std::string pref = "__VERIFIER_atomic_";
+        return std::mismatch(pref.begin(), pref.end(), name.begin()).first == pref.end();
     }
 
     friend class Dispatcher< Evaluator< DataStore > >;

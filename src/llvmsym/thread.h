@@ -2,6 +2,7 @@
 #include <llvmsym/blobutils.h>
 #include <cassert>
 #include <ostream>
+#include <boost/iterator/counting_iterator.hpp>
 
 namespace llvm_sym {
 
@@ -21,9 +22,10 @@ struct Control {
       }
     };
 
-    std::vector< std::vector< PC > > context;
-    std::vector< PC > previous_bb;
-    std::vector< short unsigned > tids;
+    std::vector<std::vector<PC>> context;
+    std::vector<PC> previous_bb;
+    std::vector<short unsigned> tids;
+    std::vector<size_t> atomic_section; // Idx of threads
     short unsigned next_free_tid = 0;
 
     void writeData( char * &mem ) const
@@ -58,7 +60,7 @@ struct Control {
     }
 
     // returns tid
-    int startThread( short unsigned function_no )
+    int startThread(short unsigned function_no)
     {
         PC func_pc;
         func_pc.function = function_no;
@@ -71,7 +73,7 @@ struct Control {
         return tids.back();
     }
 
-    void enterFunction( short unsigned function_no, int tid )
+    void enterFunction(short unsigned function_no, size_t tid)
     {
         PC new_pc;
         new_pc.function = function_no;
@@ -80,7 +82,7 @@ struct Control {
         context[tid].push_back( new_pc );
     }
 
-    void jumpTo( PC new_pc, unsigned tid, bool remember_previous_bb )
+    void jumpTo(PC new_pc, size_t tid, bool remember_previous_bb)
     {
         assert( tid < context.size() );
         assert( !context[tid].empty() );
@@ -88,7 +90,7 @@ struct Control {
         context[tid].back() = new_pc;
     }
 
-    bool leave( unsigned tid )
+    bool leave(size_t tid)
     {
         assert( tid < context.size() );
         assert( !context[tid].empty() );
@@ -105,30 +107,30 @@ struct Control {
         }
     }
 
-    unsigned threadCount() const
+    size_t threadCount() const
     {
         return context.size();
     }
 
-    void advance( unsigned tid, int relative = 1 )
+    void advance(size_t tid, int relative = 1)
     {
         assert( tid < context.size() );
         context[ tid ].back().instruction += relative;
     }
 
-    const PC& getPC( unsigned tid ) const
+    const PC& getPC(size_t tid) const
     {
         assert( tid < context.size() );
         return context[ tid ].back();
     }
     
-    PC &getPC( unsigned tid )
+    PC &getPC(size_t tid)
     {
         assert( tid < context.size() );
         return context[ tid ].back();
     }
 
-    const PC& getPrevPC( unsigned tid ) const
+    const PC& getPrevPC(size_t tid) const
     {
         assert( tid < context.size() );
         assert( context[ tid ].size() > 1 );
@@ -136,10 +138,32 @@ struct Control {
         return context[ tid ][ context[tid].size() - 2 ];
     }
 
-    bool last( unsigned tid ) const
+    bool last(size_t tid) const
     {
         assert( tid < context.size() );
         return context[ tid ].size() == 1;
+    }
+    
+    void enter_atomic_section(size_t tid) {
+        assert(tid < context.size());
+        atomic_section.push_back(tid);
+    }
+    
+    void leave_atomic_section(size_t tid) {
+        assert(!atomic_section.empty() && atomic_section.back() == tid);
+        atomic_section.pop_back();
+    }
+    
+    std::vector<size_t> get_allowed_threads() const {
+        if (atomic_section.empty()) {
+            // Allow all threads
+            return std::vector<size_t>(
+                boost::counting_iterator<size_t>(0),
+                boost::counting_iterator<size_t>(context.size())
+                );
+        }
+        // Allow only single thread
+        return std::vector<size_t>({ atomic_section.back() });
     }
 };
 

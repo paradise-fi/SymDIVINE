@@ -92,6 +92,8 @@ public:
         dp.property("label", boost::get(&DotEdge::label, graphviz));
 
         bool status = boost::read_graphviz(dot, graphviz, dp);
+        if (!status)
+            throw LtlConvException("Cannot read ltl2ba output");
 
         // Convert BA to Graph class
         typedef typename boost::property_map<graph_t, boost::vertex_index_t>::type IndexMap;
