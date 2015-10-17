@@ -1,7 +1,7 @@
 #pragma once
 #include <llvmsym/blobutils.h>
 #include <cassert>
-#include <ostream>
+#include <iostream>
 #include <boost/iterator/counting_iterator.hpp>
 
 namespace llvm_sym {
@@ -30,13 +30,13 @@ struct Control {
 
     void writeData( char * &mem ) const
     {
-        blobWrite( mem, context, previous_bb, tids, next_free_tid );
+        blobWrite( mem, context, previous_bb, tids, next_free_tid, atomic_section );
     }
 
     void readData( const char * &mem )
     {
         context.clear();
-        blobRead( mem, context, previous_bb, tids, next_free_tid );
+        blobRead( mem, context, previous_bb, tids, next_free_tid, atomic_section );
 
         assert( context.size() == previous_bb.size() && context.size() == tids.size() );
     }
@@ -56,7 +56,7 @@ struct Control {
 
     size_t getSize() const
     {
-        return representation_size( context, previous_bb, tids, next_free_tid );
+        return representation_size( context, previous_bb, tids, next_free_tid, atomic_section );
     }
 
     // returns tid
@@ -157,10 +157,12 @@ struct Control {
     std::vector<size_t> get_allowed_threads() const {
         if (atomic_section.empty()) {
             // Allow all threads
-            return std::vector<size_t>(
+            auto ret = std::vector<size_t>(
                 boost::counting_iterator<size_t>(0),
                 boost::counting_iterator<size_t>(context.size())
                 );
+            
+            return ret;
         }
         // Allow only single thread
         return std::vector<size_t>({ atomic_section.back() });

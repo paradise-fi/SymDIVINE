@@ -456,6 +456,14 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                 do_mutex_unlock(ci->getArgOperand(0), tid);
                 yield(!amILonelyThread(), false, true);
             }
+            else if (fun_name == "__VERIFIER_atomic_begin") {
+                state.control.enter_atomic_section(tid);
+                yield(!amILonelyThread(), false, true);
+            }
+            else if (fun_name == "__VERIFIER_atomic_end") {
+                state.control.leave_atomic_section(tid);
+                yield(!amILonelyThread(), false, true);
+            }
             else if (fun_name == "llvm.dbg.declare") {
                 // ignore llvm dbg functions
             }
