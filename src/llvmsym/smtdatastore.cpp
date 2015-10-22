@@ -89,7 +89,7 @@ bool SMTStore::subseteq(
     z3::params p(c);
     p.set(":mbqi", true);
     if (!Config.is_set("--disabletimeout")) {
-        p.set("SOFT_TIMEOUT", timeout);
+        //p.set("timeout", timeout);
     }
     s.set(p);
     

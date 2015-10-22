@@ -432,19 +432,21 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                         cond,
                         Value(0, getBitWidth(llvm_cond->getType())),
                         ICmp_Op::NE);
+                std::cout << "Pruning assert TRUE: " << store->empty() << "\n";
                 yield(false, store->empty());
 
                 store->prune(
                         cond,
                         Value(0, getBitWidth(llvm_cond->getType())),
                         ICmp_Op::EQ);
-                state.properties.setError(true);
+                state.properties.error = true;
+                std::cout << "Pruning assert FALSE: " << store->empty() << "\n";
                 yield(true, store->empty(), true);
 
             }
             else if (fun_name == "__VERIFIER_error") {
                 llvm_sym::DataStore *store = &state.data;
-                state.properties.setError(true);
+                state.properties.error = true;
                 yield(true, store->empty(), true);
             }
             else if (fun_name == "pthread_mutex_lock") {
@@ -758,6 +760,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
     void do_return( const llvm::ReturnInst *reti, int tid, Yield yield )
     {
         const llvm::Function* function = llvm::cast<llvm::Function>(reti->getParent()->getParent());
+        std::cout << "Doing return! " << functionmap[function].second << "\n";
         if (is_atomic_function(functionmap[function].second)) {
             state.control.leave_atomic_section(tid);
         }
@@ -920,7 +923,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         state.control.clear();
         state.data.clear();
         state.explicitData.clear();
-        state.properties.setError( false );
+        state.properties.error = false;
 
         int globals_count = bc->module.get()->getGlobalList().size();
         std::vector< int > global_variables;
@@ -1045,16 +1048,19 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
     void advance( const std::function<void ()> yield )
     {
 	    for (size_t tid : state.control.get_allowed_threads()) {
-            std::stack< State > to_do;
-            to_do.push( std::move( state ) );
+            std::stack<State> to_do;
+            to_do.push(std::move(state));
 
             // do a graph traversal from current state, stop on observable
             // states (leaves in the traversal) and yield them
-            while( !to_do.empty() ) {
+            while(!to_do.empty()) {
                 State snapshot = to_do.top();
                 state = std::move( to_do.top() );
-                if (Config.is_set("--vverbose"))
-                    std::cerr << "---------\nin state:\n" << toString() << std::endl;
+                if (Config.is_set("--vverbose")) {
+                    std::cerr << "---------\nin state:\n";
+                    dump();
+                    std::cerr << std::endl;
+                }
                 to_do.pop();
 
                 bool last_check = false;
@@ -1063,22 +1069,29 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                                                                          bool last = false)
                 {
                     assert(!last_check);
-                    if ( !is_empty ) {
-                        if ( is_observable || isError() ) {
+                    if (is_empty) {
+                        state.properties.empty = true; // ToDo: Think about nicer way...
+                        std::cout << "Empty state!\n";
+                    }
+                    else {
+                        std::cout << "Non-empty state!\n";
+                    }
+                    if (!is_empty) {
+                        if (is_observable || is_error()) {
                             yield();
                         } else {
-                            to_do.push( std::move( state ) );
+                            to_do.push(std::move(state));
                         }
                     }
-                    if ( !last )
+                    if (!last)
                         state = snapshot;
                     else {
-                        state = std::move( snapshot );
+                        state = std::move(snapshot);
                         last_check = true;
                     }
                 };
 
-                advance( restoringYield, tid );
+                advance(restoringYield, tid);
             }
         }
     }
@@ -1086,7 +1099,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
     template < typename Yield >
     void advance( Yield yield, int tid )
     {
-        if ( state.properties.isError() )
+        if (state.properties.error)
             return;
         llvm::Instruction *inst = fetch( tid );
 
@@ -1113,25 +1126,41 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
     
     }
 
-    bool isError() const
+    bool is_error() const
     {
-        return state.properties.isError();
+        return state.properties.error;
+    }
+    
+    bool is_empty() const
+    {
+        return state.properties.empty;
     }
 
-    std::string toString() const
+    void dump() const
     {
         std::stringstream ss;
-        if ( state.control.context.empty() )
-            return "exit";
+        if (state.control.context.empty()) {
+            std::cout << "exit\n";
+            return;
+        }
         
-        if ( isError() )
-            ss << "Error state." << std::endl;
-        ss << "Control:\n" << state.control;
-        ss << "Data:\n" << state.layout;
-        ss << state.explicitData;
-        ss << state.data;
-
-        return ss.str();
+        std::cout << "State: ";
+        if(is_error())
+            std::cout << "error\n";
+        else
+            std::cout << "normal\n";
+        std::cout << "Control:\n" << state.control;
+        std::cout << "---------------------------------\n";   
+        std::cout << "Data layout:\n";
+        state.layout.dump();
+        std::cout << "---------------------------------"; 
+        std::cout << "Explicit data:\n";
+        std::cout << state.explicitData;
+        std::cout << "---------------------------------\n";  
+        std::cout << "Symbolic data:\n";
+        std::cout << "---------------------------------\n";  
+        std::cout << state.data;
+        std::cout << "---------------------------------\n";
     }
     
     /**

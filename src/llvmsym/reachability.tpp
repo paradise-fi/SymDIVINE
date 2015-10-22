@@ -35,9 +35,10 @@ void Reachability<Store, Hit>::run() {
                 Blob newSucc(eval.getSize(), eval.getExplicitSize());
                 eval.write(newSucc.getExpl());
 
-                if (eval.isError()) {
-                    std::cout << "Error state:\n" << eval.toString() << "is reachable."
-                        << std::endl;
+                if (eval.is_error() && !eval.is_empty()) {
+                    std::cout << "Error state:\n";
+                    eval.dump();
+                    std::cout << "is reachable." << std::endl;
                     error_found = true;
                 }
 

@@ -3,34 +3,23 @@
 
 namespace llvm_sym {
 
-class Properties {
-    bool _error = false;
-
-public:
-
-    bool isError() const
-    {
-        return _error;
-    }
-
-    void setError( bool val )
-    {
-        _error = val;
-    }
+struct Properties {
+    bool error = false;
+    bool empty = false;
 
     size_t getSize() const
     {
-        return representation_size( _error );
+        return representation_size(error, empty);
     }
 
-    void writeData( char * &mem ) const
+    void writeData(char * &mem) const
     {
-        blobWrite( mem, _error );
+        blobWrite(mem, error, empty);
     }
 
-    void readData( const char * &mem )
+    void readData(const char * &mem)
     {
-        blobRead( mem, _error );
+        blobRead(mem, error, empty);
     }
 
 };
