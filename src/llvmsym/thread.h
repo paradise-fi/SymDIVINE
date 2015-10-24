@@ -146,13 +146,11 @@ struct Control {
     
     void enter_atomic_section(size_t tid) {
         assert(tid < context.size());
-        std::cout << "Entering atomic section\n";
         atomic_section.push_back(tid);
     }
     
     void leave_atomic_section(size_t tid) {
         assert(!atomic_section.empty() && atomic_section.back() == tid);
-        std::cout << "Leaving atomic section\n";
         atomic_section.pop_back();
     }
     
