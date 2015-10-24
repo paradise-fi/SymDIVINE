@@ -163,7 +163,7 @@
     <LaunchGDBSettings xsi:type="GDBLaunchParametersNewInstance">
       <DebuggedProgram>$(RemoteSourceDir)/bin/symdivine</DebuggedProgram>
       <GDBServerPort>2000</GDBServerPort>
-      <ProgramArguments>reachability ./test_programs/sv_comp_err/gcd_err_min.ll</ProgramArguments>
+      <ProgramArguments>reachability ../sv-comp/sv-benchmarks/c/pthread-atomic/gcd_true-unreach-call_true-termination.ll</ProgramArguments>
       <WorkingDirectory>$(BuildDir)</WorkingDirectory>
     </LaunchGDBSettings>
     <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>
@@ -198,7 +198,7 @@
     <CXXFLAGS />
     <ExternalSourceFileList />
     <ExtraSettings>
-      <HideErrorsInSystemHeaders>false</HideErrorsInSystemHeaders>
+      <HideErrorsInSystemHeaders>true</HideErrorsInSystemHeaders>
     </ExtraSettings>
   </CodeSense>
 </VisualGDBProjectSettings2>

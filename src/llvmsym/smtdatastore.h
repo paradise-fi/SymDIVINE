@@ -507,7 +507,9 @@ class SMTStore : public DataStore {
     virtual void prune( Value a, Value b, ICmp_Op op )
     {
         Formula a_expr = build_expression( a );
+        std::cout << "Formula a: " << a_expr << "\n";
         Formula b_expr = build_expression( b );
+        std::cout << "Formula b: " << b_expr << "\n";
         switch ( op ) {
             case ICmp_Op::EQ:
                 pushCondition( a_expr == b_expr );

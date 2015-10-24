@@ -132,7 +132,7 @@ struct Formula {
                         case LEq:   return " <= ";
                         case ULEq:   return " <= ";
                         case GT:    return " > ";
-                        case UGT:   return " >= ";
+                        case UGT:   return " > ";
                         case GEq:   return " >= ";
                         case UGEq:   return " >= ";
                         case BAnd:   return " & ";
@@ -173,7 +173,7 @@ struct Formula {
             return "";
         }
 
-      std::string print( std::map< Ident, unsigned > &m ) {
+      std::string print( std::map< Ident, unsigned > &m ) const {
         std::stringstream ss;
         switch ( kind ) {
         case Op:
@@ -210,14 +210,14 @@ struct Formula {
                     
           }
         case Constant:
-          ss << "0d" << id.bw << "_" << value;
+          ss << "0d" << (int)id.bw << "_" << value;
           return ss.str();
                     
         case Identifier:
           if ( id.gen == 0 )
-            ss << "r" << m[ id ];
+            ss << "r" << m[id];
           else
-            ss << "input [ 0 : " << id.bw <<  "]";
+            ss << "[seg" << id.seg << "_off" << id.off << "]";
           return ss.str();
         case BoolVal:
           if ( value )
@@ -634,7 +634,7 @@ struct Formula {
 
     friend std::ostream &operator<<( std::ostream &o, const Formula &f );
 
-    std::string print( std::map< Ident, unsigned > &m ) {
+    std::string print( std::map< Ident, unsigned > &m ) const {
       std::vector< std::string > stack;
 
       for ( unsigned pos = 0; pos < size(); ++pos ) {

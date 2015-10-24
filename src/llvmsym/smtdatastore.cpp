@@ -36,11 +36,13 @@ bool SMTStore::empty() const
 
     z3::solver s( c );
     for (const auto& group : sym_data) {
-        for (const Definition &def : group.second.definitions)
+        for (const Definition &def : group.second.definitions) {
             s.add(toz3(def.to_formula(), 'a', c));
+        }
 
-        for (const Formula &pc : group.second.path_condition)
+        for (const Formula &pc : group.second.path_condition) {
             s.add(toz3(pc, 'a', c));
+        }
     }
 
     ++Statistics::getCounter( STAT_SMT_CALLS );

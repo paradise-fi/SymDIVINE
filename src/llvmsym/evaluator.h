@@ -9,6 +9,7 @@
 #include <llvmsym/llvmdata.h>
 #include <llvmsym/memorylayout.h>
 #include <llvmsym/explicitstore.h>
+#include <llvmsym/smtdatastore.h>
 
 #include <llvmsym/programutils/statistics.h>
 #include <llvmsym/programutils/config.h>
@@ -432,7 +433,6 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                         cond,
                         Value(0, getBitWidth(llvm_cond->getType())),
                         ICmp_Op::NE);
-                std::cout << "Pruning assert TRUE: " << store->empty() << "\n";
                 yield(false, store->empty());
 
                 store->prune(
@@ -440,7 +440,6 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                         Value(0, getBitWidth(llvm_cond->getType())),
                         ICmp_Op::EQ);
                 state.properties.error = true;
-                std::cout << "Pruning assert FALSE: " << store->empty() << "\n";
                 yield(true, store->empty(), true);
 
             }
@@ -654,7 +653,6 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         yield( false, store->empty() );
 
         store->prune( a, b, icmp_negate( ICmp_Op( cmp_inst->getPredicate() ) ) );
-
         state.layout.setMultival( result, false );
         state.explicitData.implement_store( result, Value( 0, result_bw ) );
         assert( state.explicitData.get( result ) == 0 );
@@ -760,7 +758,6 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
     void do_return( const llvm::ReturnInst *reti, int tid, Yield yield )
     {
         const llvm::Function* function = llvm::cast<llvm::Function>(reti->getParent()->getParent());
-        std::cout << "Doing return! " << functionmap[function].second << "\n";
         if (is_atomic_function(functionmap[function].second)) {
             state.control.leave_atomic_section(tid);
         }
@@ -818,6 +815,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
             case llvm::Instruction::FRem:
             case llvm::Instruction::URem:
                 store.implement_urem( res, a, b );
+                break;
             case llvm::Instruction::SRem:
                 store.implement_srem( res, a, b );
                 break;
@@ -1071,10 +1069,6 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                     assert(!last_check);
                     if (is_empty) {
                         state.properties.empty = true; // ToDo: Think about nicer way...
-                        std::cout << "Empty state!\n";
-                    }
-                    else {
-                        std::cout << "Non-empty state!\n";
                     }
                     if (!is_empty) {
                         if (is_observable || is_error()) {
