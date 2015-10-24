@@ -4,12 +4,42 @@ namespace llvm_sym {
 
 std::ostream & operator<<( std::ostream & o, const MemoryLayout &m )
 {
-    for ( unsigned i = 0; i < m.thread_segments.size(); ++i ) {
+    /*for ( unsigned i = 0; i < m.thread_segments.size(); ++i ) {
         o << "tid " << i << " segments:\n";
         for ( auto j : m.thread_segments[i] )
             o << j << std::endl;
+    }*/
+    std::cout << m.global_valuemap->size() << "\n";
+    for (const auto& pair : *(m.global_valuemap)) {
+        pair.first->dump();
     }
     return o;
+}
+    
+void MemoryLayout::dump() const {
+    std::cout << "Globals:\n";
+    for (const auto& pair : *global_valuemap) {
+        std::cout << "\t";
+        pair.first->dump();
+        std::cout << "\n";
+    }
+    
+    int count = 0;
+    for (const auto& frames : current_frames) {
+        std::cerr << "thread " << count << ":\n";
+        std::vector<std::pair<const llvm::Value*, ValueInfo>> o;
+        for (const auto& pair : frames->valuemap) {
+            o.push_back(pair);
+        }
+        std::sort(o.begin(), o.end(), [](const std::pair<const llvm::Value*, ValueInfo>& a, const std::pair<const llvm::Value*, ValueInfo>& b) {
+            return a.second.id < b.second.id;
+        });
+        for (const auto& pair : o) {
+            std::cerr << "Offset " << pair.second.id << ": ";
+            pair.first->dump();
+        }
+        count++;
+    }
 }
 
 void MemoryLayout::leave( unsigned tid )

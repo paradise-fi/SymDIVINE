@@ -157,7 +157,7 @@ bool Ltl<Store, Hit>::run_inner_dfs(StateId start_vertex) {
 			info.inner_color = VertexColor::GRAY;
 		}
 		else if (info.inner_color == VertexColor::GRAY) {
-			info.inner_color == VertexColor::BLACK;
+			info.inner_color = VertexColor::BLACK;
 			to_process.pop();
 		}
 		else if (info.inner_color == VertexColor::BLACK) {

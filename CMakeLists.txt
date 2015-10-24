@@ -67,5 +67,7 @@ target_link_libraries(symdivine ${Z3_LIBRARIES})
 add_definitions("-std=c++11")
 set_property(TARGET symdivine PROPERTY CXX_STANDARD 11)
 set_property(TARGET symdivine PROPERTY CXX_STANDARD_REQUIRED ON)
+set_property(TARGET symdivine APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
+
 #set(CMAKE_BUILD_TYPE Release)
 

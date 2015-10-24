@@ -36,11 +36,13 @@ bool SMTStore::empty() const
 
     z3::solver s( c );
     for (const auto& group : sym_data) {
-        for (const Definition &def : group.second.definitions)
+        for (const Definition &def : group.second.definitions) {
             s.add(toz3(def.to_formula(), 'a', c));
+        }
 
-        for (const Formula &pc : group.second.path_condition)
+        for (const Formula &pc : group.second.path_condition) {
             s.add(toz3(pc, 'a', c));
+        }
     }
 
     ++Statistics::getCounter( STAT_SMT_CALLS );
@@ -89,7 +91,7 @@ bool SMTStore::subseteq(
     z3::params p(c);
     p.set(":mbqi", true);
     if (!Config.is_set("--disabletimeout")) {
-        p.set("SOFT_TIMEOUT", timeout);
+        //p.set("timeout", timeout);
     }
     s.set(p);
     

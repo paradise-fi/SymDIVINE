@@ -236,6 +236,8 @@ class MemoryLayout {
     {
         return representation_size( thread_segments, segments_in_stack, variablesFlags );
     }
+    
+    void dump() const;
 
 
     friend std::ostream & operator<<( std::ostream & o, const MemoryLayout &m );

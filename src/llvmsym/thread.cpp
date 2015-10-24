@@ -6,14 +6,15 @@ namespace llvm_sym {
 std::ostream & operator<<( std::ostream &o, const Control &c )
 {
     for ( unsigned tid = 0; tid < c.threadCount(); ++tid ) {
-        o << "thread " << tid << '\n';
+        o << "thread " << tid << ": ";
         
         for ( const Control::PC &p : c.context[tid] ) {
-            o << '{'
-              << p.function << ", "
-              << p.basicblock << ", "
-              << p.instruction << "}\n";
+            o << "{ func: "
+              << p.function << ", block: "
+              << p.basicblock << ", inst: "
+              << p.instruction << "}, ";
         }
+        o << "\n";
     }
 
 
