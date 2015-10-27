@@ -89,11 +89,12 @@ bool SMTStorePartial::subseteq(
     z3::params p(c);
     p.set(":mbqi", true);
     if (!Config.is_set("--disabletimeout")) {
-        p.set("SOFT_TIMEOUT", timeout);
+        // p.set("SOFT_TIMEOUT", timeout);
     }
     s.set(p);
     
-    bool is_caching_enabled = Config.is_set("--enablecaching");
+    static bool is_caching_enabled = Config.is_set("--enablecaching");
+    static bool verbose = Config.is_set("--verbose") || Config.is_set("--vverbose");
     Z3SubsetCall formula;
     
     if (is_caching_enabled) {
@@ -107,6 +108,9 @@ bool SMTStorePartial::subseteq(
             formula.pc_b.push_back(def.to_formula());
         
         if (Z3cache.is_cached(formula)) {
+            if (verbose) {
+                std::cout << "Cached!\n";
+            }
             return Z3cache.result() == z3::unsat;
         }
     }
@@ -147,7 +151,7 @@ bool SMTStorePartial::subseteq(
     
     if (ret == z3::unknown) {
         ++unknown_instances;
-        if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
+        if (verbose) {
             if (Config.is_set("--vverbose"))
                 std::cerr << "while checking:\n" << s;
             std::cerr << "\ngot 'unknown', reason: " << s.reason_unknown() << std::endl;

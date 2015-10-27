@@ -113,14 +113,14 @@ def parse_args():
     if len(args) < 3 or args[1].startswith("-") or args[2].startswith("-"):
         print(__doc__)
         sys.exit(1)
-    opt = "-o2"
+    opt = "-O2"
     loc = args[1]
     benchmark = args[2]
     timeout = 900
     res = []
 
     for arg in args[3:]:
-        if arg.startswith("-o"):
+        if arg.startswith("-O"):
             opt = arg
         elif arg.startswith("--timeout="):
             timeout = int(arg.split('=')[1])
@@ -133,8 +133,8 @@ def parse_args_docopt():
     arguments = docopt.docopt(__doc__)
 
     arguments = {k: v for k, v in arguments.items() if v}
-    if not "-o" in arguments:
-        arguments["-o"] = 2
+    if not "-O2" in arguments:
+        arguments["-O2"] = 2
 
     if not "--timeout" in arguments:
         arguments["--timeout"] = 900
