@@ -290,6 +290,14 @@ class ValueStore : public DataStore {
         assert( false );
     }
     
+    virtual void implement_inttoptr(Value result_id, Value a_id) {
+        implement_store(result_id, a_id);
+    }
+    
+    virtual void implement_ptrtoint(Value result_id, Value a_id) {
+        implement_store(result_id, a_id);
+    }
+    
     virtual bool equal( char *mem_a, char *mem_b ) const
     {
         return memcmp( mem_a, mem_b, getSize() ) == 0;

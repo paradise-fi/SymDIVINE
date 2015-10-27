@@ -7,6 +7,8 @@ import sys
 import subprocess
 import os
 
+LART_PATH = "./bin/lart"
+
 def change_suffix(src, suffix):
     out, _ = os.path.splitext(src)
     out += "." + suffix
@@ -18,13 +20,28 @@ def compile_benchmark(src, args, output = None, fix_inline=False):
 
     if fix_inline:
         args.append('-fgnu89-inline')
-    cmd = "clang -S -emit-llvm {0} -o {1} {2}".format(' '.join(args), output, src)
-    print cmd
+    cmd = "clang -c -O0 -emit-llvm -o {0} {1}".format(output, src)
+    print(cmd)
 
     if os.system(cmd) != 0:
         print("ERROR")
         print("Compilation failed")
         return ""
+
+    cmd = LART_PATH + " {0} {1} main-volatilize".format(output, output)
+    print(cmd)
+    if os.system(cmd) != 0:
+        print("ERROR")
+        print("Compilation failed")
+        return ""
+    """
+    cmd = "clang -S -emit-llvm {0} -o {1} {2}".format(' '.join(args), output, output)
+    print(cmd)
+    if os.system(cmd) != 0:
+        print("ERROR")
+        print("Compilation failed")
+        return ""
+    """
     return output
 
 if __name__ == "__main__":
