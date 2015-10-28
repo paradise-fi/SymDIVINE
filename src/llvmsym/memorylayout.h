@@ -57,8 +57,9 @@ class MemoryLayout {
 
     std::vector< std::vector< char > > variablesFlags;
     enum {
-        F_MULTIVAL = 0x1,
+        F_MULTIVAL = 1 << 0,
         F_DEFAULT = F_MULTIVAL,
+        F_SYMPOINTER = 1 << 1
     };
     
     public:
@@ -144,6 +145,31 @@ class MemoryLayout {
         assert( v.type == Value::Type::Variable );
 
         setMultival( v.variable, value );
+    }
+    
+    bool isSymbolicPointer(Value v) const {
+        if (v.pointer)
+            return false;
+        assert(v.variable.segmentId < variablesFlags.size());
+        assert(v.variable.offset < variablesFlags[v.variable.segmentId].size());
+        return (variablesFlags[v.variable.segmentId][v.variable.offset] & F_SYMPOINTER);
+    }
+    
+    void setSymbolicPointer(VariableId variable, bool value) {
+        assert(variable.segmentId < variablesFlags.size());
+        assert(variable.offset < variablesFlags[variable.segmentId].size());
+
+        char mask = F_SYMPOINTER;
+        if (value)
+            variablesFlags[variable.segmentId][variable.offset] |= mask;
+        else
+            variablesFlags[variable.segmentId][variable.offset] &= ~mask;
+    }
+
+    void setSymbolicPointer(Value v, bool value) {
+        assert(v.type == Value::Type::Variable);
+
+        setSymbolicPointer(v.variable, value);
     }
 
     void startThread()

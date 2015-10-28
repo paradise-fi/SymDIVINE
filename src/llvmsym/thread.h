@@ -36,6 +36,7 @@ struct Control {
     void readData( const char * &mem )
     {
         context.clear();
+        atomic_section.clear();
         blobRead( mem, context, previous_bb, tids, next_free_tid, atomic_section );
 
         assert( context.size() == previous_bb.size() && context.size() == tids.size() );
@@ -146,6 +147,7 @@ struct Control {
     
     void enter_atomic_section(size_t tid) {
         assert(tid < context.size());
+        assert(atomic_section.empty() || atomic_section.back() == tid);
         atomic_section.push_back(tid);
     }
     

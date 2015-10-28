@@ -503,6 +503,16 @@ class SMTStorePartial : public DataStore {
         Formula what_expr = build_expression( a_id );
         pushDefinition( result_id, what_expr.buildTrunc( bw ) );
     }
+    
+    virtual void implement_inttoptr(Value result_id, Value a_id) {
+        Formula what_expr = build_expression(a_id);
+        pushDefinition(result_id, what_expr);
+    }
+    
+    virtual void implement_ptrtoint(Value result_id, Value a_id) {
+        Formula what_expr = build_expression(a_id);
+        pushDefinition(result_id, what_expr);
+    }
 
     virtual void prune( Value a, Value b, ICmp_Op op )
     {

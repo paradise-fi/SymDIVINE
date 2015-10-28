@@ -479,8 +479,10 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
             std::vector< Value > params;
             const llvm::Function *fun_called = ci->getCalledFunction();
             
+            bool atomic_section = false;            
             if (is_atomic_function(functionmap[fun_called].second)) {
                 state.control.enter_atomic_section(tid);
+                atomic_section = true;
             }
             
             for ( unsigned arg_no = 0; arg_no < ci->getNumArgOperands(); ++arg_no ) {
@@ -498,7 +500,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                     state.explicitData.implement_store( arg_value, params[ arg_no ] );
                 }
             }
-            yield( false, false, true );
+            yield(atomic_section, false, true);
         }
     }
 
@@ -569,6 +571,10 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         Value result = deref( inst, tid, false );
         const llvm::Value *ptr_operand = inst->getPointerOperand();
         Value val = deref( ptr_operand, tid );
+        if (state.layout.isSymbolicPointer(val)) {
+            std::cerr << "Cannot load from nondeterministic pointer\n";
+            abort();
+        }
         assert( val.type == Value::Type::Constant );
         uint64_t ptr_content = val.constant.value;
         Pointer from_ptr = static_cast< Pointer >( ptr_content );
@@ -591,6 +597,10 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         Value value = deref( store_inst->getValueOperand(), tid );
         const llvm::Value *ptr_operand = store_inst->getPointerOperand();
         Value val = deref( ptr_operand, tid, false );
+        if (state.layout.isSymbolicPointer(val)) {
+            std::cerr << "Cannot load from nondeterministic pointer\n";
+            abort();
+        }
         Pointer to_ptr = static_cast< Pointer >( state.explicitData.get( val ) );
         Value to;
         to.type = Value::Type::Variable;
@@ -839,6 +849,42 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         }
     }
 
+    template <typename Yield>
+    void do_ptrtoint(const llvm::PtrToIntInst *inst, int tid, Yield yield) {
+        Value res = deref(llvm::cast<llvm::Value>(inst), tid, false);
+        Value a = deref(inst->getOperand(0), tid);
+        
+        assert(state.layout.isSymbolicPointer(a));
+        bool multival = state.layout.isMultival(a);
+        
+        llvm_sym::DataStore* store;
+        if (multival)
+            store = &state.data;
+        else
+            store = &state.explicitData;
+
+        store->implement_ptrtoint(res, a);
+        yield(false, false, false);
+    }
+
+    template <typename Yield>
+    void do_inttoptr(const llvm::IntToPtrInst *inst, int tid, Yield yield) {
+        Value res = deref(llvm::cast<llvm::Value>(inst), tid, false);
+        Value a = deref(inst->getOperand(0), tid);
+        
+        bool multival = state.layout.isMultival(a);
+        state.layout.setSymbolicPointer(res, true);
+
+        llvm_sym::DataStore* store;
+        if (multival)
+            store = &state.data;
+        else
+            store = &state.explicitData;
+
+        store->implement_inttoptr(res, a);
+        yield(false, false, false);
+    }
+
     BB actualBB( int tid ) const
     {
         const PC &pc = state.control.getPC( tid );
@@ -1045,7 +1091,8 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
 
     void advance( const std::function<void ()> yield )
     {
-	    for (size_t tid : state.control.get_allowed_threads()) {
+        auto allowed = state.control.get_allowed_threads();
+	    for (size_t tid : allowed) {
             std::stack<State> to_do;
             to_do.push(std::move(state));
 

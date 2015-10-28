@@ -15,7 +15,7 @@ Options:
     -s --statistics       Enable output of statistics
     -v --verbose          Enable verbose mode
     -w --vverbose         Enable extended verbose mode
-    -o                    level of optimalizations [default: 2]
+    -O                    level of optimalizations [default: 2]
     --timeout             timeout in seconds [default: 900]
 """
 
@@ -56,10 +56,10 @@ def run_symdivine(symdivine_location, benchmark, symdivine_params = None):
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return p
 
-def compile_benchmark(src, opt_level, tmpdir):
+def compile_benchmark(src, opt_level, tmpdir, bin_path):
     out = os.path.join(tmpdir, "model.ll")
     
-    compile_to_bitcode.compile_benchmark(src, [opt_level], out, fix_inline=True)
+    compile_to_bitcode.compile_benchmark(src, [opt_level], out, fix_inline=True, fix_volatile=True, lart_path = bin_path)
     return out
 
 def printTimeConsumed():
@@ -113,14 +113,14 @@ def parse_args():
     if len(args) < 3 or args[1].startswith("-") or args[2].startswith("-"):
         print(__doc__)
         sys.exit(1)
-    opt = "-o2"
+    opt = "-O1"
     loc = args[1]
     benchmark = args[2]
-    timeout = 900
+    timeout = 120
     res = []
 
     for arg in args[3:]:
-        if arg.startswith("-o"):
+        if arg.startswith("-O"):
             opt = arg
         elif arg.startswith("--timeout="):
             timeout = int(arg.split('=')[1])
@@ -133,20 +133,20 @@ def parse_args_docopt():
     arguments = docopt.docopt(__doc__)
 
     arguments = {k: v for k, v in arguments.items() if v}
-    if not "-o" in arguments:
-        arguments["-o"] = 2
+    if not "-O" in arguments:
+        arguments["-O"] = 2
 
     if not "--timeout" in arguments:
         arguments["--timeout"] = 900
 
     benchmark = arguments["<benchmark>"]
-    opt = "-o" + str(arguments["-o"])
+    opt = "-O" + str(arguments["-O"])
     loc = arguments["<symdivine_dir>"]
     timeout = arguments["--timeout"]
 
     print timeout
 
-    del arguments["-o"]
+    del arguments["-O"]
     del arguments["<benchmark>"]
     del arguments["<symdivine_dir>"]
     del arguments["--timeout"]
@@ -165,6 +165,10 @@ if __name__ == "__main__":
 
     location, benchmark, opt_level, timeout, symdivine_params = parse_args()
 
+    print('=== VERSION')
+    print('O1 lart')
+
+
     tmpdir, src = copy_source_to_tmp(benchmark)
 
     signal.signal(signal.SIGPIPE, sigpipe_handler)
@@ -174,7 +178,7 @@ if __name__ == "__main__":
     sys.stdout.flush()
 
     try:
-        benchmark_comp = compile_benchmark(src, opt_level, tmpdir)
+        benchmark_comp = compile_benchmark(src, opt_level, tmpdir, location)
         p = run_symdivine(location, benchmark_comp, symdivine_params)
         (out, err) = p.communicate()
         stop_timeout()

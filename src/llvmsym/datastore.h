@@ -90,6 +90,9 @@ struct DataStore {
 
     virtual void implement_store( Value result_id, Value what ) = 0;
 
+	virtual void implement_inttoptr(Value result_id, Value a_id) = 0;
+    virtual void implement_ptrtoint(Value result_id, Value a_id) = 0;
+
     virtual void prune( Value a, Value b, ICmp_Op op ) = 0;
 
     // read _bw_ bits from input, assign to _input_variable_

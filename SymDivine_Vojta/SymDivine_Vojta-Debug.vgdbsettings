@@ -163,7 +163,7 @@
     <LaunchGDBSettings xsi:type="GDBLaunchParametersNewInstance">
       <DebuggedProgram>$(RemoteSourceDir)/bin/symdivine</DebuggedProgram>
       <GDBServerPort>2000</GDBServerPort>
-      <ProgramArguments>reachability ../sv-comp/sv-benchmarks/c/pthread-atomic/gcd_true-unreach-call_true-termination.ll</ProgramArguments>
+      <ProgramArguments>reachability -v --enablecaching ../sv-comp/sv-benchmarks/c/pthread-wmm/safe024_rmo.opt_false-unreach-call.ll</ProgramArguments>
       <WorkingDirectory>$(BuildDir)</WorkingDirectory>
     </LaunchGDBSettings>
     <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>

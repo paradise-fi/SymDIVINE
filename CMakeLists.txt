@@ -63,11 +63,17 @@ target_link_libraries(symdivine ${LIBDL_LIBRARIES})
 target_link_libraries(symdivine ${TERMINFO_LIBRARIES})
 target_link_libraries(symdivine ${Z3_LIBRARIES})
 
+#set_target_properties(symdivine PROPERTIES LINK_SEARCH_START_STATIC 1)
+#set_target_properties(symdivine PROPERTIES LINK_SEARCH_END_STATIC 1)
+#set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+
 # Set C++11 standard
 add_definitions("-std=c++11")
 set_property(TARGET symdivine PROPERTY CXX_STANDARD 11)
 set_property(TARGET symdivine PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET symdivine APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
+#set(CMAKE_EXE_LINKER_FLAGS "-static -static-libgcc -static-libstdc++")
 
 #set(CMAKE_BUILD_TYPE Release)
 
+message(STATUS "Configuration complete. To build SymDIVINE run 'cd build; make -j2'")

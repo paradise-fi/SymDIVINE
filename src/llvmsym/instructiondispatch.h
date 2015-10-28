@@ -134,6 +134,12 @@ class Dispatcher {
             case llvm::Instruction::Select:
                 self().do_ite( llvm::cast< llvm::SelectInst >( inst ), tid, yield );
                 break;
+            case llvm::Instruction::PtrToInt:
+                self().do_ptrtoint(llvm::cast<llvm::PtrToIntInst>(inst), tid, yield);
+                break;
+            case llvm::Instruction::IntToPtr:
+                self().do_inttoptr(llvm::cast<llvm::IntToPtrInst>(inst), tid, yield);
+                break;
             case llvm::Instruction::LandingPad:
             case llvm::Instruction::Fence:
             case llvm::Instruction::SIToFP:
@@ -148,8 +154,6 @@ class Dispatcher {
             case llvm::Instruction::Invoke:
             case llvm::Instruction::UIToFP:
             case llvm::Instruction::FPToUI:
-            case llvm::Instruction::PtrToInt:
-            case llvm::Instruction::IntToPtr:
             case llvm::Instruction::FCmp:
             default: {
                 std::cerr << "unknown instruction " << opcodename << std::endl;
