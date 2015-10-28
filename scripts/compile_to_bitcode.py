@@ -21,13 +21,14 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
 
     suff = ""
     if supress_output:
-        suff = " 2>/dev/null"
+        suff = " 2> /dev/null"
 
     if fix_volatile:
         lart_path = os.path.join(lart_path, "lart")
         args_no_opt = [x for x in args if not x.startswith("-O")]
         cmd = "clang -c -emit-llvm {0} -o {1} {2}".format(' '.join(args_no_opt), output, src) + suff
-        print cmd
+        if not supress_output:
+            print cmd
 
         if os.system(cmd) != 0:
             print("ERROR")
@@ -35,7 +36,8 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
             return ""
 
         cmd = lart_path + " {0} {1} main-volatilize".format(output, output) + suff
-        print cmd
+        if not supress_output:
+            print cmd
 
         if os.system(cmd) != 0:
             print("ERROR")
@@ -43,7 +45,8 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
             return ""
 
         cmd = "clang -c -emit-llvm {0} -o {1} {2}".format(' '.join(args_no_opt), output, output) + suff
-        print cmd
+        if not supress_output:
+            print cmd
 
         if os.system(cmd) != 0:
             print("ERROR")
@@ -51,7 +54,8 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
             return ""
     else:
         cmd = "clang -c -emit-llvm {0} -o {1} {2}".format(' '.join(args), output, src) + suff
-        print cmd
+        if not supress_output:
+            print cmd
 
         if os.system(cmd) != 0:
             print("ERROR")
