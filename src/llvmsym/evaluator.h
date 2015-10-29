@@ -849,12 +849,11 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         }
     }
 
-    template <typename Yield>
-    void do_ptrtoint(const llvm::PtrToIntInst *inst, int tid, Yield yield) {
-        Value res = deref(llvm::cast<llvm::Value>(inst), tid, false);
-        Value a = deref(inst->getOperand(0), tid);
+    void do_ptrtoint(llvm::Value* r, llvm::Value* oper, int tid) {
+        Value res = deref(r, tid, false);
+        Value a = deref(oper, tid);
         
-        assert(state.layout.isSymbolicPointer(a));
+        assert(state.layout.isSymbolicPointer(a) || a.type == Value::Type::Constant);
         bool multival = state.layout.isMultival(a);
         
         llvm_sym::DataStore* store;
@@ -864,13 +863,11 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
             store = &state.explicitData;
 
         store->implement_ptrtoint(res, a);
-        yield(false, false, false);
     }
 
-    template <typename Yield>
-    void do_inttoptr(const llvm::IntToPtrInst *inst, int tid, Yield yield) {
-        Value res = deref(llvm::cast<llvm::Value>(inst), tid, false);
-        Value a = deref(inst->getOperand(0), tid);
+    void do_inttoptr(llvm::Value* r, llvm::Value* oper, int tid) {
+        Value res = deref(r, tid, false);
+        Value a = deref(oper, tid);
         
         bool multival = state.layout.isMultival(a);
         state.layout.setSymbolicPointer(res, true);
@@ -882,7 +879,6 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
             store = &state.explicitData;
 
         store->implement_inttoptr(res, a);
-        yield(false, false, false);
     }
 
     BB actualBB( int tid ) const
