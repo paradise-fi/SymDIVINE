@@ -14,7 +14,7 @@ If your system doesn't have package for Z3 SMT solver or you want to use the new
 ### Running 
 For simple assert reachability verification of LLVM bitcode run `bin/symdivine reachability <model.ll>` or see `bin/symdivne help` for more info. SymDIVINE supports pthreads, pthread mutexes, atomic sections via SV-COMP notation and more.
 
-You can also use helper script `run_benchmark.py`, which takes a C a C++ file, compiles it and runs SymDIVINE.
+You can also use helper script `scripts/run_symdivine.py`, which takes a C a C++ file, compiles it and runs SymDIVINE.
 
 ## Building
 To build SymDIVINE, yout need `cmake`, `make`, `llvm-3.5`, `z3`, `boost`, `flex` and `bison`.
