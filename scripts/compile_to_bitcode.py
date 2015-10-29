@@ -26,7 +26,7 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
     if fix_volatile:
         lart_path = os.path.join(lart_path, "lart")
         args_no_opt = [x for x in args if not x.startswith("-O")]
-        cmd = "clang -c -emit-llvm {0} -o {1} {2}".format(' '.join(args_no_opt), output, src) + suff
+        cmd = "clang -c -m32 -fno-inline -emit-llvm {0} -o {1} {2}".format(' '.join(args_no_opt), output, src) + suff
         if not supress_output:
             print cmd
 
@@ -44,7 +44,7 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
             print("Transformation failed")
             return ""
 
-        cmd = "clang -c -emit-llvm {0} -o {1} {2}".format(' '.join(args_no_opt), output, output) + suff
+        cmd = "clang -S -m32 -fno-inline -emit-llvm {0} -o {1} {2}".format(' '.join(args_no_opt), output, output) + suff
         if not supress_output:
             print cmd
 
@@ -53,7 +53,7 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
             print("Second phase compilation failed")
             return ""
     else:
-        cmd = "clang -c -emit-llvm {0} -o {1} {2}".format(' '.join(args), output, src) + suff
+        cmd = "clang -S -m32 -fno-inline -emit-llvm {0} -o {1} {2}".format(' '.join(args), output, src) + suff
         if not supress_output:
             print cmd
 
