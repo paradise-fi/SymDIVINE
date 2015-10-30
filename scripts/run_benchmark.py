@@ -185,8 +185,7 @@ if __name__ == "__main__":
 
         if p.returncode != 0:
             print('ERROR')
-
-        if not out is None:
+        elif not out is None:
             if "Safe." in out:
                 print("TRUE")
             elif "Error state" in out:
