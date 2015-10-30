@@ -17,12 +17,9 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
         output = change_suffix(src, "ll")
 
     if fix_inline:
-        args.append('-fgnu89-inline')
-
-    if fix_volatile:
         args.append('-fno-inline')
 
-    args += ['-m32', '-emit-llvm']
+    args += ['-m32', '-emit-llvm', '-fgnu89-inline']
 
     suff = ""
     if supress_output:
@@ -31,7 +28,6 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
     if fix_volatile:
         lart_path = os.path.join(lart_path, "lart")
         args_no_opt = [x for x in args if not x.startswith("-O")]
-        print(args_no_opt)
         cmd = "clang -c {0} -o {1} {2}".format(' '.join(args_no_opt), output, src) + suff
         if not supress_output:
             print cmd
@@ -59,6 +55,7 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
             print("Second phase compilation failed")
             return ""
     else:
+        print("Running without LART")
         cmd = "clang -S {0} -o {1} {2}".format(' '.join(args), output, src) + suff
         if not supress_output:
             print cmd

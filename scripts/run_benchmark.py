@@ -193,8 +193,8 @@ if __name__ == "__main__":
             else:
                 print("UNKNOWN")
         if not err is None:
-            print(out)
             print(err)
+        print(out)
 
         sys.stdout.flush()
     except Timeout:

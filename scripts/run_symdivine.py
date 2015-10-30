@@ -25,12 +25,6 @@ def run_symdivine(symdivine_location, benchmark, symdivine_params = []):
 
     return os.system(cmd) == 0
 
-def compile_benchmark(src, opt_level, tmpdir, bin_path):
-    out = os.path.join(tmpdir, "model.ll")
-    
-    compile_to_bitcode.compile_benchmark(src, [opt_level], out, fix_inline=True, fix_volatile=True, lart_path = bin_path)
-    return out
-
 def rmrf_tmp_dir(d):
     return os.system('rm -rf {0}'.format(d))
 
@@ -92,7 +86,7 @@ if __name__ == "__main__":
     return_code = 1
     try:
         model = os.path.join(tmpdir, "model.ll")
-        print("Running symdivine")
+        print("Preprocessing")
         result = compile_to_bitcode.compile_benchmark(
             src = src, args = [opt], output = model, fix_inline = fix_inline,
             fix_volatile = fix_volatile, lart_path = loc, supress_output = silent)
@@ -100,7 +94,7 @@ if __name__ == "__main__":
         if result == "":
             print("Compilation failed!")
             sys.exit(1)
-
+        print("Running symdivine")
         return_code = run_symdivine(loc, model)
     except Exception as e:
         print(e.message)
