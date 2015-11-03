@@ -6,8 +6,7 @@ R"(SymDIVINE
 Usage:
   symdivine reachability <model> [options]
   symdivine ltl <property> <model> [options]
-  symdivine (-h | --help)
-  symdivine --version
+  symdivine (-h | --help | --version)
 
 Options:
   -h --help           Show this screen.

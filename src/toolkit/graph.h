@@ -138,8 +138,8 @@ public:
                 add_vertex(s);
         }
         else {
-            for (auto id = succ.begin(), info = v_info.begin();
-                id != succ.end(); ++id, ++info)
+            auto info = v_info.begin();
+            for (auto id = succ.begin(); id != succ.end(); ++id, ++info)
             {
                 add_vertex(*id, *info);
             }

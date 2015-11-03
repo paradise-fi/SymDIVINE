@@ -55,7 +55,7 @@ add_executable(symdivine src/symdivine.cpp ${BIN_SOURCES} ${DOCOPT_SOURCES}
 	${BISON_LTL_PARSER_OUTPUTS} ${FLEX_LTL_SCANNER_OUTPUTS})
 
 # Setup libraries
-target_link_libraries(symdivine ${FLEX_LIBRARIES} ${BISON_LIBRARIES})
+# target_link_libraries(symdivine ${FLEX_LIBRARIES} ${BISON_LIBRARIES})
 target_link_libraries(symdivine ${LLVM_LIBRARIES})
 target_link_libraries(symdivine ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(symdivine ${Boost_LIBRARIES})
