@@ -27,6 +27,14 @@ struct Blob {
     T& user_as() {
         return *((T*)getUser());
     }
+    
+    Blob() :
+        mem(nullptr),
+        refcount(nullptr),
+        size(0),
+        user_size(0),
+        explicit_size(0)
+    { }
 
 	Blob(size_t s, size_t e_s, size_t user_s = 0) : mem(new char[s]), refcount(new size_t(1)),
         size(s), user_size(user_s), explicit_size(e_s) {}
@@ -34,13 +42,15 @@ struct Blob {
     Blob(const Blob &snd) : mem(snd.mem), refcount(snd.refcount), size(snd.size),
         user_size(snd.user_size), explicit_size(snd.explicit_size)
     {
-        ++*refcount;
+        if (mem)
+            ++*refcount;
     }
 
     Blob &operator=(const Blob snd) {
         if (this != &snd) {
             if (mem && --*refcount == 0) {
                 delete[] mem;
+                mem = nullptr;
             }
 
             mem = snd.mem;
@@ -48,14 +58,24 @@ struct Blob {
             explicit_size = snd.explicit_size;
             user_size = snd.user_size;
             size = snd.size;
-            ++*refcount;
+            if (mem)
+                ++*refcount;
         }
         return *this;
     }
+    
+    void writeUser(char* mem) const {
+        assert(mem);
+        memcpy(mem, getUser(), getUserSize());
+    }
+    
+    void writeExpl(char* mem) const {
+        assert(mem);
+        memcpy(mem, getExpl(), getExplSize());
+    }
 
     ~Blob() {
-        assert(*refcount >= 1);
-        if (--*refcount == 0) {
+        if (mem && --*refcount == 0) {
             delete[] mem;
             delete refcount;
         }
@@ -135,7 +155,7 @@ struct StateId {
 };
 
 static inline std::ostream& operator<<(std::ostream& o, const StateId& i) {
-    return (o << "<" << i.exp_id << ", " << i.sym_id << ">");
+    return (o << std::dec << "<" << i.exp_id << ", " << i.sym_id << ">");
 }
 
 namespace std {
@@ -172,73 +192,84 @@ class Database {
 public:
     typedef typename StateId::IdType IdType;
 
-    Database() : id_counter(1) {};
+    Database() : id_counter(0) {};
 
     bool seen(const ExplState &st) {
-        auto got = si_table.find(st);
-        if (got == si_table.end())
+        auto got = state2item_table.find(st);
+        if (got == state2item_table.end())
             return false;
         else {
             SymbState sst;
             fillSym(sst, st);
-            return got->second.second.seen(sst);
+            return data[got->second].sym_container.seen(sst);
         }
     }
 
     bool seen(StateId id) {
-        auto got = is_table.find(id);
-        if (got == is_table.end())
+        auto got = id2item_table.find(id);
+        if (got == id2item_table.end())
             return false;
         return true;
     }
 
     //assume st is not yet stored
     StateId insert(const ExplState &st) {
-        auto got = si_table.find(st);
-        if (got == si_table.end()) {
-            SymbContainer sc;
+        auto got = state2item_table.find(st);
+        if (got == state2item_table.end()) {
+            // Create new explicit item
+            data.push_back(ExplicitItem());
+            ExplicitItem& item = data.back();
+            item.explicit_id = ++id_counter;
+            item.exp_state = st;
+            size_t item_idx = data.size() - 1;
+            
+            // Prepare symbolic data
             SymbState sst;
             fillSym(sst, st);
+            
+            // Fill correct id
             StateId id;
-            id.sym_id = sc.insert(sst);
-            si_table.insert(std::make_pair(st, std::make_pair(++id_counter, sc)));
-            id.exp_id = id_counter - 1;
-            is_table.insert(std::make_pair(id, st));
+            id.sym_id = item.sym_container.insert(sst);
+            id.exp_id = item.explicit_id;
+            
+            // Insert correct items in tables
+            state2item_table.insert(std::make_pair(st, item_idx));
+            id2item_table.insert(std::make_pair(id, item_idx));
+            
             return id;
         }
         else {
+            ExplicitItem& item = data[got->second];
+            
             SymbState sst;
             fillSym(sst, st);
             StateId id;
-            id.exp_id = got->second.first;
-            id.sym_id = got->second.second.insert(sst);
-            is_table.insert(std::make_pair(id, st));
+            id.exp_id = item.explicit_id;
+            id.sym_id = item.sym_container.insert(sst);
+            
+            id2item_table.insert(std::make_pair(id, got->second));
             return id;
         }
     }
 
     std::pair<bool, StateId> insertCheck(const ExplState &st) {
-        auto got = si_table.find(st);
-        if (got == si_table.end()) {
-            SymbContainer sc;
-            SymbState sst;
-            fillSym(sst, st);
-            StateId id;
-            id.sym_id = sc.insert(sst);
-            si_table.insert(std::make_pair(st, std::make_pair(++id_counter, sc)));
-            id.exp_id = id_counter - 1;
-            is_table.insert(std::make_pair(id, st));
-            return std::make_pair(true, id);
+        auto got = state2item_table.find(st);
+        if (got == state2item_table.end()) {
+            return std::make_pair(true, insert(st));
         }
         else {
+            ExplicitItem& item = data[got->second];
+            
             SymbState sst;
             fillSym(sst, st);
+            
             StateId id;
-            id.exp_id = got->second.first;
-            std::pair<bool, IdType> ret = got->second.second.insertCheck(sst);
+            id.exp_id = item.explicit_id;
+            std::pair<bool, IdType> ret = item.sym_container.insertCheck(sst);
             id.sym_id = ret.second;
+            
             if (ret.first)
-                is_table.insert(std::make_pair(id, st));
+                id2item_table.insert(std::make_pair(id, got->second));
             return std::make_pair(ret.first, id);
         }
     }
@@ -250,32 +281,50 @@ public:
 
     size_t size() {
         size_t retVal = 0;
-        for (auto e : si_table) {
-            retVal += e.second.second.size();
+        for (auto e : state2item_table) {
+            retVal += data[e.second].sym_container.size();
         }
         return retVal;
     }
 
-    Blob getState(StateId id) {
-        auto res = is_table.find(id);
-        if (res == is_table.end()) {
+    ExplState getState(StateId id) {
+        auto res = id2item_table.find(id);
+        if (res == id2item_table.end()) {
             std::cout << "Table content: ";
-            for(const auto& item : is_table)
-                std::cout << item.first;
+            for(const auto& item : id2item_table)
+                std::cout << item.first << " -> " << item.second;
             std::cout << "\n";
             throw DatabaseException("Cannot find state <"
                     + std::to_string(id.exp_id) + ", "
                     + std::to_string(id.sym_id) + ">");
         }
-        return res->second;
+        
+        const auto& expl_state = data[res->second].exp_state;
+        const auto& sym_state = data[res->second].sym_container.get(id.sym_id);
+        ExplState b(expl_state.getExplSize() + expl_state.getUserSize() + sym_state.getSize(),
+            expl_state.getExplSize(),
+            expl_state.getUserSize());
+
+        expl_state.writeUser(b.getUser());
+        expl_state.writeExpl(b.getExpl());
+        char* sym = b.getSymb();
+        sym_state.writeData(sym); 
+    
+        return b;
     }
 
 private:
-    // Table from explicit state -> <id, Symbolic>
+    struct ExplicitItem {
+        IdType explicit_id;
+        ExplState exp_state;
+        SymbContainer sym_container;
+    };
+    
+    std::vector<ExplicitItem> data;
+    
     std::unordered_map<
-        ExplState, std::pair<IdType, SymbContainer>, ExplHasher, ExplEqual> si_table;
-    // Table from id to explicit state
-    std::unordered_map<StateId, ExplState> is_table;
+        ExplState, size_t, ExplHasher, ExplEqual> state2item_table;
+    std::unordered_map<StateId, size_t> id2item_table;
 
     IdType id_counter; // Holds next free id
 };
@@ -351,6 +400,10 @@ public:
 
     size_t size() {
         return data.size();
+    }
+    
+    const State& get(IdType id) {
+        return data[id - 1];
     }
 private:
     std::vector<State> data;

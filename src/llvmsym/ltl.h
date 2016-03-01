@@ -19,6 +19,7 @@ class Ltl {
 public:
     Ltl(const std::string& model, const std::string& prop);
     void run();
+    void output_state_space(const std::string& filename);
 private:
     typedef typename Ltl2ba<DummyTranslator>::index_type index_type;
     enum class VertexColor { WHITE, GRAY, BLACK };

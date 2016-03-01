@@ -146,7 +146,7 @@ class Dispatcher {
             case llvm::Instruction::IntToPtr: {
                 llvm::Value* res = llvm::cast<llvm::Value>(inst);
                 llvm::Value* oper = inst->getOperand(0);
-                self().do_ptrtoint(res, oper, tid);
+                self().do_inttoptr(res, oper, tid);
                 if (!is_constexpr) {
                     yield(false, false, false);
                 }

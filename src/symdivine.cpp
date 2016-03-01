@@ -5,7 +5,7 @@
 #include "llvmsym/reachability.h"
 #include "llvmsym/ltl.h"
 
-int main( int args, char *argv[] )
+int main(int args, char *argv[])
 {
     try {
         Config.parse_cmd_args(args, argv);
@@ -38,6 +38,7 @@ int main( int args, char *argv[] )
             /**
              * ToDo: Add outputting of statistic data ec.
              */
+            ltl.output_state_space("output.dot");
         }
 
         if (Config.is_set("--statistics")) {
@@ -62,6 +63,9 @@ int main( int args, char *argv[] )
         std::cerr << "Wrong type of command line argument " << e.what() << "\n";
         return 1;
     }
+    /*catch (const z3::exception& e) {
+        std::cerr << "Z3 error: " << e.msg() << "\n";
+    }*/
     return 0;
 }
 

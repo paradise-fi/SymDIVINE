@@ -402,6 +402,10 @@ class SMTStorePartial : public DataStore {
         }
         pushCondition(f);
     }
+    
+    int getBitWidth(Value val) {
+        return bitWidths[val.variable.segmentId][val.variable.offset];
+    }
 
     virtual void implement_add( Value result_id, Value a_id, Value b_id )
     {

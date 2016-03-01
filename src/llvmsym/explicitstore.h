@@ -439,7 +439,7 @@ std::ostream & operator<<( std::ostream & o, const ValueStore< Element > &v )
     o << "data:\n";
 
     for ( unsigned sid = 0; sid < v._data.size(); ++sid ) {
-        o << "stack No. " << sid << ":\n";
+        o << "stack " << sid << ":\n";
 
         o << "[ ";
         for ( auto &i : v._data[sid] )

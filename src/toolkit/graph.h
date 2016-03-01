@@ -34,7 +34,7 @@ template <class VertexId, class VertexInfo = NoInfo, class EdgeInfo = NoInfo,
     class VertexHasher = std::hash<VertexId>, class VertexEq = std::equal_to<VertexId> >
 class Graph {
 public:
-    Graph() : last_check_valid(false), last_res(vertices.end()) { }
+    Graph() = default;
 
     /**
      * Inserts new vertex into graph.
@@ -44,7 +44,6 @@ public:
      */
     template <class... Args>
     bool add_vertex(VertexId id, Args...args) {
-        last_check_valid = false;
         auto res = vertices.find(id);
         if (res != vertices.end())
             return false;
@@ -59,7 +58,6 @@ public:
      * @return true if the removal was successful
      */
     bool remove_vertex(VertexId id) {
-        last_check_valid = false;
         auto res = vertices.find(id);
         if (res == vertices.end())
             return false;
@@ -125,8 +123,6 @@ public:
         assert((v_info.empty() && e_info.empty()) ||
             (succ.size() == v_info.size() && succ.size() == e_info.size()));
 
-        last_check_valid = false;
-
         auto res = vertices.find(from);
         if (res == vertices.end())
             return false;
@@ -157,14 +153,6 @@ public:
     /**
      * Returns all successors of the given vertex
      */
-    const std::vector<VertexId>& get_successors(VertexId id) {
-        if ((!last_check_valid || last_check != id) && !exists(id))
-            throw GraphException("No such vertex!");
-        if (last_res != vertices.end())
-            return last_res->second.neighbors;
-        throw GraphException("No such vertex!");
-    }
-
     const std::vector<VertexId>& get_successors(VertexId id) const {
         auto res = vertices.find(id);
         if (res == vertices.end())
@@ -175,17 +163,9 @@ public:
     /**
      * Returns corresponding edge info for successors
      */
-    const std::vector<EdgeInfo>& get_successors_edges(VertexId id) {
-        if ((!last_check_valid || last_check != id) && !exists(id))
-            throw GraphException("No such vertex!");
-        if (last_res != vertices.end())
-            return last_res->second.edge_info;
-        throw GraphException("No such vertex!");
-    }
-
     const std::vector<EdgeInfo>& get_successors_edges(VertexId id) const {
         auto res = vertices.find(id);
-        if (res == vertices.edn())
+        if (res == vertices.end())
             throw GraphException("No such vertex!");
         return res->second.edge_info;
     }
@@ -213,18 +193,15 @@ public:
      * Return true if given vertex exists
      */
     bool exists(VertexId id) {
-        last_check_valid = true;
-        last_check = id;
-        last_res = vertices.find(id);
+        auto last_res = vertices.find(id);
         return last_res != vertices.end();
     }
 
     VertexInfo& get_vertex_info(VertexId id) {
-        if ((!last_check_valid || last_check != id) && !exists(id))
+        auto res = vertices.find(id);
+        if (res == vertices.end())
             throw GraphException("No such vertex!");
-        if (last_res != vertices.end())
-            return last_res->second.vertex_info;
-        throw GraphException("No such vertex!");
+        return res->second.vertex_info;
     }
     
     const VertexInfo& get_vertex_info(VertexId id) const {
@@ -232,6 +209,24 @@ public:
         if (res == vertices.end())
             throw GraphException("No such vertex!");
         return res->second.vertex_info;
+    }
+    
+    template <class IdFormat, class LabelFormat, class StyleFormat>
+    void to_dot(std::ostream& o, IdFormat id_format, LabelFormat label_format,
+        StyleFormat style_format )
+    {
+        o << "digraph state_space {\n";
+        for (const auto& state : vertices) {
+            std::string id = id_format(state.first);
+            std::string vert = id + "[label=\"" + label_format(state.first)
+                + "\"" + style_format(state.first) + "]";
+            o << "\t" << vert << "\n";
+            
+            for (const auto& n : state.second.neighbors) {
+                o << "\t" << id << " -> " << id_format(n) << "\n";
+            }
+        }
+        o << "\n}\n";
     }
 
     // ToDo: Implement other operations including BATCH!
@@ -247,8 +242,4 @@ private:
     };
 
     std::unordered_map<VertexId, Vertex, VertexHasher, VertexEq> vertices;
-
-    bool last_check_valid;
-    VertexId last_check;
-    typename std::unordered_map<VertexId, Vertex, VertexHasher, VertexEq>::iterator last_res;
 };

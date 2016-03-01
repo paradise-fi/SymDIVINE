@@ -300,6 +300,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
 		    }
 		    else {
 			    state.explicitData.implement_store(argument_dest, argument);
+    		    state.data.implement_store(argument_dest, argument);
 		    }
 	    }
     }
@@ -498,6 +499,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                     state.data.implement_store( arg_value, params[ arg_no ] );
                 } else {
                     state.explicitData.implement_store( arg_value, params[ arg_no ] );
+                    state.data.implement_store(arg_value, params[arg_no]);
                 }
             }
             yield(atomic_section, false, true);
@@ -584,11 +586,15 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         from.pointer = inst->getType()->isPointerTy();
 
         state.layout.setMultival( result, state.layout.isMultival( from ) );
-        if ( state.layout.isMultival( from ) )
-            state.data.implement_store( result, from );
-        else
-            state.explicitData.implement_store( result, from );
-        yield( !amILonelyThread(), false, true );
+        if (state.layout.isMultival(from))
+            state.data.implement_store(result, from);
+        else {
+            state.explicitData.implement_store(result, from);
+            state.data.implement_store(result, from);
+        }
+        // We want to verify LTL, we have to yield it
+        //yield( !amILonelyThread(), false, true );
+        yield(true, false, true); 
     }
 
     template < typename Yield >
@@ -608,11 +614,15 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         to.pointer = store_inst->getValueOperand()->getType()->isPointerTy();
 
         state.layout.setMultival( to, state.layout.isMultival( value ) );
-        if ( state.layout.isMultival( value ) )
-            state.data.implement_store( to, value );
-        else
-            state.explicitData.implement_store( to, value );
-        yield( !amILonelyThread(), false, true );
+        if (state.layout.isMultival(value))
+            state.data.implement_store(to, value);
+        else {
+            state.explicitData.implement_store(to, value);
+            state.data.implement_store(to, value);
+        }
+        // We want to verify LTL, we have to yield it
+        //yield( !amILonelyThread(), false, true );
+        yield(true, false, true);
     }
 
     template < typename Yield >
@@ -630,10 +640,12 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         Value result = deref( phi, tid, false );
 
         state.layout.setMultival( result, state.layout.isMultival( incoming ) );
-        if ( state.layout.isMultival( incoming ) )
-            state.data.implement_store( result, incoming );
-        else
-            state.explicitData.implement_store( result, incoming );
+        if (state.layout.isMultival(incoming))
+            state.data.implement_store(result, incoming);
+        else {
+            state.explicitData.implement_store(result, incoming);
+            state.data.implement_store(result, incoming);
+        }
 
         yield( false, false, true );
     }
@@ -659,12 +671,14 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
 
         state.layout.setMultival( result, false );
         state.explicitData.implement_store( result, Value( 1, result_bw ) );
+        state.data.implement_store(result, Value(1, result_bw));
         assert( state.explicitData.get( result ) == 1 );
         yield( false, store->empty() );
 
         store->prune( a, b, icmp_negate( ICmp_Op( cmp_inst->getPredicate() ) ) );
         state.layout.setMultival( result, false );
         state.explicitData.implement_store( result, Value( 0, result_bw ) );
+        state.data.implement_store(result, Value(0, result_bw));
         assert( state.explicitData.get( result ) == 0 );
         yield( false, store->empty(), true );
     }
@@ -793,6 +807,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                 state.data.implement_store( caller_return_val, calee_return_val );
             else {
                 state.explicitData.implement_store( caller_return_val, calee_return_val );
+                state.data.implement_store(caller_return_val, calee_return_val);
             }
 
             leave( tid );
@@ -975,7 +990,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         getGlobalsBitWidths( globals_bitwidths );
 
         state.explicitData.addSegment( 0, globals_expl_bitwidths );
-        state.data.addSegment( 0, std::vector< int >() );
+        state.data.addSegment(0, globals_expl_bitwidths );
         state.layout.addSegment( 0, globals_expl_bitwidths );
 
         state.data.addSegment( 1, globals_bitwidths );
@@ -1002,8 +1017,10 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                 if ( g_var_it->getInitializer()->getType()->isAggregateType() ) {
                     Pointer ptr_to_global_aux = ptr_to_global;
                     for ( int i = 0; i < *g_width_it; ++i ) {
-                        state.layout.setMultival( deref( ptr_to_global_aux ), false );
-                        state.explicitData.implement_store( deref( ptr_to_global_aux ), Value( 0, 64 ) );
+                        auto value = deref(ptr_to_global_aux);
+                        state.layout.setMultival( value, false );
+                        state.explicitData.implement_store( value, Value( 0, 64 ) );
+                        state.data.implement_store(value, Value(0, state.data.getBitWidth(value)));
                         ++ptr_to_global_aux.content.offset;
                     }
 
@@ -1015,6 +1032,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
 
                     state.layout.setMultival( deref( ptr_to_global ), false );
                     state.explicitData.implement_store( deref( ptr_to_global ), initializer );
+                    state.data.implement_store(deref(ptr_to_global), initializer);
                 } else {
                     if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
                         std::cerr << "initializer for "; g_var_it->dump();
@@ -1026,6 +1044,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
             state.layout.setMultival( global_ptr, false );
             Value ptr_content = Value( static_cast< uint64_t >( ptr_to_global ), 64 );
             state.explicitData.implement_store( global_ptr, ptr_content );
+            state.data.implement_store(global_ptr, ptr_content);
         }
 
 	    assert(functionmap.count(main) > 0);
@@ -1114,7 +1133,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
                         state.properties.empty = true; // ToDo: Think about nicer way...
                     }
                     if (!is_empty) {
-                        if (is_observable || is_error()) {
+	                    if (is_observable || is_error()) {
                             yield();
                         } else {
                             to_do.push(std::move(state));

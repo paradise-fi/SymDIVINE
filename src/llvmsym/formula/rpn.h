@@ -151,7 +151,7 @@ struct Formula {
                     
                     }
                 case Constant:
-                    ss << value;
+                    ss << value << "[" << (int)id.bw << "]";
                     return ss.str();
                     
                 case Identifier:
@@ -161,7 +161,8 @@ struct Formula {
                        << "_off"
                        << id.off
                        << "_gen"
-                       << id.gen;
+                       << id.gen
+                       << "[" << (int)id.bw << "]";
                     return ss.str();
                 case BoolVal:
                     if ( value )

@@ -286,11 +286,17 @@ const Formula fromz3( const z3::expr &expr )
 
 z3::expr toz3( const Formula &f, char vpref, z3::context &c )
 {
-    assert( f.sane() );
-    std::vector< z3::expr > stack;
-    rpn2z3( f, stack, c, vpref );
+    try {
+        assert(f.sane());
+        std::vector< z3::expr > stack;
+        rpn2z3(f, stack, c, vpref);
    
-    return stack.empty() ? c.bool_val( true ) : stack[0];
+        return stack.empty() ? c.bool_val(true) : stack[0];
+    }
+    catch (const z3::exception& e) {
+        std::cerr << "toz3: invalid formula " << f << "\n";
+        throw e;
+    }
 }
 
 z3::expr forall( const std::vector< z3::expr > &v, const z3::expr & b )
@@ -352,11 +358,17 @@ Formula simplify( const Formula &f )
     z3::context ctx;
     
     try {
-        return simplify( toz3( f, 'a', ctx ), "ctx-solver-simplify" );
-    } catch ( std::exception e ) {
+        return simplify(toz3(f, 'a', ctx), "ctx-solver-simplify");
+    }
+    catch (std::exception e) {
         if (Config.is_set("--verbose") || Config.is_set("--vverbose"))
             std::cerr << "continuing with non-simplified formula " << f << std::endl;
         return f;
+    }
+    catch (const z3::exception& e) {
+        std::cerr << "Warning: z3 simplify failed, continuing with non-simplified"
+            " formula " << f << std::endl;
+        abort();
     }
 
 }
