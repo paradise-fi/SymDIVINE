@@ -229,7 +229,12 @@ public:
         o << "\n}\n";
     }
 
-    // ToDo: Implement other operations including BATCH!
+    template <class F>
+    void transform_vertices(F f) {
+        for (auto& vertex : vertices) {
+            f(vertex.second.vertex_info);
+        }        
+    }
 
 private:
     /**

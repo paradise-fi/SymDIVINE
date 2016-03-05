@@ -91,12 +91,10 @@ namespace llvm_sym {
 		z3::context c;
 		z3::solver s(c);
 
-		unsigned int timeout = 1 << (unknown_instances / 5);
-
 		z3::params p(c);
 		p.set(":mbqi", true);
-		/*if (!Config.is_set("--disabletimout"))
-			p.set("SOFT_TIMEOUT", timeout);*/
+		if (!Config.is_set("--disabletimeout"))
+			p.set(":timeout", 1000u);
 		s.set(p);
 
 		bool is_caching_enabled = Config.is_set("--enablecaching");
@@ -175,7 +173,6 @@ namespace llvm_sym {
 				if (Config.is_set("--vverbose"))
 					std::cerr << "while checking:\n" << s;
 				std::cerr << "\ngot 'unknown', reason: " << s.reason_unknown() << std::endl;
-				std::cerr << "\ttimeout = " << timeout << std::endl;
 			}
 		}
 

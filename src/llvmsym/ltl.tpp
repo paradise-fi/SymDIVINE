@@ -1,8 +1,9 @@
 #pragma once
 
 template <class Store, class Hit>
-Ltl<Store, Hit>::Ltl(const std::string& model, const std::string& prop)
-	: model_name(model), ba("! (" + prop + ")")
+Ltl<Store, Hit>::Ltl(const std::string& model, const std::string& prop,
+    bool depth_bounded)
+	: model_name(model), depth_bounded(depth_bounded), ba("! (" + prop + ")")
 {
 	// ToDo: Check if the file is valid
 }
@@ -33,18 +34,36 @@ void Ltl<Store, Hit>::run() {
 }
 
 template <class Store, class Hit>
+void Ltl<Store, Hit>::reset_dfs() {
+    graph.transform_vertices([&](VertexInfo& info) {
+        info.reset();
+    });
+}
+
+template <class Store, class Hit>
 void Ltl<Store, Hit>::run_nested_dfs(Evaluator<Store>& eval, StateId start_vertex) {
 	if (!graph.exists(start_vertex))
 		throw LtlException("Initial vertex not found!");
 
 	std::stack<StateId> to_process;
 	to_process.push(start_vertex);
-	bool accepting_found = false;
+
+	bool accepting_found     = false;
+    bool depth_bound_reached = false;
+    size_t depth_bound       = 32;
 
 	while (!accepting_found && !to_process.empty()) {
 		auto vertex_id = to_process.top();
-		VertexInfo& info = graph.get_vertex_info(vertex_id);
-		Blob b = knowns.getState(vertex_id);
+		VertexInfo& info = graph.get_vertex_info(vertex_id);	
+
+        // Check depth bound
+        if (depth_bounded && info.depth >= depth_bound) {
+            to_process.pop();
+            depth_bound_reached = true;
+            continue;
+        }
+        
+        Blob b = knowns.getState(vertex_id);
 		if (info.outer_color == VertexColor::WHITE) {
 			// New vertex, generate successors & change color
 			const auto& succs = graph.get_successors(vertex_id);
@@ -52,8 +71,9 @@ void Ltl<Store, Hit>::run_nested_dfs(Evaluator<Store>& eval, StateId start_verte
 				<< vertex_id.sym_id << ", " << b.user_as<index_type>() << ">\n";
 			if (succs.empty()) {
 				// We have to generate new successors
-				std::vector<StateId> successors_ids;
-                std::vector<StateId> successors_to_process;
+				std::vector<StateId>    successors_ids;
+                std::vector<VertexInfo> successors_info;
+                std::vector<StateId>    successors_to_process;
 
 				// Generate product with BA
 				auto ba_graph = ba.get_ba();
@@ -86,14 +106,15 @@ void Ltl<Store, Hit>::run_nested_dfs(Evaluator<Store>& eval, StateId start_verte
                             successors_to_process.push_back(result.second);
 						}
                         successors_ids.push_back(result.second);
+                        successors_info.push_back({ VertexColor::WHITE,
+                            VertexColor::WHITE, info.depth + 1 });
 					});
 				}
 
                 /*std::random_shuffle(successors_to_process.begin(),
                     successors_to_process.end());*/
-                graph.add_successors(vertex_id, successors_ids);
-    			/*if (successors_ids.empty())
-        			graph.add_edge(vertex_id, vertex_id);*/
+                graph.add_successors(vertex_id, successors_ids,
+                    successors_info, std::vector<NoInfo>(successors_info.size()));
 
                 std::cout << "Successors: ";
                 for (const auto& id : successors_to_process) {
@@ -104,6 +125,11 @@ void Ltl<Store, Hit>::run_nested_dfs(Evaluator<Store>& eval, StateId start_verte
 
                 std::cout << successors_ids.size() << " successors generated\n";
 			}
+            if (depth_bounded) {
+                for (const auto& id : succs) {
+                    to_process.push(id);
+                }
+            }
 			info.outer_color = VertexColor::GRAY;
 		}
 		else if (info.outer_color == VertexColor::GRAY) {
@@ -117,13 +143,23 @@ void Ltl<Store, Hit>::run_nested_dfs(Evaluator<Store>& eval, StateId start_verte
 			index_type ba_vertex = b.user_as<index_type>();
 			if (ba.get_ba().get_vertex_info(ba_vertex))
 				accepting_found |= run_inner_dfs(vertex_id);
-			/*if (accepting_found)
-				break;*/
+			if (accepting_found)
+				break;
 		}
 		else if (info.outer_color == VertexColor::BLACK) {
 			// Vertex was put multiple times onto stack
 			to_process.pop();
 		}
+
+        // Check if the DFS is ending
+        if (depth_bounded && to_process.empty() && depth_bound_reached) {
+            reset_dfs();
+            depth_bound *= 2;
+            depth_bound_reached = false;
+            to_process.push(start_vertex);
+            std::cout << "   Starting new depth " << depth_bound << "\n"
+                         "============================\n";
+        }
 	}
 
 	if (accepting_found)

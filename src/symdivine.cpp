@@ -33,7 +33,8 @@ int main(int args, char *argv[])
 
         if (Config.is_set("ltl")) {
             Ltl<SMTStore, SMTSubseteq<SMTStore>>
-                ltl(Config.get_string("<model>"), Config.get_string("<property>"));
+                ltl(Config.get_string("<model>"), Config.get_string("<property>"),
+                    Config.is_set("--iterative"));
             ltl.run();
             /**
              * ToDo: Add outputting of statistic data ec.

@@ -17,7 +17,7 @@ public:
 template <class Store, class Hit>
 class Ltl {
 public:
-    Ltl(const std::string& model, const std::string& prop);
+    Ltl(const std::string& model, const std::string& prop, bool depth_bound = false);
     void run();
     void output_state_space(const std::string& filename);
 private:
@@ -25,14 +25,21 @@ private:
     enum class VertexColor { WHITE, GRAY, BLACK };
     struct VertexInfo {
         VertexInfo(VertexColor outer = VertexColor::WHITE,
-                   VertexColor inner = VertexColor::WHITE)
-            : outer_color(outer), inner_color(inner) {}
+                   VertexColor inner = VertexColor::WHITE,
+                   size_t depth = 0)
+            : outer_color(outer), inner_color(inner), depth(depth) {}
+        
+        void reset() {
+            outer_color = inner_color = VertexColor::WHITE;
+        }
 
         VertexColor outer_color;
         VertexColor inner_color;
+        size_t      depth;
     };
 
     std::string model_name; // Name of the file with bitcode
+    bool depth_bounded; // Use iterative DFS?
     Ltl2ba<LtlTranslator> ba; // Buchi automaton for given property
     Database<Blob, Store, LinearCandidate<Store, Hit>, blobHashExplicitUserPart,
         blobEqualExplicitUserPart> knowns; // Database of the states
@@ -42,6 +49,11 @@ private:
      * Runs nested DFS with given initial state
      */
     void run_nested_dfs(Evaluator<Store>& eval, StateId start_vertex);
+    
+    /**
+     * Resets DFS state, so next iteration can be started
+     */
+    void reset_dfs();
 
     /**
      * Run inner pass of nested DFS
