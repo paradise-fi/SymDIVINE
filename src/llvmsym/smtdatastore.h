@@ -1,6 +1,6 @@
 #pragma once
 
-#include <llvmsym/datastore.h>
+#include <llvmsym/base_smt_datastore.h>
 #include <llvmsym/formula/rpn.h>
 #include <llvmsym/formula/z3.h>
 #include <llvmsym/programutils/statistics.h>
@@ -18,7 +18,7 @@
 
 namespace llvm_sym {
 
-	class SMTStore : public DataStore {
+	class SMTStore : public BaseSMTStore<SMTStore> {
 		std::vector< short unsigned > segments_mapping;
 		std::vector< std::vector< short unsigned > > generations;
 		std::vector< std::vector< char > > bitWidths;
@@ -34,7 +34,7 @@ namespace llvm_sym {
 			return Formula::Ident(
 			            segment_mapped_to,
 			            val.variable.offset,
-			            getGeneration(val.variable.segmentId, val.variable.offset),
+			            get_generation(val.variable.segmentId, val.variable.offset),
 			            bitWidths[val.variable.segmentId][val.variable.offset]
 			            );
 		}
@@ -47,7 +47,7 @@ namespace llvm_sym {
 				return Formula::buildIdentifier(Formula::Ident(
 				            segment_mapped_to,
 				            val.variable.offset,
-				            getGeneration(val.variable.segmentId, val.variable.offset),
+				            get_generation(val.variable.segmentId, val.variable.offset),
 				            bitWidths[val.variable.segmentId][val.variable.offset]
 				            ));
 			}
@@ -61,19 +61,19 @@ namespace llvm_sym {
 				return Formula::buildIdentifier(Formula::Ident(
 				            segment_mapped_to,
 				            val.variable.offset,
-				            getGeneration(val.variable.segmentId, val.variable.offset, advance_generation),
+				            get_generation(val.variable.segmentId, val.variable.offset, advance_generation),
 				            bitWidths[val.variable.segmentId][val.variable.offset]
 				            ));
 			}
 		}
 
-		int getGeneration(unsigned segId, unsigned offset) const {
+		int get_generation(unsigned segId, unsigned offset) const {
 			assert(segId < generations.size());
 			assert(offset < generations[segId].size());
 			return generations[segId][offset];
 		}
 
-		int getGeneration(unsigned segId, unsigned offset, bool advance_generation) {
+		int get_generation(unsigned segId, unsigned offset, bool advance_generation) {
 			assert(segId < generations.size());
 			assert(offset < generations[segId].size());
 			short unsigned &g = generations[segId][offset];
@@ -88,24 +88,24 @@ namespace llvm_sym {
 
 			return g;
 		}
-		int getGeneration(Value val, bool advance_generation = false) {
+		int get_generation(Value val, bool advance_generation = false) {
 			assert(val.type == Value::Type::Variable);
-			return getGeneration(val.variable.segmentId, val.variable.offset, advance_generation);
+			return get_generation(val.variable.segmentId, val.variable.offset, advance_generation);
 		}	
 
-		void pushCondition(const Formula &f) {
+		void push_condition(const Formula &f) {
 			path_condition.push_back(f);
 			simplify();
 		}
 
-		void pushDefinition(Value symbol_id, const Formula &def) {
+		void push_definition(Value symbol_id, const Formula &def) {
 			assert(def.sane());
 			assert(!def._rpn.empty());
 			int segment_mapped_to = segments_mapping[symbol_id.variable.segmentId];
 			auto ident = Formula::Ident(
 			                segment_mapped_to,
 			                symbol_id.variable.offset,
-			                getGeneration(symbol_id.variable.segmentId, symbol_id.variable.offset, true),
+			                get_generation(symbol_id.variable.segmentId, symbol_id.variable.offset, true),
 			                bitWidths[symbol_id.variable.segmentId][symbol_id.variable.offset]
 			);
 			const Definition whole_def = Definition(ident, def);
@@ -137,7 +137,7 @@ namespace llvm_sym {
 			int segment_mapped_to = segments_mapping[symbol_id.variable.segmentId];
 			int offset = symbol_id.variable.offset;
 
-			int gen = getGeneration(symbol_id.variable.segmentId, offset);
+			int gen = get_generation(symbol_id.variable.segmentId, offset);
 
 			return dependsOn(segment_mapped_to, offset, gen);
 		}
@@ -241,154 +241,16 @@ namespace llvm_sym {
 			std::vector<Formula::Ident> ids;
 			for (auto &i : f._rpn) {
 				if (i.kind == Formula::Item::Kind::Identifier) {
-					i.id.gen = getGeneration(i.id.seg, i.id.off, false);
+					i.id.gen = get_generation(i.id.seg, i.id.off, false);
 					i.id.bw = bitWidths[i.id.seg][i.id.off];
 				}
 			}
-			pushCondition(f);
+			push_condition(f);
 		}
     	
     	int getBitWidth(Value val) {
         	return bitWidths[val.variable.segmentId][val.variable.offset];
     	}
-
-		virtual void implement_add(Value result_id, Value a_id, Value b_id) {
-			Formula a_expr = build_expression(a_id);
-			Formula b_expr = build_expression(b_id);
-			pushDefinition(result_id, a_expr + b_expr);
-		}
-
-		virtual void implement_mult(Value result_id, Value a_id, Value b_id) {
-			Formula a_expr = build_expression(a_id);
-			Formula b_expr = build_expression(b_id);
-			pushDefinition(result_id, a_expr * b_expr);
-		}
-
-		virtual void implement_sub(Value result_id, Value a_id, Value b_id) {
-			Formula a_expr = build_expression(a_id);
-			Formula b_expr = build_expression(b_id);
-			pushDefinition(result_id, a_expr - b_expr);
-		}
-
-		virtual void implement_div(Value result_id, Value a_id, Value b_id) {
-			Formula a_expr = build_expression(a_id);
-			Formula b_expr = build_expression(b_id);
-			pushDefinition(result_id, a_expr / b_expr);
-		}
-    
-		virtual void implement_urem(Value result_id, Value a_id, Value b_id) {
-			Formula a_expr = build_expression(a_id);
-			Formula b_expr = build_expression(b_id);
-			pushDefinition(result_id, a_expr.buildURem(b_expr));
-		}
-    
-		virtual void implement_srem(Value result_id, Value a_id, Value b_id) {
-			Formula a_expr = build_expression(a_id);
-			Formula b_expr = build_expression(b_id);
-			pushDefinition(result_id, a_expr.buildSRem(b_expr));
-		}
-
-		virtual void implement_and(Value result_id, Value a_id, Value b_id) {
-			Formula a_expr = build_expression(a_id);
-			Formula b_expr = build_expression(b_id);
-			pushDefinition(result_id, a_expr & b_expr);
-		}
-
-		virtual void implement_or(Value result_id, Value a_id, Value b_id) {
-			Formula a_expr = build_expression(a_id);
-			Formula b_expr = build_expression(b_id);
-			pushDefinition(result_id, a_expr | b_expr);
-		}
-
-		virtual void implement_xor(Value result_id, Value a_id, Value b_id) {
-			Formula a_expr = build_expression(a_id);
-			Formula b_expr = build_expression(b_id);
-			pushDefinition(result_id, a_expr ^ b_expr);
-		}
-
-		virtual void implement_left_shift(Value result_id, Value a_id, Value b_id) {
-			Formula a_expr = build_expression(a_id);
-			Formula b_expr = build_expression(b_id);
-			pushDefinition(result_id, a_expr << b_expr);
-		}
-
-		virtual void implement_right_shift(Value result_id, Value a_id, Value b_id) {
-			Formula a_expr = build_expression(a_id);
-			Formula b_expr = build_expression(b_id);
-			pushDefinition(result_id, a_expr >> b_expr);
-		}
-
-		virtual void implement_store(Value result_id, Value what) {
-			Formula what_expr = build_expression(what);
-			pushDefinition(result_id, what_expr);
-		}
-
-		virtual void implement_ZExt(Value result_id, Value a_id, int bw) {
-			Formula what_expr = build_expression(a_id);
-			pushDefinition(result_id, what_expr.buildZExt(bw));
-		}
-
-		virtual void implement_SExt(Value result_id, Value a_id, int bw) {
-			Formula what_expr = build_expression(a_id);
-			pushDefinition(result_id, what_expr.buildSExt(bw));
-		}
-
-		virtual void implement_Trunc(Value result_id, Value a_id, int bw) {
-			Formula what_expr = build_expression(a_id);
-			pushDefinition(result_id, what_expr.buildTrunc(bw));
-		}
-
-		virtual void prune(Value a, Value b, ICmp_Op op) {
-			Formula a_expr = build_expression(a);
-			Formula b_expr = build_expression(b);
-			switch (op) {
-			case ICmp_Op::EQ:
-				pushCondition(a_expr == b_expr);
-				break;
-			case ICmp_Op::NE:
-				pushCondition(a_expr != b_expr);
-				break;
-			case ICmp_Op::UGT:
-				pushCondition(a_expr.buildUGT(b_expr));
-				break;
-			case ICmp_Op::SGT:
-				pushCondition(a_expr > b_expr);
-				break;
-			case ICmp_Op::UGE:
-				pushCondition(a_expr.buildUGEq(b_expr));
-				break;
-			case ICmp_Op::SGE:
-				pushCondition(a_expr >= b_expr);
-				break;
-			case ICmp_Op::ULT:
-				pushCondition(a_expr.buildULT(b_expr));
-				break;
-			case ICmp_Op::SLT:
-				pushCondition(a_expr < b_expr);
-				break;
-			case ICmp_Op::ULE:
-				pushCondition(a_expr.buildULEq(b_expr));
-				break;
-			case ICmp_Op::SLE:
-				pushCondition(a_expr <= b_expr);
-				break;
-			}
-		}
-    	
-		virtual void implement_inttoptr(Value result_id, Value a_id) {
-	        Formula what_expr = build_expression(a_id).buildZExt(64);
-	        pushDefinition(result_id, what_expr);
-		}
-    	
-		virtual void implement_ptrtoint(Value result_id, Value a_id) {
-		    Formula what_expr = build_expression(a_id).buildTrunc(
-        		bitWidths[result_id.variable.segmentId][result_id.variable.offset]);
-		    pushDefinition(result_id, what_expr);
-		}
-
-		virtual void implement_input(Value input_variable, unsigned bw) {
-			getGeneration(input_variable, true);
-		}
 
 		virtual void addSegment(unsigned id, const std::vector< int > &bit_widths) {
 			segments_mapping.insert(segments_mapping.begin() + id, fst_unused_id++);
