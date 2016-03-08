@@ -38,7 +38,7 @@ private:
         size_t      depth;
     };
 
-    std::string model_name; // Name of the file with bitcode
+    Evaluator<Store> eval; // Evaluator for the bitcode
     bool depth_bounded; // Use iterative DFS?
     Ltl2ba<LtlTranslator> ba; // Buchi automaton for given property
     Database<Blob, Store, LinearCandidate<Store, Hit>, blobHashExplicitUserPart,
@@ -48,7 +48,7 @@ private:
     /**
      * Runs nested DFS with given initial state
      */
-    void run_nested_dfs(Evaluator<Store>& eval, StateId start_vertex);
+    void run_nested_dfs(StateId start_vertex);
     
     /**
      * Resets DFS state, so next iteration can be started
@@ -60,6 +60,12 @@ private:
      * @return true if accepting cycle is found
      */
     bool run_inner_dfs(StateId start_vertex);
+    
+    /**
+     * Generate successors of given vertex, insert them into knowns and
+     * return their Ids
+     */
+    std::vector<StateId> generate_successors(StateId vertex_id);
 };
 
 #include "ltl.tpp"
