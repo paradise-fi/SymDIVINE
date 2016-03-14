@@ -25,7 +25,7 @@ namespace {
                 break;
             case Formula::Item::Trunc:
                 res.push_back( z3::expr( c,
-                            Z3_mk_extract( c, i.value - 1, 0, l ) ) );
+                            Z3_mk_extract( c, i.value >> 16, i.value & 0xFFFF, l ) ) );
                 break;
             case Formula::Item::BNot:
                 res.push_back( z3::expr( c, Z3_mk_bvnot( c, l ) ) );
@@ -125,7 +125,7 @@ namespace {
                 break;
             case Formula::Item::Trunc:
                 res.push_back( z3::expr( c,
-                            Z3_mk_extract( c, i.value - 1, 0, l ) ) );
+                            Z3_mk_extract( c, i.value >> 16, i.value & 0xFFFF, l ) ) );
                 break;
             default:
                 abort();
@@ -134,7 +134,7 @@ namespace {
 
     void constant2z3( const Formula::Item &i, std::vector< z3::expr > &res, z3::context &c )
     {
-        res.push_back( c.bv_val( i.value, i.id.bw ) );
+        res.push_back( c.bv_val((__uint64)i.value, i.id.bw ) );
     }
     
     void bool2z3( const Formula::Item &i, std::vector< z3::expr > &res, z3::context &c )
@@ -208,7 +208,7 @@ const Formula fromz3( const z3::expr &expr )
         return Formula::buildIdentifier( Formula::Ident( segment, offset, generation, bw ) );
     } else if ( is_bv ) {
         ss << expr;
-        int n;
+        uint64_t n;
         ss.read( dummy, 2 ); // #x
         ss << std::hex;
         assert( expr.decl().is_const() );
@@ -261,7 +261,7 @@ const Formula fromz3( const z3::expr &expr )
                 switch ( expr.decl().decl_kind() ) {
                     case Z3_OP_SIGN_EXT: return l.buildSExt( expr.get_sort().bv_size() );
                     case Z3_OP_ZERO_EXT: return l.buildZExt( expr.get_sort().bv_size() );
-                    case Z3_OP_EXTRACT:  return l.buildTrunc( expr.get_sort().bv_size() );
+                    case Z3_OP_EXTRACT:  return l.buildTrunc( expr.hi(), expr.lo() );
                     case Z3_OP_NOT:      return !l;
                     case Z3_OP_BNOT:     return l.buildBNot();
                     default:
@@ -347,7 +347,6 @@ Formula simplify( const z3::expr f, std::string tactics )
 
     if ( empty )
         return fromz3();
-
     return fromz3( result_expr );
 }
 

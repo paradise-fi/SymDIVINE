@@ -84,7 +84,7 @@ struct Formula {
         Kind kind;
         Operator op;
         Ident id; // for Identifiers
-        int value; // for Constants
+        uint64_t value; // for Constants and operator parameters
 
         bool is_unary_op() const
         {
@@ -119,36 +119,37 @@ struct Formula {
             switch ( kind ) {
                 case Op:
                     switch ( op ) {
-                        case Plus:  return " + ";
-                        case Minus: return " - ";
-                        case Times: return " * ";
-                        case Div:   return " / ";
-                        case Eq:    return " == ";
-                        case SRem:    return " % ";
-                        case URem:    return " % ";
-                        case NEq:   return " != ";
-                        case LT:    return " < ";
-                        case ULT:    return " < ";
-                        case LEq:   return " <= ";
-                        case ULEq:   return " <= ";
-                        case GT:    return " > ";
-                        case UGT:   return " > ";
-                        case GEq:   return " >= ";
-                        case UGEq:   return " >= ";
-                        case BAnd:   return " & ";
-                        case Shl:   return " << ";
+                        case Plus:     return " + ";
+                        case Minus:    return " - ";
+                        case Times:    return " * ";
+                        case Div:      return " / ";
+                        case Eq:       return " == ";
+                        case SRem:     return " % ";
+                        case URem:     return " % ";
+                        case NEq:      return " != ";
+                        case LT:       return " < ";
+                        case ULT:      return " < ";
+                        case LEq:      return " <= ";
+                        case ULEq:     return " <= ";
+                        case GT:       return " > ";
+                        case UGT:      return " > ";
+                        case GEq:      return " >= ";
+                        case UGEq:     return " >= ";
+                        case BAnd:     return " & ";
+                        case Shl:      return " << ";
                         case Concat:   return " . ";
-                        case Shr:   return " >> ";
-                        case And:   return " && ";
-                        case Xor:   return " ^ ";
-                        case Or:    return " || ";
-                        case BOr:    return " | ";
-                        case Not:   return "!";
-                        case BNot:   return "!";
-                        case SExt:   return "SignExt ";
-                        case ZExt:   return "ZeroExt ";
-                        case Trunc:   return "Trunc ";
-                    
+                        case Shr:      return " >> ";
+                        case And:      return " && ";
+                        case Xor:      return " ^ ";
+                        case Or:       return " || ";
+                        case BOr:      return " | ";
+                        case Not:      return "!";
+                        case BNot:     return "!";
+                        case SExt:     return "SignExt ";
+                        case ZExt:     return "ZeroExt ";
+                        case Trunc:    return "Trunc["
+                                         + std::to_string(value >> 16) + ", "
+                                         + std::to_string(value & 0xFFFF) + "] ";
                     }
                 case Constant:
                     ss << value << "[" << (int)id.bw << "]";
@@ -205,7 +206,9 @@ struct Formula {
           case Xor:    return " ^ ";
           case Not:   return "!";
           case BNot:   return "!";
-          case Trunc:   return "Trunc ";
+          case Trunc:    return "Trunc["
+                                         + std::to_string(value >> 16) + ", "
+                                         + std::to_string(value & 0xFFFF) + "] ";
           case SExt:   return "SignExt ";
           case ZExt:   return "ZeroExt ";
                     
@@ -407,7 +410,7 @@ struct Formula {
         return ret;
     }
 
-  static Formula buildConstant( int val, int bw )
+  static Formula buildConstant( uint64_t val, int bw )
     {
         assert( bw > 0 );
         Formula ret;
@@ -445,9 +448,10 @@ struct Formula {
         return joinUnary( *this, Item::SExt, bits );
     }
 
-    Formula buildTrunc( int bits ) const
+    Formula buildTrunc( int from, int to) const
     {
-        return joinUnary( *this, Item::Trunc, bits );
+        // high word contains from, low word contains from
+        return joinUnary( *this, Item::Trunc, (from << 16) | to );
     }
 
     Formula operator==( const Formula &b ) const

@@ -118,7 +118,7 @@ namespace llvm_sym {
 
 		virtual void implement_Trunc(Value result_id, Value a_id, int bw) final {
 			Formula what_expr = build_expression(a_id);
-			push_definition(result_id, what_expr.buildTrunc(bw));
+			push_definition(result_id, what_expr.buildTrunc(bw - 1, 0));
 		}
 
 		virtual void implement_inttoptr(Value result_id, Value a_id) final {

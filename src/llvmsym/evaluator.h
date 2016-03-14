@@ -1206,9 +1206,8 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         else
             std::cout << "normal\n";
         std::cout << "Control:\n" << state.control;
-        std::cout << "---------------------------------\n";   
-        std::cout << "Data layout:\n";
-        state.layout.dump();
+        std::cout << "---------------------------------\n";  
+        //state.layout.dump();
         std::cout << "---------------------------------"; 
         std::cout << "Explicit data:\n";
         std::cout << state.explicitData;

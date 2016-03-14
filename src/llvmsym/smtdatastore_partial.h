@@ -496,16 +496,15 @@ class SMTStorePartial : public DataStore {
         pushDefinition( result_id, what_expr.buildZExt( bw ) );
     }
 
-    virtual void implement_SExt( Value result_id, Value a_id, int bw )
-    {
-        Formula what_expr = build_expression( a_id );
-        pushDefinition( result_id, what_expr.buildSExt( bw ) );
-    }
+	virtual void implement_SExt(Value result_id, Value a_id, int bw) {
+		Formula what_expr = build_expression(a_id);
+		pushDefinition(result_id, what_expr.buildSExt(bw));
+	}
 
     virtual void implement_Trunc( Value result_id, Value a_id, int bw )
     {
         Formula what_expr = build_expression( a_id );
-        pushDefinition( result_id, what_expr.buildTrunc( bw ) );
+        pushDefinition( result_id, what_expr.buildTrunc( bw - 1, 0 ) );
     }
     
     virtual void implement_inttoptr(Value result_id, Value a_id) {

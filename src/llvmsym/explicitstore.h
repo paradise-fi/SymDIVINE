@@ -443,7 +443,7 @@ std::ostream & operator<<( std::ostream & o, const ValueStore< Element > &v )
 
         o << "[ ";
         for ( auto &i : v._data[sid] )
-            o << std::hex << i << " ";
+            o /*<< std::hex*/ << i << " ";
         o << "]\n";
     }
         
