@@ -8,9 +8,8 @@
 
 template <class T>
 void process_statistics(T& t) {
-    std::string space_output_filename = Config.get_string("--space_output");
-    if (!space_output_filename.empty()) {
-        t.output_state_space(space_output_filename);       
+	if (Config.is_set("--space_output")) {
+		t.output_state_space(Config.get_string("--space_output"));       
     } 
     
     if (Config.is_set("--statistics")) {

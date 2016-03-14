@@ -40,7 +40,7 @@ struct ConfigStruct {
         if (res == args.end())
             throw ArgNotFoundException(name);
         if (!res->second.isBool())
-            throw ArgTypeException(name);
+            return (bool)res->second; 
         return res->second.asBool();
     }
 
