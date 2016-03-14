@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <queue>
 
 #include "evaluator.h"
 #include "datastore.h"
@@ -7,6 +8,7 @@
 #include "smtdatastore.h"
 #include "smtdatastore_partial.h"
 #include "programutils/config.h"
+#include "../toolkit/graph.h"
 
 using namespace llvm_sym; // This is weird, can't compile with direct usage of namespace
 
@@ -18,10 +20,12 @@ class Reachability {
 public:
     Reachability(const std::string& model);
     void run();
+    void output_state_space(const std::string& filename);
 private:
-    std::string model_name;
+    Evaluator<Store> eval; // Evaluator for the bitcode
     Database<Blob, Store, LinearCandidate<Store, Hit>, blobHashExplicitPart,
         blobEqualExplicitPart> knowns;
+    Graph<StateId> graph;
 };
 
 #include "reachability.tpp"

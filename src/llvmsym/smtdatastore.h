@@ -180,7 +180,9 @@ namespace llvm_sym {
 			}
 			else if (!Config.is_set("--dontsimplify")) {
 			    // regular, full, expensive simplify
+    			std::cout << "Before simplification: " << conj << "\n";
 				auto simplified = llvm_sym::simplify(conj);
+    			std::cout << "After simplification: " << simplified << "\n";
 				path_condition.resize(1);
 				path_condition.back() = simplified;
 			}

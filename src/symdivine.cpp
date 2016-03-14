@@ -1,9 +1,32 @@
 #include "llvmsym/programutils/config.h"
 #include <iostream>
+#include <string>
 
 #include "toolkit/z3cache.h"
 #include "llvmsym/reachability.h"
 #include "llvmsym/ltl.h"
+
+template <class T>
+void process_statistics(T& t) {
+    std::string space_output_filename = Config.get_string("--space_output");
+    if (!space_output_filename.empty()) {
+        t.output_state_space(space_output_filename);       
+    } 
+    
+    if (Config.is_set("--statistics")) {
+        std::cout << Statistics::get();
+        std::cout << "\n";
+        Z3cache.dump_stat(std::cout);
+        std::cout << "\n";
+
+        size_t time = 0;
+        Z3cache.process(
+            [&time](const Z3SubsetCall&, z3::check_result, const Z3Info& i) {
+            time += i.time * i.accessed;
+        });
+        std::cout << "Time saved: " << time << " us\n";
+    }
+}
 
 int main(int args, char *argv[])
 {
@@ -20,15 +43,14 @@ int main(int args, char *argv[])
                 Reachability<SMTStorePartial, SMTSubseteq<SMTStorePartial>>
                     reachability(Config.get_string("<model>"));
                 reachability.run();
+                process_statistics(reachability);
             }
             else {
                 Reachability<SMTStore, SMTSubseteq<SMTStore>>
                     reachability(Config.get_string("<model>"));
                 reachability.run();
-            }
-            /**
-             * ToDo: Add outputting of statistic data ec.
-             */
+                process_statistics(reachability);
+            }           
         }
 
         if (Config.is_set("ltl")) {
@@ -36,25 +58,8 @@ int main(int args, char *argv[])
                 ltl(Config.get_string("<model>"), Config.get_string("<property>"),
                     Config.is_set("--iterative"));
             ltl.run();
-            /**
-             * ToDo: Add outputting of statistic data ec.
-             */
-            ltl.output_state_space("output.dot");
-        }
-
-        if (Config.is_set("--statistics")) {
-            std::cout << Statistics::get();
-            std::cout << "\n";
-            Z3cache.dump_stat(std::cout);
-            std::cout << "\n";
-
-            size_t time = 0;
-            Z3cache.process(
-                [&time](const Z3SubsetCall&, z3::check_result, const Z3Info& i) {
-                time += i.time * i.accessed;
-            });
-            std::cout << "Time saved: " << time << " us\n";
-        }
+            process_statistics(ltl);
+        } 
     }
     catch (const ArgNotFoundException& e) {
         std::cerr << "Missing command line argument " << e.what() << "\n";
