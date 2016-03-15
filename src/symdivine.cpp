@@ -55,8 +55,11 @@ int main(int args, char *argv[])
         if (Config.is_set("ltl")) {
             Ltl<SMTStore, SMTSubseteq<SMTStore>>
                 ltl(Config.get_string("<model>"), Config.get_string("<property>"),
-                    Config.is_set("--iterative"));
-            ltl.run();
+                    Config.is_set("--iterative") || Config.is_set("--bound"));
+            if (Config.is_set("--bound"))
+                ltl.run(Config.get_long("--bound"));
+            else
+                ltl.run();
             process_statistics(ltl);
         } 
     }

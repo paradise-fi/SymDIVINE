@@ -18,7 +18,7 @@ template <class Store, class Hit>
 class Ltl {
 public:
     Ltl(const std::string& model, const std::string& prop, bool depth_bound = false);
-    void run();
+    void run(int max_depth = -1);
     void output_state_space(const std::string& filename);
 private:
     typedef typename Ltl2ba<DummyTranslator>::index_type index_type;
@@ -48,7 +48,7 @@ private:
     /**
      * Runs nested DFS with given initial state
      */
-    void run_nested_dfs(StateId start_vertex);
+    void run_nested_dfs(StateId start_vertex, int max_depth);
     
     /**
      * Resets DFS state, so next iteration can be started

@@ -48,8 +48,15 @@ struct ConfigStruct {
         auto res = args.find(name);
         if (res == args.end())
             throw ArgNotFoundException(name);
-        if (!res->second.isLong())
+        if (!res->second.isLong()) {
+            if (res->second.isString()) {
+                try {
+                    return std::stoi(res->second.asString());
+                } 
+                catch (std::invalid_argument&) { }
+            }   
             throw ArgTypeException(name);
+        }
         return res->second.asLong();
     }
 

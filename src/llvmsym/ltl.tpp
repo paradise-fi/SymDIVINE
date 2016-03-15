@@ -9,7 +9,7 @@ Ltl<Store, Hit>::Ltl(const std::string& model_name, const std::string& prop,
 }
 
 template <class Store, class Hit>
-void Ltl<Store, Hit>::run() {
+void Ltl<Store, Hit>::run(int max_depth) {
 	// Init blob and reserve space for info about BA state in user section
 	Blob initial(eval.getSize()
 		+ sizeof(index_type), eval.getExplicitSize(), sizeof(index_type));
@@ -27,7 +27,7 @@ void Ltl<Store, Hit>::run() {
 	StateId initial_id = knowns.insert(initial);
 	graph.add_vertex(initial_id);
 
-	run_nested_dfs(initial_id);
+	run_nested_dfs(initial_id, max_depth);
 }
 
 template <class Store, class Hit>
@@ -78,7 +78,7 @@ std::vector<StateId> Ltl<Store, Hit>::generate_successors(StateId vertex_id)
 }
 
 template <class Store, class Hit>
-void Ltl<Store, Hit>::run_nested_dfs(StateId start_vertex) {
+void Ltl<Store, Hit>::run_nested_dfs(StateId start_vertex, int max_depth) {
 	if (!graph.exists(start_vertex))
 		throw LtlException("Initial vertex not found!");
 
@@ -93,6 +93,18 @@ void Ltl<Store, Hit>::run_nested_dfs(StateId start_vertex) {
         auto& top = to_process.top();
         if (top.empty()) { // No successors left
             to_process.pop();
+            if (depth_bounded && to_process.empty() && depth_bound_reached &&
+                (max_depth == -1 || depth_bound < (size_t)max_depth))
+            {
+                reset_dfs();
+                depth_bound *= 2;
+                if (max_depth != -1)
+                    depth_bound = std::min(depth_bound, (size_t)max_depth);
+                depth_bound_reached = false;
+                to_process.push({ start_vertex });
+                std::cout << "   Starting new depth " << depth_bound << "\n"
+                    "============================\n";
+            }
             continue;
         }
 		auto vertex_id = top.back();
@@ -146,18 +158,12 @@ void Ltl<Store, Hit>::run_nested_dfs(StateId start_vertex) {
 		else if (info.outer_color == VertexColor::BLACK) {
 			// Vertex was put multiple times onto stack
 			top.pop_back();
-		}
-
-        // Check if the DFS is ending
-        if (depth_bounded && to_process.empty() && depth_bound_reached) {
-            reset_dfs();
-            depth_bound *= 2;
-            depth_bound_reached = false;
-            to_process.push({ start_vertex });
-            std::cout << "   Starting new depth " << depth_bound << "\n"
-                         "============================\n";
-        }
+		}        
 	}
+
+    if (max_depth != -1 && depth_bound >= (size_t)max_depth) {
+        std::cout << "Depth limit of " << max_depth << " reached!\n";
+    }
 
 	if (accepting_found)
 		std::cout << "Property violated!\n";

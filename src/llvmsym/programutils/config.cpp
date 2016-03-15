@@ -19,6 +19,7 @@ Options:
   -c --enablecaching     Enable caching for Z3 formulas
   -s --statistics        Enable output of statistics
   --space_output=<file>  Outputs state space to <file> in dot format
+  --bound=<depth>        Limits depth exploration to given bound
   -v --verbose           Enable verbose mode
   -w --vverbose          Enable extended verbose mode
 
