@@ -207,14 +207,8 @@ const Formula fromz3( const z3::expr &expr )
         bw = expr.decl().range().bv_size();
         return Formula::buildIdentifier( Formula::Ident( segment, offset, generation, bw ) );
     } else if ( is_bv ) {
-        ss << expr;
-        uint64_t n;
-        ss.read( dummy, 2 ); // #x
-        ss << std::hex;
-        assert( expr.decl().is_const() );
         int bw = expr.decl().range().bv_size();
-        ss >> n;
-        return Formula::buildConstant( n, bw );
+        return Formula::buildConstant(expr.get_numeral_uint64(), bw);
     } else if ( is_bool ) {
         ss << expr;
         assert( ss.str() == "true" || ss.str() == "false" );
