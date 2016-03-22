@@ -76,7 +76,7 @@ namespace llvm_sym {
 				Formula::Ident a_atom = a.build_item(var);
 				Formula::Ident b_atom = b.build_item(var);
 
-				if (!a.dependsOn(var) && !b.dependsOn(var))
+				if (!a.depends_on(var) && !b.depends_on(var))
 					continue;
 
 				to_compare.insert(std::make_pair(a_atom, b_atom));
@@ -86,8 +86,8 @@ namespace llvm_sym {
 		if (to_compare.empty())
 			return true;
 
-			    // pc_b && foreach(a).(!pc_a || a!=b)
-			    // (sat iff not _b_ subseteq _a_)
+    	// pc_b && foreach(a).(!pc_a || a!=b)
+    	// (sat iff not _b_ subseteq _a_)
 		z3::context c;
 		z3::solver s(c);
 
@@ -100,7 +100,7 @@ namespace llvm_sym {
 		bool is_caching_enabled = Config.is_set("--enablecaching");
 		Z3SubsetCall formula; // Structure for caching
 
-		    // Try if the formula is in cache
+		// Try if the formula is in cache
 		if (is_caching_enabled) {
 			StopWatch s;
 			s.start();
@@ -123,9 +123,11 @@ namespace llvm_sym {
 			if (Config.is_set("--verbose") || Config.is_set("--vverbose"))
 				std::cout << "Building formula took " << s.getUs() << " us\n";
 
-				        // Test if this formula is in cache or not
-			if (Z3cache.is_cached(formula))
-				return Z3cache.result() == z3::unsat;
+	        // Test if this formula is in cache or not
+    		if (Z3cache.is_cached(formula)) {
+        		++Statistics::getCounter(STAT_SMT_CACHED);
+        		return Z3cache.result() == z3::unsat;
+    		}
 		}
 
 		StopWatch solving_time;
@@ -154,7 +156,7 @@ namespace llvm_sym {
 
 		std::vector< z3::expr > a_all_vars;
 
-		for (const auto &var : a.collectVariables()) {
+		for (const auto &var : a.collect_variables()) {
 			a_all_vars.push_back(toz3(Formula::buildIdentifier(var), 'a', c));
 		}
 

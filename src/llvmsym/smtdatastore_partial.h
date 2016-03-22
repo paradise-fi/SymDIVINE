@@ -1,6 +1,6 @@
 #pragma once
 
-#include <llvmsym/datastore.h>
+#include <llvmsym/base_smt_datastore.h>
 #include <llvmsym/formula/rpn.h>
 #include <llvmsym/formula/z3.h>
 #include <llvmsym/programutils/statistics.h>
@@ -11,24 +11,17 @@
 #include <set>
 #include <toolkit/utils.h>
 
-#define STAT_SUBSETEQ_CALLS "SMT calls Subseteq()"
-#define STAT_EMPTY_CALLS "SMT calls Empty()"
-#define STAT_SMT_CALLS "SMT queries"
-#define STAT_SUBSETEQ_SAT "SMT queries: SAT"
-#define STAT_SUBSETEQ_UNSAT "SMT queries: unSAT"
-#define STAT_SUBSETEQ_UNKNOWN "SMT queries: unSAT"
-#define STAT_SUBSETEQ_SYNTAX_EQUAL "SMT subseteq on syntax. equal"
-#define STAT_SMT_SIMPLIFY_CALLS "SMT simplify calls"
+
 
 namespace llvm_sym {
 
-class SMTStorePartial : public DataStore {
+class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
     std::vector<short unsigned> segments_mapping;
     std::vector<std::vector<short unsigned>> generations;
     std::vector<std::vector<char>> bitWidths;
     
     struct dependency_group {
-        std::set<Formula::Ident> group; // ToDo: Think about using std::vector for speed increase
+        std::set<Formula::Ident> group; 
         std::vector<Formula> path_condition;
         std::vector<Definition> definitions;
         
@@ -43,17 +36,36 @@ class SMTStorePartial : public DataStore {
         bool operator==(const dependency_group& g) const {
             return group == g.group;
         }
+        std::vector<Formula::Ident> collect_variables() const {
+            std::vector<Formula::Ident> ret;
+            for (const auto& pc : path_condition)
+                pc.collect_variables(ret);
+            for (const auto& def : definitions)
+                def.collect_variables(ret);
+            
+            std::set<Formula::Ident> debug(ret.begin(), ret.end());
+            for (const auto& ident : group)
+                std::cout << "s" << ident.seg << "o" << ident.off << "g" << ident.gen << "b" << (int)ident.bw << ",";
+            std::cout << "\n";
+            for (const auto& ident : debug)
+                std::cout << "s" << ident.seg << "o" << ident.off << "g" << ident.gen << "b" << (int)ident.bw << ","; 
+            std::cout << "\n";
+            //assert(debug == group);
+            return { group.begin(), group.end() };
+        }
         
         void append(const dependency_group& g) {
             std::copy(g.group.cbegin(), g.group.cend(), std::inserter(group, group.end()));
             std::copy(g.path_condition.cbegin(), g.path_condition.cend(), std::back_inserter(path_condition));
-            std::copy(g.definitions.cbegin(), g.definitions.cend(), std::back_inserter(definitions));
+            std::vector<Definition> new_defs;
+            new_defs.reserve(definitions.size() + g.definitions.size());
+            std::merge(definitions.begin(), definitions.end(),
+                g.definitions.begin(), g.definitions.end(),
+                std::back_inserter(new_defs));
+            definitions = new_defs;
         }
     };
-    
-    using dep_pointer = std::list<dependency_group>::iterator;
-    using dep_pointer_const = std::list<dependency_group>::const_iterator;
-    
+     
     std::map<Formula::Ident, size_t> dependency_map; // Identifier map
     IdContainer<dependency_group> sym_data; // path_condition & definition
     
@@ -67,7 +79,7 @@ class SMTStorePartial : public DataStore {
         return Formula::Ident (
                     segment_mapped_to,
                     val.variable.offset,
-                    getGeneration( val.variable.segmentId, val.variable.offset ),
+                    get_generation( val.variable.segmentId, val.variable.offset ),
                     bitWidths[ val.variable.segmentId ][ val.variable.offset ]
                     );
     }
@@ -81,7 +93,7 @@ class SMTStorePartial : public DataStore {
             return Formula::buildIdentifier( Formula::Ident (
                         segment_mapped_to,
                         val.variable.offset,
-                        getGeneration( val.variable.segmentId, val.variable.offset ),
+                        get_generation( val.variable.segmentId, val.variable.offset ),
                         bitWidths[ val.variable.segmentId ][ val.variable.offset ]
                         ) );
         }
@@ -96,20 +108,20 @@ class SMTStorePartial : public DataStore {
             return Formula::buildIdentifier( Formula::Ident (
                         segment_mapped_to,
                         val.variable.offset,
-                        getGeneration( val.variable.segmentId, val.variable.offset, advance_generation ),
+                        get_generation( val.variable.segmentId, val.variable.offset, advance_generation ),
                         bitWidths[ val.variable.segmentId ][ val.variable.offset ]
                         ) );
         }
     }
 
-    int getGeneration( unsigned segId, unsigned offset ) const
+    int get_generation( unsigned segId, unsigned offset ) const
     {
         assert( segId < generations.size() );
         assert( offset < generations[ segId ].size() );
         return generations[ segId][ offset ];
     }
 
-    int getGeneration( unsigned segId, unsigned offset, bool advance_generation )
+    int get_generation( unsigned segId, unsigned offset, bool advance_generation )
     {
         assert( segId < generations.size() );
         assert( offset < generations[ segId ].size() );
@@ -126,10 +138,10 @@ class SMTStorePartial : public DataStore {
         return g;
     }
     
-    int getGeneration(Value val, bool advance_generation = false)
+    int get_generation(Value val, bool advance_generation = false)
     {
         assert( val.type == Value::Type::Variable );
-        return getGeneration( val.variable.segmentId, val.variable.offset, advance_generation );
+        return get_generation( val.variable.segmentId, val.variable.offset, advance_generation );
     }
     
     dependency_group& resolve_dependency(const std::vector<Formula::Ident>& deps) {
@@ -166,11 +178,11 @@ class SMTStorePartial : public DataStore {
         return res;
     }
 
-    void pushCondition(const Formula &f)
+    void push_condition(const Formula &f)
     {
         // Solve dependencies
         std::vector<Formula::Ident> deps;
-        f.collectVariables(deps);
+        f.collect_variables(deps);
         
         auto& group = resolve_dependency(deps);
         
@@ -178,7 +190,7 @@ class SMTStorePartial : public DataStore {
         simplify();
     }
 
-    void pushDefinition(Value symbol_id, const Formula &def)
+    void push_definition(Value symbol_id, const Formula &def)
     {
         assert(def.sane());
         assert(!def._rpn.empty());
@@ -186,13 +198,13 @@ class SMTStorePartial : public DataStore {
         auto ident = Formula::Ident(
                         segment_mapped_to,
                         symbol_id.variable.offset,
-                        getGeneration(symbol_id.variable.segmentId, symbol_id.variable.offset, true),
+                        get_generation(symbol_id.variable.segmentId, symbol_id.variable.offset, true),
                         bitWidths[symbol_id.variable.segmentId][symbol_id.variable.offset]
                 );
         const Definition whole_def = Definition(ident, def);
         
         std::vector<Formula::Ident> deps;
-        whole_def.collectVariables(deps);
+        whole_def.collect_variables(deps);
         
         auto& info = resolve_dependency(deps);
         
@@ -200,42 +212,43 @@ class SMTStorePartial : public DataStore {
         info.definitions.insert(it, whole_def);
     }
 
-    std::vector< Formula::Ident > collectVaribles() const
+    std::vector< Formula::Ident > collect_variables() const
     {
         std::vector<Formula::Ident> ret;
         
         for (const auto& group : sym_data) {
             for (const auto& pc : group.second.path_condition)
-                pc.collectVariables(ret);
+                pc.collect_variables(ret);
             for (const auto& def : group.second.definitions)
-                def.collectVariables(ret);
+                def.collect_variables(ret);
         }
 
         return ret;
     }
 
-    bool dependsOn(Value symbol_id) const
+    bool depends_on(Value symbol_id) const
     {
         int segment_mapped_to = segments_mapping[symbol_id.variable.segmentId];
         int offset = symbol_id.variable.offset;
 
-        int gen = getGeneration(symbol_id.variable.segmentId, offset);
+        int gen = get_generation(symbol_id.variable.segmentId, offset);
 
-        return dependsOn(segment_mapped_to, offset, gen);
+        return depends_on(segment_mapped_to, offset, gen);
     }
 
-    bool dependsOn(int seg, int offset, int generation) const
+    bool depends_on(int seg, int offset, int generation) const
     {
         for (auto& group : sym_data) {
             for (const auto& pc : group.second.path_condition) {
-                if (pc.dependsOn(seg, offset, generation))
+                if (pc.depends_on(seg, offset, generation))
                     return true;
             }
             for (const auto& def : group.second.definitions) {
-                if (def.dependsOn(seg, offset, generation))
+                if (def.depends_on(seg, offset, generation))
                     return true;
             }
         }
+        return false;
     }
 
     public:
@@ -245,9 +258,9 @@ class SMTStorePartial : public DataStore {
         // ToDo: Add dependency simplification
         ++Statistics::getCounter(STAT_SMT_SIMPLIFY_CALLS);
         
-        if (unknown_instances <= 4)
+        /*if (unknown_instances <= 4)
                 // instances are very easy (solving time < 10ms), it is a waste to simplify
-            return;
+            return;*/
 
         for (auto& group : sym_data) {
             if (group.second.path_condition.empty())
@@ -396,168 +409,15 @@ class SMTStorePartial : public DataStore {
         std::vector<Formula::Ident> ids;
         for (auto &i : f._rpn) {
             if (i.kind == Formula::Item::Kind::Identifier) {
-                i.id.gen = getGeneration(i.id.seg, i.id.off, false);
+                i.id.gen = get_generation(i.id.seg, i.id.off, false);
                 i.id.bw = bitWidths[i.id.seg][i.id.off];
             }
         }
-        pushCondition(f);
+        push_condition(f);
     }
     
     int getBitWidth(Value val) {
         return bitWidths[val.variable.segmentId][val.variable.offset];
-    }
-
-    virtual void implement_add( Value result_id, Value a_id, Value b_id )
-    {
-        Formula a_expr = build_expression( a_id );
-        Formula b_expr = build_expression( b_id );
-        pushDefinition( result_id, a_expr + b_expr );
-    }
-
-    virtual void implement_mult( Value result_id, Value a_id, Value b_id )
-    {
-        Formula a_expr = build_expression( a_id );
-        Formula b_expr = build_expression( b_id );
-        pushDefinition( result_id, a_expr * b_expr );
-    }
-
-    virtual void implement_sub( Value result_id, Value a_id, Value b_id )
-    {
-        Formula a_expr = build_expression( a_id );
-        Formula b_expr = build_expression( b_id );
-        pushDefinition( result_id, a_expr - b_expr );
-    }
-
-    virtual void implement_div( Value result_id, Value a_id, Value b_id )
-    {
-        Formula a_expr = build_expression( a_id );
-        Formula b_expr = build_expression( b_id );
-        pushDefinition( result_id, a_expr / b_expr );
-    }
-    
-    virtual void implement_urem( Value result_id, Value a_id, Value b_id )
-    {
-        Formula a_expr = build_expression( a_id );
-        Formula b_expr = build_expression( b_id );
-        pushDefinition( result_id, a_expr.buildURem( b_expr ) );
-    }
-    
-    virtual void implement_srem( Value result_id, Value a_id, Value b_id )
-    {
-        Formula a_expr = build_expression( a_id );
-        Formula b_expr = build_expression( b_id );
-        pushDefinition( result_id, a_expr.buildSRem( b_expr ) );
-    }
-
-    virtual void implement_and( Value result_id, Value a_id, Value b_id )
-    {
-        Formula a_expr = build_expression( a_id );
-        Formula b_expr = build_expression( b_id );
-        pushDefinition( result_id, a_expr & b_expr );
-    }
-
-    virtual void implement_or( Value result_id, Value a_id, Value b_id )
-    {
-        Formula a_expr = build_expression( a_id );
-        Formula b_expr = build_expression( b_id );
-        pushDefinition( result_id, a_expr | b_expr );
-    }
-
-    virtual void implement_xor( Value result_id, Value a_id, Value b_id )
-    {
-        Formula a_expr = build_expression( a_id );
-        Formula b_expr = build_expression( b_id );
-        pushDefinition( result_id, a_expr ^ b_expr );
-    }
-
-    virtual void implement_left_shift( Value result_id, Value a_id, Value b_id )
-    {
-        Formula a_expr = build_expression( a_id );
-        Formula b_expr = build_expression( b_id );
-        pushDefinition( result_id, a_expr << b_expr );
-    }
-
-    virtual void implement_right_shift( Value result_id, Value a_id, Value b_id )
-    {
-        Formula a_expr = build_expression( a_id );
-        Formula b_expr = build_expression( b_id );
-        pushDefinition( result_id, a_expr >> b_expr );
-    }
-
-    virtual void implement_store( Value result_id, Value what )
-    {
-        Formula what_expr = build_expression( what );
-        pushDefinition( result_id, what_expr );
-    }
-
-    virtual void implement_ZExt( Value result_id, Value a_id, int bw )
-    {
-        Formula what_expr = build_expression( a_id );
-        pushDefinition( result_id, what_expr.buildZExt( bw ) );
-    }
-
-	virtual void implement_SExt(Value result_id, Value a_id, int bw) {
-		Formula what_expr = build_expression(a_id);
-		pushDefinition(result_id, what_expr.buildSExt(bw));
-	}
-
-    virtual void implement_Trunc( Value result_id, Value a_id, int bw )
-    {
-        Formula what_expr = build_expression( a_id );
-        pushDefinition( result_id, what_expr.buildTrunc( bw - 1, 0 ) );
-    }
-    
-    virtual void implement_inttoptr(Value result_id, Value a_id) {
-        Formula what_expr = build_expression(a_id);
-        pushDefinition(result_id, what_expr);
-    }
-    
-    virtual void implement_ptrtoint(Value result_id, Value a_id) {
-        Formula what_expr = build_expression(a_id);
-        pushDefinition(result_id, what_expr);
-    }
-
-    virtual void prune( Value a, Value b, ICmp_Op op )
-    {
-        Formula a_expr = build_expression( a );
-        Formula b_expr = build_expression( b );
-        switch ( op ) {
-            case ICmp_Op::EQ:
-                pushCondition( a_expr == b_expr );
-                break;
-            case ICmp_Op::NE:
-                pushCondition( a_expr != b_expr );
-                break;
-            case ICmp_Op::UGT:
-                pushCondition( a_expr.buildUGT( b_expr ) );
-                break;
-            case ICmp_Op::SGT:
-                pushCondition( a_expr > b_expr );
-                break;
-            case ICmp_Op::UGE:
-                pushCondition( a_expr.buildUGEq( b_expr ) );
-                break;
-            case ICmp_Op::SGE:
-                pushCondition( a_expr >= b_expr );
-                break;
-            case ICmp_Op::ULT:
-                pushCondition( a_expr.buildULT( b_expr ) );
-                break;
-            case ICmp_Op::SLT:
-                pushCondition( a_expr < b_expr );
-                break;
-            case ICmp_Op::ULE:
-                pushCondition( a_expr.buildULEq( b_expr ) );
-                break;
-            case ICmp_Op::SLE:
-                pushCondition( a_expr <= b_expr );
-                break;
-        }
-    }
-
-    virtual void implement_input( Value input_variable, unsigned bw )
-    {
-        getGeneration( input_variable, true );
     }
 
     virtual void addSegment( unsigned id, const std::vector< int > &bit_widths )
@@ -656,7 +516,8 @@ class SMTStorePartial : public DataStore {
 	static bool subseteq(const SMTStorePartial &a, const SMTStorePartial &b);
     static bool subseteq(
         const std::vector<std::reference_wrapper<const dependency_group>>& a_g,
-        const std::vector<std::reference_wrapper<const dependency_group>>& b_g);
+        const std::vector<std::reference_wrapper<const dependency_group>>& b_g,
+        const SMTStorePartial& aa, const SMTStorePartial& bb);
 
     void clear()
     {
@@ -665,9 +526,11 @@ class SMTStorePartial : public DataStore {
     }
 
     friend std::ostream & operator<<( std::ostream & o, const SMTStorePartial &v );
+    friend std::ostream& operator<<(std::ostream& o, const SMTStorePartial::dependency_group& g);
 };
 
 std::ostream & operator<<( std::ostream & o, const SMTStorePartial &v );
+std::ostream& operator<<(std::ostream& o, const SMTStorePartial::dependency_group& g);
 
 }
 

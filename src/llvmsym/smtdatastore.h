@@ -7,14 +7,6 @@
 #include <llvmsym/programutils/config.h>
 #include <vector>
 
-#define STAT_SUBSETEQ_CALLS "SMT calls Subseteq()"
-#define STAT_EMPTY_CALLS "SMT calls Empty()"
-#define STAT_SMT_CALLS "SMT queries"
-#define STAT_SUBSETEQ_SAT "SMT queries: SAT"
-#define STAT_SUBSETEQ_UNSAT "SMT queries: unSAT"
-#define STAT_SUBSETEQ_UNKNOWN "SMT queries: unSAT"
-#define STAT_SUBSETEQ_SYNTAX_EQUAL "SMT subseteq on syntax. equal"
-#define STAT_SMT_SIMPLIFY_CALLS "SMT simplify calls"
 
 namespace llvm_sym {
 
@@ -109,44 +101,35 @@ namespace llvm_sym {
 			                bitWidths[symbol_id.variable.segmentId][symbol_id.variable.offset]
 			);
 			const Definition whole_def = Definition(ident, def);
-    		// TEMP
-    		try {
-        		z3::context c;
-        		toz3(whole_def.to_formula(), 'a', c);
-    		}
-    		catch (const z3::exception& e) {
-        		throw e;
-    		}
-    		// TEMP
 			auto it = std::upper_bound(definitions.begin(), definitions.end(), whole_def);
 			definitions.insert(it, whole_def);
 		}
 
-		std::vector< Formula::Ident > collectVariables() const {
+		std::vector< Formula::Ident > collect_variables() const {
 			std::vector< Formula::Ident > ret;
 
 			for (const auto &pc : path_condition)
-				pc.collectVariables(ret);
+				pc.collect_variables(ret);
 			for (const auto &def : definitions)
-				def.to_formula().collectVariables(ret);
+				def.to_formula().collect_variables(ret);
 
 			return ret;
 		}
 
-		bool dependsOn(Value symbol_id) const {
+		bool depends_on(Value symbol_id) const {
 			int segment_mapped_to = segments_mapping[symbol_id.variable.segmentId];
 			int offset = symbol_id.variable.offset;
 
 			int gen = get_generation(symbol_id.variable.segmentId, offset);
 
-			return dependsOn(segment_mapped_to, offset, gen);
+			return depends_on(segment_mapped_to, offset, gen);
 		}
 
-		bool dependsOn(int seg, int offset, int generation) const {
+		bool depends_on(int seg, int offset, int generation) const {
 			bool defs_depends = false;
 			for (auto &def : definitions)
 				defs_depends = defs_depends
-				    || def.dependsOn(seg, offset, generation);
+				    || def.depends_on(seg, offset, generation);
 
 			if (defs_depends)
 				return true;
@@ -154,7 +137,7 @@ namespace llvm_sym {
 			bool pc_depends = false;
 			for (auto &pc : path_condition)
 				pc_depends = pc_depends
-				    || pc.dependsOn(seg, offset, generation);
+				    || pc.depends_on(seg, offset, generation);
 
 			return pc_depends;
 		}
