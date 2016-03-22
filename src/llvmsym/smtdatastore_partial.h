@@ -43,14 +43,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
             for (const auto& def : definitions)
                 def.collect_variables(ret);
             
-            std::set<Formula::Ident> debug(ret.begin(), ret.end());
-            for (const auto& ident : group)
-                std::cout << "s" << ident.seg << "o" << ident.off << "g" << ident.gen << "b" << (int)ident.bw << ",";
-            std::cout << "\n";
-            for (const auto& ident : debug)
-                std::cout << "s" << ident.seg << "o" << ident.off << "g" << ident.gen << "b" << (int)ident.bw << ","; 
-            std::cout << "\n";
-            //assert(debug == group);
+            std::set<Formula::Ident> debug(ret.begin(), ret.end()); 
             return { group.begin(), group.end() };
         }
         
@@ -518,6 +511,8 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         const std::vector<std::reference_wrapper<const dependency_group>>& a_g,
         const std::vector<std::reference_wrapper<const dependency_group>>& b_g,
         const SMTStorePartial& aa, const SMTStorePartial& bb);
+    
+    static bool syntax_equal(const dependency_group a, const dependency_group b);
 
     void clear()
     {

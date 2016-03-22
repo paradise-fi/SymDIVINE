@@ -57,6 +57,22 @@ bool SMTStorePartial::empty() const
 
     return r == z3::unsat;
 }
+    
+bool SMTStorePartial::syntax_equal(const dependency_group a,
+        const dependency_group b)
+{
+    if (a.definitions == b.definitions) {
+        bool equal_syntax = a.path_condition.size() == b.path_condition.size();
+        for (size_t i = 0; equal_syntax && i < a.path_condition.size(); ++i) {
+            if (a.path_condition[i]._rpn != b.path_condition[i]._rpn)
+                equal_syntax = false;
+        }
+        if (equal_syntax) 
+            return true;
+    } 
+    
+    return false;
+}
 
 bool SMTStorePartial::subseteq(
         const std::vector<std::reference_wrapper<const dependency_group>>& a_g,
@@ -76,18 +92,11 @@ bool SMTStorePartial::subseteq(
         b_group.append(item.get());
     
     ++Statistics::getCounter(STAT_SUBSETEQ_CALLS);
-    if (a_group.definitions == b_group.definitions) {
-        bool equal_syntax = a_group.path_condition.size() == b_group.path_condition.size();
-        for (size_t i = 0; equal_syntax && i < a_group.path_condition.size(); ++i) {
-            if (a_group.path_condition[i]._rpn != b_group.path_condition[i]._rpn)
-                equal_syntax = false;
-        }
-        if (equal_syntax) {
-            std::cout << "Equal syntax\n";
-            ++Statistics::getCounter(STAT_SUBSETEQ_SYNTAX_EQUAL);
-            return true;
-        }
+    if (syntax_equal(a_group, b_group)) {
+        ++Statistics::getCounter(STAT_SUBSETEQ_SYNTAX_EQUAL);
+        return true;
     }
+
 
     std::map< Formula::Ident, Formula::Ident > to_compare;
     for (unsigned s = 0; s < aa.generations.size(); ++s) {
@@ -119,26 +128,11 @@ bool SMTStorePartial::subseteq(
     for (const auto& id : tmp) {
         to_compare2.insert(std::make_pair(id, id));
     }
-    
-    std::cout << "To compare:\n";
-    for (const auto& ident : to_compare)
-        std::cout << "s" << ident.first.seg << "o" << ident.first.off << "g" << ident.first.gen << "b" << (int)ident.first.bw << ",";
-    std::cout << "\n";
-    for (const auto& ident : to_compare)
-        std::cout << "s" << ident.second.seg << "o" << ident.second.off << "g" << ident.second.gen << "b" << (int)ident.second.bw << ",";
-    std::cout << "\n";
-    std::cout << "To compare2:\n";
-    for (const auto& ident : to_compare2)
-        std::cout << "s" << ident.first.seg << "o" << ident.first.off << "g" << ident.first.gen << "b" << (int)ident.first.bw << ",";
-    std::cout << "\n";
-    for (const auto& ident : to_compare2)
-        std::cout << "s" << ident.second.seg << "o" << ident.second.off << "g" << ident.second.gen << "b" << (int)ident.second.bw << ",";
-    std::cout << "\n";
-    std::cout << a_group << "\n";
-    std::cout << b_group << "\n";
+    //to_compare = std::move(to_compare2);
+     
     // pc_b && foreach(a).(!pc_a || a!=b)
     // (sat iff not _b_ subseteq _a_)
-    z3::context c;
+    static z3::context c;
     z3::solver s(c);
 
     z3::params p(c);
@@ -150,7 +144,7 @@ bool SMTStorePartial::subseteq(
     bool is_caching_enabled = Config.is_set("--enablecaching");
     Z3SubsetCall formula; // Structure for caching
 
-    		// Try if the formula is in cache
+    // Try if the formula is in cache
     if (is_caching_enabled) {
         StopWatch s;
         s.start();
@@ -200,8 +194,8 @@ bool SMTStorePartial::subseteq(
     z3::expr distinct = c.bool_val(false);
 
     for (const auto &vars : to_compare) {
-        if (a_group.group.find(vars.first) == a_group.group.end())
-            continue;
+        /*if (a_group.group.find(vars.first) == a_group.group.end())
+            continue;*/
         z3::expr a_expr = toz3(Formula::buildIdentifier(vars.first), 'a', c);
         z3::expr b_expr = toz3(Formula::buildIdentifier(vars.second), 'b', c);
 
@@ -245,118 +239,11 @@ bool SMTStorePartial::subseteq(
     // ;std::cout << "Model: " << s.get_model() << "\n";
 
     return ret == z3::unsat;
-    // Test for syntax equality
-    /*if (a_group.definitions == b_group.definitions) {
-        bool equal_syntax = a_group.path_condition.size() == b_group.path_condition.size();
-        for (size_t i = 0; equal_syntax && i != a_group.path_condition.size(); i++) {
-            equal_syntax = a_group.path_condition[i]._rpn == b_group.path_condition[i]._rpn;
-        }
-        if (equal_syntax) {
-            ++Statistics::getCounter(STAT_SUBSETEQ_SYNTAX_EQUAL);
-            return true;
-        }
-    }
-    
-    // Check for equality: exists(b):(pc_b && foreach(a): (pc_a => a != b))
-    // sat iff not b subseteq a
-    
-    z3::context c;
-    z3::solver s(c);
-    
-    z3::params p(c);
-    p.set(":mbqi", true);
-    if (!Config.is_set("--disabletimeout")) {
-        p.set(":timeout", 1000u);
-    }
-    s.set(p);
-    
-    static bool is_caching_enabled = Config.is_set("--enablecaching");
-    static bool verbose = Config.is_set("--verbose") || Config.is_set("--vverbose");
-    Z3SubsetCall formula;
-    
-    if (is_caching_enabled) {
-        std::copy(a_group.path_condition.begin(), a_group.path_condition.end(),
-            std::back_inserter(formula.pc_a));
-        std::copy(b_group.path_condition.begin(), b_group.path_condition.end(),
-            std::back_inserter(formula.pc_b));
-        for (const Definition& def : a_group.definitions)
-            formula.pc_a.push_back(def.to_formula());
-        for (const Definition& def : b_group.definitions)
-            formula.pc_b.push_back(def.to_formula());
-        
-	    if (Z3cache.is_cached(formula)) {
-    	    ++Statistics::getCounter(STAT_SMT_CACHED);
-            return Z3cache.result() == z3::unsat;
-        }
-    }
-    
-    StopWatch solving_time;
-    solving_time.start();
-    
-    z3::expr pc_a = c.bool_val(true);
-    for (const auto& pc : a_group.path_condition)
-        pc_a = pc_a && toz3(pc, 'a', c);
-    z3::expr pc_b = c.bool_val(true);
-    for (const auto& pc : b_group.path_condition)
-        pc_b = pc_b && toz3(pc, 'b', c);
-    
-    for (const auto& def : a_group.definitions)
-        pc_a = pc_a && toz3(def.to_formula(), 'a', c);
-    for (const auto& def : b_group.definitions)
-        pc_b = pc_b && toz3(def.to_formula(), 'b', c);
-    
-    z3::expr distinct = c.bool_val(false);
-    std::vector<Formula::Ident> ident_union;
-    ident_union.reserve(a_group.group.size() + b_group.group.size());
-    std::set_union(a_group.group.begin(), a_group.group.end(),
-        b_group.group.begin(), b_group.group.end(), std::back_inserter(ident_union));
-    for (const auto& ident : ident_union) {
-        z3::expr a_expr = toz3(Formula::buildIdentifier(ident), 'a', c);
-        z3::expr b_expr = toz3(Formula::buildIdentifier(ident), 'b', c);
-        
-        distinct = distinct || (a_expr != b_expr);
-    }
-    
-    std::vector<z3::expr> a_all_vars;
-    for (const auto& var : a_group.group) {
-        a_all_vars.push_back(toz3(Formula::buildIdentifier(var), 'a', c));
-    }
-    
-    z3::expr not_witness = !pc_a || distinct;
-    s.add(pc_b);
-    s.add(forall(a_all_vars, not_witness));
-    
-    Statistics::getCounter(STAT_SMT_CALLS);
-    z3::check_result ret = s.check();
-    
-    if (ret == z3::unknown) {
-        ++unknown_instances;
-        if (verbose) {
-            if (Config.is_set("--vverbose"))
-                std::cerr << "while checking:\n" << s;
-            std::cerr << "\ngot 'unknown', reason: " << s.reason_unknown() << std::endl;
-        }
-    }
-    
-    if (ret == z3::sat)
-        ++Statistics::getCounter(STAT_SUBSETEQ_SAT);
-    else if (ret == z3::unsat)
-        ++Statistics::getCounter(STAT_SUBSETEQ_UNSAT);
-    else
-        ++Statistics::getCounter(STAT_SUBSETEQ_UNKNOWN);
-    
-    solving_time.stop();
-    
-    if (is_caching_enabled)
-        Z3cache.place(formula, ret, solving_time.getUs());
-        
-    return ret == z3::unsat;*/
 }
 
 bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &b) // There were mismatched letters!
 {
     using dependency_group_r = std::reference_wrapper<const dependency_group>;
-    
     std::vector<dependency_group_r> a_group;
     std::vector<dependency_group_r> b_group;
     
@@ -365,14 +252,9 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
     for (const auto& value : b.sym_data)
         b_group.emplace_back(value.second);
     
-    std::cout << "State A:\n" << a << "\nState B:\n" << b << "\n";
-    
-    std::cout << "Subset A_____________________________________________\n";
-    bool subset1 = subseteq(a_group, b_group, a, b);
-    if (subset1)
-        std::cout << "Subset\n";
-    else
-        std::cout << "No subset\n";
+    bool full_check_result;
+    if (Config.is_set("--partialtest"))
+        full_check_result = subseteq(a_group, b_group, a, b);
     
     std::vector<std::pair<dependency_group_r, dependency_group_r>> same;
     std::vector<dependency_group_r> unmatched_a, unmatched_b;
@@ -403,39 +285,23 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
             j++;
         }
     }
-    /*for (size_t i = 0; i != a_group.size(); i++) {
-        size_t j = i;
-        for (; j != b_group.size(); j++) {
-            if (a_group[i].get() == b_group[j].get()) {
-                same.emplace_back(a_group[i], b_group[i]);
-                j = b_group.size() + 1;
-                break;
-            }
-            else if (i == j) {
-                unmatched_b.emplace_back(b_group[j]);
-            }
-        }   
-        if (j == b_group.size())
-            unmatched_a.emplace_back(a_group[i]);
-    }*/
-    
-    std::cout << "Subset B__________________________________________\n";
-    
+
     bool result = true;
     for (auto& pair : same) {
         if (!subseteq(std::vector<dependency_group_r>({pair.first}),
                 std::vector<dependency_group_r>({pair.second}), a, b))
         {
             result = false;
-            assert(result == subset1);
+            if (Config.is_set("--partialtest"))
+                assert(result == full_check_result);
             break;
         }
     }
     
-    
     result = result && subseteq(unmatched_a, unmatched_b, a, b);
     
-    assert(subset1 == result);
+    if (Config.is_set("--partialtest"))
+        assert(result == full_check_result);
     return result;
 }
 
