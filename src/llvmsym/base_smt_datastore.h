@@ -19,6 +19,7 @@
 #define STAT_SUBSETEQ_UNKNOWN "SMT queries: unSAT"
 #define STAT_SUBSETEQ_SYNTAX_EQUAL "SMT subseteq on syntax. equal"
 #define STAT_SMT_SIMPLIFY_CALLS "SMT simplify calls"
+#define STAT_SMT_CACHED "SMT CACHED"
 
 namespace llvm_sym {
 
