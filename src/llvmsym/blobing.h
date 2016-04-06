@@ -353,7 +353,9 @@ struct ObliviousCandidate {
 struct SMTEqual {
     bool operator()(const SMTStore &a, const SMTStore &b) const {
         //assert( a.segments_mapping.size() == b.segments_mapping.size() );
-        return a.subseteq(a, b) && a.subseteq(b, a);
+        static bool timeout = !Config.is_set("--disabletimeout");
+        static bool cache = Config.is_set("--enablecaching");
+        return a.subseteq(a, b, timeout, cache) && a.subseteq(b, a, timeout, cache);
     }
 };
 
@@ -361,7 +363,9 @@ template <class Store>
 struct SMTSubseteq {
     bool operator()(const Store &a, const Store &b) const {
         //assert( a.segments_mapping.size() == b.segments_mapping.size() );
-        return a.subseteq(a, b);
+        static bool timeout = !Config.is_set("--disabletimeout");
+        static bool cache = Config.is_set("--enablecaching");
+        return a.subseteq(a, b, timeout, cache);
     }
 };
 

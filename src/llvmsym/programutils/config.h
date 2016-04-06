@@ -6,6 +6,7 @@
 #include <cassert>
 #include <iostream>
 #include <docopt/docopt.h>
+#include <thread>
 
 extern const char USAGE[];
 
@@ -24,18 +25,23 @@ struct ConfigStruct {
      * Parses cmd-line arguments
      */
     void parse_cmd_args(int argc, char* argv[]) {
-        args = docopt::docopt(
-                USAGE,
-                { argv + 1, argv + argc },
-                true              // show help if requested
-            );
-        // Uncomment for debugging
-        /*for (auto const& arg : args) {
-            std::cout << arg.first << ": " << arg.second << std::endl;
-        }*/
+        // There is a possible memory corruption in docopt
+        // resulting in incorrect results of SymDIVINE.
+        // Keeping docopt parsing in separate thread is a
+        // temporary hack. Fix it! ToDo
+        std::thread t([&]() {
+            args = docopt::docopt(std::string(USAGE), { argv + 1, argv + argc }, true);
+        });
+        t.join();
+    }
+    
+    void dump(std::ostream& o = std::cout) const {
+        for (auto const& arg : args) {
+            o << arg.first << ": " << arg.second << std::endl;
+        }
     }
 
-    bool is_set(const std::string& name) {
+    bool is_set(const std::string& name) const {
         auto res = args.find(name);
         if (res == args.end())
             throw ArgNotFoundException(name);
@@ -44,7 +50,7 @@ struct ConfigStruct {
         return res->second.asBool();
     }
 
-    long get_long(const std::string& name) {
+    long get_long(const std::string& name) const {
         auto res = args.find(name);
         if (res == args.end())
             throw ArgNotFoundException(name);
@@ -60,7 +66,7 @@ struct ConfigStruct {
         return res->second.asLong();
     }
 
-    std::string get_string(const std::string& name) {
+    std::string get_string(const std::string& name) const {
         auto res = args.find(name);
         if (res == args.end())
             throw ArgNotFoundException(name);
@@ -69,7 +75,7 @@ struct ConfigStruct {
         return res->second.asString();
     }
 
-    std::vector<std::string> get_strings(const std::string& name) {
+    std::vector<std::string> get_strings(const std::string& name) const {
         auto res = args.find(name);
         if (res == args.end())
             throw ArgNotFoundException(name);
@@ -83,6 +89,7 @@ struct ConfigStruct {
      */
     template <class T>
     void set(const std::string& name, T val) {
+        assert(false);
         args[name] = docopt::value(val);
     }
 

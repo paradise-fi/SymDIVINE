@@ -77,8 +77,8 @@ bool SMTStorePartial::syntax_equal(const dependency_group a,
 bool SMTStorePartial::subseteq(
         const std::vector<std::reference_wrapper<const dependency_group>>& a_g,
         const std::vector<std::reference_wrapper<const dependency_group>>& b_g,
-        const SMTStorePartial& aa,
-        const SMTStorePartial& bb)
+        const SMTStorePartial& aa, const SMTStorePartial& bb, bool timeout,
+        bool is_caching_enabled)
 {
     if (a_g.empty() && b_g.empty())
         return true;
@@ -137,11 +137,10 @@ bool SMTStorePartial::subseteq(
 
     z3::params p(c);
     p.set(":mbqi", true);
-    if (!Config.is_set("--disabletimeout"))
+    if (timeout)
         p.set(":timeout", 1000u);
     s.set(p);
 
-    bool is_caching_enabled = Config.is_set("--enablecaching");
     Z3SubsetCall formula; // Structure for caching
 
     // Try if the formula is in cache
@@ -194,8 +193,8 @@ bool SMTStorePartial::subseteq(
     z3::expr distinct = c.bool_val(false);
 
     for (const auto &vars : to_compare) {
-        /*if (a_group.group.find(vars.first) == a_group.group.end())
-            continue;*/
+        if (a_group.group.find(vars.first) == a_group.group.end())
+            continue;
         z3::expr a_expr = toz3(Formula::buildIdentifier(vars.first), 'a', c);
         z3::expr b_expr = toz3(Formula::buildIdentifier(vars.second), 'b', c);
 
@@ -241,7 +240,8 @@ bool SMTStorePartial::subseteq(
     return ret == z3::unsat;
 }
 
-bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &b) // There were mismatched letters!
+bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &b,
+        bool timeout, bool caching) 
 {
     using dependency_group_r = std::reference_wrapper<const dependency_group>;
     std::vector<dependency_group_r> a_group;
@@ -253,8 +253,8 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
         b_group.emplace_back(value.second);
     
     bool full_check_result;
-    if (Config.is_set("--partialtest"))
-        full_check_result = subseteq(a_group, b_group, a, b);
+    if (Config.is_set("--testvalidity"))
+        full_check_result = subseteq(a_group, b_group, a, b, timeout, caching);
     
     std::vector<std::pair<dependency_group_r, dependency_group_r>> same;
     std::vector<dependency_group_r> unmatched_a, unmatched_b;
@@ -289,19 +289,34 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
     bool result = true;
     for (auto& pair : same) {
         if (!subseteq(std::vector<dependency_group_r>({pair.first}),
-                std::vector<dependency_group_r>({pair.second}), a, b))
+                std::vector<dependency_group_r>({pair.second}), a, b,
+                timeout, caching))
         {
             result = false;
-            if (Config.is_set("--partialtest"))
-                assert(result == full_check_result);
+            if (Config.is_set("--testvalidity")) {
+                if (result != full_check_result) {
+                    std::cout << "Different result other than join of the groups was obtained!\n";
+                    abort();
+                }
+            }
             break;
         }
     }
     
-    result = result && subseteq(unmatched_a, unmatched_b, a, b);
+    result = result && subseteq(unmatched_a, unmatched_b, a, b,
+                                timeout, caching);
     
-    if (Config.is_set("--partialtest"))
-        assert(result == full_check_result);
+    if (Config.is_set("--testvalidity")) {
+        if (result != full_check_result) {
+            std::cout << "Different result other than join of the groups was obtained!\n";
+            abort();
+        }
+        if (result != SMTStore::subseteq(a.store, b.store, false, false)) {
+            std::cout << "Different result other than SMTStore was obtained!\n";
+            abort(); 
+        }
+    }
+    
     return result;
 }
 
