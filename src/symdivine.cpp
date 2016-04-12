@@ -23,7 +23,7 @@ void process_statistics(T& t) {
             [&time](const Z3SubsetCall&, z3::check_result, const Z3Info& i) {
             time += i.time * i.accessed;
         });
-        std::cout << "Time saved: " << time << " us\n";
+        std::cout << "Time saved:    " << time << " us\n";
     }
 }
 
