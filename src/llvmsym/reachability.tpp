@@ -60,7 +60,9 @@ void Reachability<Store, Hit>::run() {
             std::cout << "Safe." << std::endl;
 
         if (Config.is_set("--statistics")) {
-            std::cout << knowns.size() << " states generated" << std::endl;
+            std::cout << "States count\n"
+                         "------------\n";
+            std::cout << knowns.size() << "\n\n";
         }
     }
     catch (std::exception& e) {
