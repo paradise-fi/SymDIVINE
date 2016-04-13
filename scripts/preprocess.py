@@ -35,48 +35,57 @@ def timeout_command(command, timeout):
     while process.poll() is None:
       time.sleep(0.1)
       now = datetime.datetime.now()
-      if (now - start).seconds > timeout:
+      if (now - start).seconds + (now - start).microseconds * 0.000001 > timeout:
         os.kill(process.pid, signal.SIGKILL)
         os.waitpid(-1, os.WNOHANG)
-        return None
-    return process.stdout.read(), (now - start).seconds + (now - start).microseconds * 0.000001
+        return None, None
+    return process.stdout.read() + process.stderr.read(), (now - start).seconds + (now - start).microseconds * 0.000001
     
 def reachability(file, flags, timeout=120):
     print("Running reachability on file {0}".format(file))
     command = ["../bin/symdivine", "reachability", file, "-s"] + flags
     out, time = timeout_command(command, timeout)
-    if not out:
-        return None
         
-    result = [str(time)] + (2 + 3 + len(STAT_CASES))*[None]
+    result = [str(time)] + (2 + 4 + len(STAT_CASES))*[None]
+    
+    if not out and not time:
+        print("TIMEOUT")
+        result[-1] = "TIMEOUT"
+        return result
     
     lines = out.split("\n")
     
-    if "Safe" in out:
-        result[1] = "true"
-    else:
-        result[1] = "false"
+    try:
+        if "Safe" in out:
+            result[1] = "true"
+        else:
+            result[1] = "false"
+            
+        idx = lines.index("States count")
+        result[2] = lines[idx + 2]
         
-    idx = lines.index("States count")
-    result[2] = lines[idx + 2]
-    
-    idx = lines.index("General statistics") + 2
-    while len(lines[idx]):
-        s = lines[idx].split(":")
-        s[0] = s[0].strip()
-        i = STAT_CASES.index(s[0])
-        result[3 + i] = s[1].strip()
-        idx = idx + 1
-        
-    idx = lines.index("Query cache statistics")
-    for i in range(3):
-        result[3 + len(STAT_CASES) + i] = lines[idx + 2 + i].split(":")[1].strip()
+        idx = lines.index("General statistics") + 2
+        while len(lines[idx]):
+            s = lines[idx].split(":")
+            s[0] = s[0].strip()
+            i = STAT_CASES.index(s[0])
+            result[3 + i] = s[1].strip()
+            idx = idx + 1
+            
+        idx = lines.index("Query cache statistics")
+        for i in range(3):
+            result[3 + len(STAT_CASES) + i] = lines[idx + 2 + i].split(":")[1].strip()
+    except ValueError:
+        print("Warning! Unexpected output")
+        print(out)
+        result[-1] = "Unexpected output!\\n" + out.replace("\n", "\\n")
     
     return result
     
 def reachability_all(dir, output_filename, flags):
-    csv_file = csv.writer(open(output_filename, "w"))
-    csv_file.writerow(["name", "opt", "time", "result", "states"] + STAT_CASES + ["Hit count", "Miss count", "Replace count"])
+    out_file = open(output_filename, "w")
+    csv_file = csv.writer(out_file)
+    csv_file.writerow(["name", "opt", "time", "result", "states"] + STAT_CASES + ["Hit count", "Miss count", "Replace count", "Note"])
     for file in os.listdir(dir):
         if file.endswith(".ll"):
             opt = "unknown"
@@ -90,7 +99,11 @@ def reachability_all(dir, output_filename, flags):
                 opt = "S"
             src = os.path.join(dir, file)
             r = reachability(src, flags)
+            if not r:
+                r = []
             csv_file.writerow([file, opt] + r)
+            out_file.flush()
+            os.fsync(out_file.fileno())
     
 def compile(src, args, output = None):
     if not output:
