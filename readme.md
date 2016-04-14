@@ -9,7 +9,7 @@ Runtime dependencies of SymDIVINE are: `libboost-graph1.54.0`, `z3`, `gcc-4.9` a
 
 On `apt-get` based system you can run following command to get all the dependencies: `sudo apt-get install libboost-graph1.54.0 z3` (tested on Ubuntu 15.10, on Ubuntu 14.04 you have tu build Z3 yourself and add respository `ppa:ubuntu-toolchain-r/test` and install newer version of g++).
 
-If your system doesn't have package for Z3 SMT solver or you want to use the newest version (strongly recommended), your can download it or get sources and compile it from [their official repository](https://github.com/Z3Prover/z3).
+If your system doesn't have package for Z3 SMT solver or you want to use the newest version (strongly recommended), you can download it or get sources and compile it from [their official repository](https://github.com/Z3Prover/z3).
 
 ### Running 
 For simple assert reachability verification of LLVM bitcode run `bin/symdivine reachability <model.ll>` or see `bin/symdivne help` for more info. SymDIVINE supports pthreads, pthread mutexes, atomic sections via SV-COMP notation and more.
