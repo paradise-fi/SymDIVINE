@@ -37,6 +37,7 @@ ICmp_Op icmp_negate( ICmp_Op what )
             retVal = ICmp_Op::SGT;
             break;
         default:
+            retVal = ICmp_Op::SLE; // Suppress compiler warning
             assert(false);
     }
     return retVal;

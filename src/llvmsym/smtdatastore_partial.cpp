@@ -9,13 +9,13 @@ unsigned SMTStorePartial::unknown_instances = 0;
     
 std::ostream& operator<<(std::ostream& o, const SMTStorePartial::dependency_group& g) {
     o << "Variables: ";
-    for (const auto& ident : g.group)
+    for (const auto& ident : g.get_group())
         o << "seg_" << ident.seg << "_off_" << ident.off << ", ";
     o << "\nPath condition:\n";
-    for (const auto& pc : g.path_condition)
+    for (const auto& pc : g.get_path_condition())
         o << pc << "\n";
     o << "Definitions:\n";
-    for (const auto& def : g.definitions)
+    for (const auto& def : g.get_definitions())
         o << def.to_formula() << "\n";
     o << "\n";
     return o;
@@ -34,37 +34,47 @@ std::ostream & operator<<( std::ostream & o, const SMTStorePartial &v )
     return o;
 }
 
-bool SMTStorePartial::empty() const
+bool SMTStorePartial::empty()
 {
-    ++Statistics::getCounter( STAT_EMPTY_CALLS );
+    ++Statistics::getCounter(STAT_EMPTY_CALLS);
 
     z3::context c;
-    z3::expr pc( c );
+	z3::solver solver(c);
+    std::vector<dependency_group*> set;
+    for (auto& group : sym_data) {
+        TriState s = group.second.get_state();
+        if (s == TriState::TRUE)
+            continue;
+        if (s == TriState::FALSE)
+            return true;
+        for (const Definition &def : group.second.get_definitions())
+            solver.add(toz3(def.to_formula(), 'a', c));
 
-    z3::solver s( c );
-    for (const auto& group : sym_data) {
-        for (const Definition &def : group.second.definitions)
-            s.add(toz3(def.to_formula(), 'a', c));
-
-        for (const Formula &pc : group.second.path_condition)
-            s.add(toz3(pc, 'a', c));
+        for (const Formula &pc : group.second.get_path_condition())
+            solver.add(toz3(pc, 'a', c)); 
+        set.push_back(&group.second);
     }
-
-    ++Statistics::getCounter( STAT_SMT_CALLS );
-    z3::check_result r = s.check();
-
-    assert( r != z3::unknown );
-
-    return r == z3::unsat;
+    
+    ++Statistics::getCounter(STAT_SMT_CALLS);
+    z3::check_result r = solver.check();
+    assert(r != z3::unknown);
+    
+    if (r == z3::unsat) {
+        for (auto& g : set)
+            g->set_state(TriState::TRUE);
+        return true;
+    }
+    
+    return false;
 }
     
 bool SMTStorePartial::syntax_equal(const dependency_group a,
         const dependency_group b)
 {
-    if (a.definitions == b.definitions) {
-        bool equal_syntax = a.path_condition.size() == b.path_condition.size();
-        for (size_t i = 0; equal_syntax && i < a.path_condition.size(); ++i) {
-            if (a.path_condition[i]._rpn != b.path_condition[i]._rpn)
+    if (a.get_definitions() == b.get_definitions()) {
+        bool equal_syntax = a.get_path_condition().size() == b.get_path_condition().size();
+        for (size_t i = 0; equal_syntax && i < a.get_path_condition().size(); ++i) {
+            if (a.get_path_condition()[i]._rpn != b.get_path_condition()[i]._rpn)
                 equal_syntax = false;
         }
         if (equal_syntax) 
@@ -120,8 +130,8 @@ bool SMTStorePartial::subseteq(
     if (to_compare.empty())
         return true;
     std::vector<Formula::Ident> tmp;
-    std::set_union(a_group.group.begin(), a_group.group.end(),
-        b_group.group.begin(), b_group.group.end(),
+    std::set_union(a_group.get_group().begin(), a_group.get_group().end(),
+        b_group.get_group().begin(), b_group.get_group().end(),
         std::back_inserter(tmp));
     
     std::map<Formula::Ident, Formula::Ident> to_compare2;
@@ -148,17 +158,17 @@ bool SMTStorePartial::subseteq(
         StopWatch s;
         s.start();
 
-        std::copy(a_group.path_condition.begin(),
-            a_group.path_condition.end(),
+        std::copy(a_group.get_path_condition().begin(),
+            a_group.get_path_condition().end(),
             std::back_inserter(formula.pc_a));
-        std::copy(b_group.path_condition.begin(),
-            b_group.path_condition.end(),
+        std::copy(b_group.get_path_condition().begin(),
+            b_group.get_path_condition().end(),
             std::back_inserter(formula.pc_b));
 
-        for (const Definition &def : a_group.definitions)
+        for (const Definition &def : a_group.get_definitions())
             formula.pc_a.push_back(def.to_formula());
 
-        for (const Definition &def : b_group.definitions)
+        for (const Definition &def : b_group.get_definitions())
             formula.pc_b.push_back(def.to_formula());
 
         std::copy(to_compare.begin(), to_compare.end(), std::back_inserter(formula.distinct));
@@ -179,21 +189,21 @@ bool SMTStorePartial::subseteq(
     solving_time.start();
 
     z3::expr pc_a = c.bool_val(true);
-    for (const auto &pc : a_group.path_condition)
+    for (const auto &pc : a_group.get_path_condition())
         pc_a = pc_a && toz3(pc, 'a', c);
     z3::expr pc_b = c.bool_val(true);
-    for (const auto &pc : b_group.path_condition)
+    for (const auto &pc : b_group.get_path_condition())
         pc_b = pc_b && toz3(pc, 'b', c);
 
-    for (const Definition &def : a_group.definitions)
+    for (const Definition &def : a_group.get_definitions())
         pc_a = pc_a && toz3(def.to_formula(), 'a', c);
-    for (const Definition &def : b_group.definitions)
+    for (const Definition &def : b_group.get_definitions())
         pc_b = pc_b && toz3(def.to_formula(), 'b', c);
 
     z3::expr distinct = c.bool_val(false);
 
     for (const auto &vars : to_compare) {
-        if (a_group.group.find(vars.first) == a_group.group.end())
+        if (a_group.get_group().find(vars.first) == a_group.get_group().end())
             continue;
         z3::expr a_expr = toz3(Formula::buildIdentifier(vars.first), 'a', c);
         z3::expr b_expr = toz3(Formula::buildIdentifier(vars.second), 'b', c);

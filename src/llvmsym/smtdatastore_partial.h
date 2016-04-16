@@ -15,6 +15,8 @@
 
 
 namespace llvm_sym {
+    
+class SMTStorePartial;
 
 class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
     std::vector<short unsigned> segments_mapping;
@@ -24,14 +26,15 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
     bool test_run;
     SMTStore store;
     
-    struct dependency_group {
+    class dependency_group {
         std::set<Formula::Ident> group; 
         std::vector<Formula> path_condition;
         std::vector<Definition> definitions;
-        
+        TriState pc_state;
+    public:
         dependency_group(const std::set<Formula::Ident>& g = {},
             const std::vector<Formula>& pc = {}, const std::vector<Definition>& d = {})
-        : group(g), path_condition(pc), definitions(d) {}
+        : group(g), path_condition(pc), definitions(d), pc_state(TriState::UNKNOWN) {}
         
         bool operator<(const dependency_group& g) const {
             return group < g.group;
@@ -40,6 +43,15 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         bool operator==(const dependency_group& g) const {
             return group == g.group;
         }
+        
+        void set_state(TriState s) {
+            pc_state = s;
+        }
+        
+        TriState get_state() const {
+            return pc_state;
+        }
+        
         std::vector<Formula::Ident> collect_variables() const {
             std::vector<Formula::Ident> ret;
             for (const auto& pc : path_condition)
@@ -60,6 +72,185 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
                 g.definitions.begin(), g.definitions.end(),
                 std::back_inserter(new_defs));
             definitions = new_defs;
+        }
+        
+        const std::set<Formula::Ident>& get_group() const {
+            return group;
+        }
+        
+        const std::vector<Formula>& get_path_condition() const {
+            return path_condition;
+        }
+        
+        const std::vector<Definition>& get_definitions() const {
+            return definitions;
+        }
+        
+        void push_condition(const Formula& formula) {
+            pc_state = TriState::UNKNOWN;
+            path_condition.push_back(std::move(formula));
+        }
+        
+        void push_definition(const Definition& def) {
+            auto it = std::upper_bound(definitions.begin(),
+                definitions.end(), 
+                def);
+            definitions.insert(it, def);
+        }
+        
+        void collect_pc_variables(std::vector<Formula::Ident>& v) const {
+            for (const auto& pc : path_condition)
+                pc.collect_variables(v);
+        }
+        
+        void collect_def_variables(std::vector<Formula::Ident>& v) const {
+            for (const auto& def : definitions)
+                def.collect_variables(v);
+        }
+        
+        bool depends_on(int seg, int offset, int generation) const {
+            // ToDo: Can be simplified!
+            // We could use a dependency group
+            for (const auto& pc : path_condition) {
+                if (pc.depends_on(seg, offset, generation))
+                    return true;
+            }
+            
+            for (const auto& def : definitions) {
+                if (def.depends_on(seg, offset, generation))
+                    return true;
+            }
+            
+            return false;
+        }
+        
+        void simplify_pc() {
+            if (path_condition.empty())
+                return;
+            Formula conj;
+            for (const Formula& pc : path_condition)
+                conj = conj && pc;
+            
+            if (Config.is_set("--cheapsimplify")) {
+                auto simplified = cheap_simplify(conj);
+                path_condition.resize(1);
+                path_condition.back() = simplified;
+            } 
+            else if (!Config.is_set("--dontsimplify")) {
+                auto simplified = llvm_sym::simplify(conj);
+                path_condition.resize(1);
+                path_condition.back() = simplified;
+            }
+        }
+        
+        size_t getSize() const {
+            size_t size = 3 * sizeof(size_t) + group.size() * sizeof(Formula::Ident);
+            size += sizeof(TriState);
+            for (const auto& def : definitions) {
+                size += representation_size(def.symbol) + representation_size(def.def._rpn);
+            }
+            
+            for (const auto& pc : path_condition) {
+                size += representation_size(pc._rpn);
+            }
+            
+            return size;
+        }
+        
+        void writeData(char * & mem) const {
+            blobWrite(mem, definitions.size());
+            for (const auto& def : definitions) {
+                blobWrite(mem, def.symbol);
+                blobWrite(mem, def.def._rpn);
+            }
+            
+            blobWrite(mem, path_condition.size());
+            for (const auto& pc : path_condition) {
+                blobWrite(mem, pc._rpn);
+            }
+            
+            blobWrite(mem, group.size());
+            for (const auto& id : group) {
+                blobWrite(mem, id);
+            }
+            
+            blobWrite(mem, pc_state);
+        }
+        
+        void readData(const char * & mem) {
+            size_t def_size;
+            blobRead(mem, def_size);
+            definitions.resize(def_size);
+            for (size_t i = 0; i < def_size; i++) {
+                blobRead(mem, definitions[i].symbol);
+                blobRead(mem, definitions[i].def._rpn);
+            }
+            
+            size_t pc_size;
+            blobRead(mem, pc_size);
+            path_condition.resize(pc_size);
+            for (size_t i = 0; i < pc_size; i++) {
+                blobRead(mem, path_condition[i]._rpn);
+            }
+            
+            size_t group_size;
+            blobRead(mem, group_size);
+            for (size_t i = 0; i != group_size; i++) {
+                Formula::Ident id;
+                blobRead(mem, id);
+                group.insert(id);
+            }
+            
+            blobRead(mem, pc_state);
+        }
+        
+        template <typename Predicate>
+        void removeDefinitions(Predicate pred) {
+            // ToDo: Simplify dependency groups
+            std::vector<Definition> to_remove(definitions.size());
+            auto it = std::copy_if(definitions.begin(), definitions.end(), to_remove.begin(), pred);
+            to_remove.resize(it - to_remove.begin());
+
+            it = std::remove_if(definitions.begin(), definitions.end(), pred);
+            definitions.resize(it - definitions.begin());
+
+            bool change;
+            do {
+                change = false;
+                for (Formula &pc : path_condition) {
+                    for (const Definition &def : to_remove) {
+                        Formula new_pc = pc.substitute(def.getIdent(), def.getDef());
+                        if (new_pc._rpn != pc._rpn) {
+                            change = true;
+                            pc = new_pc;
+                        }
+                    }
+                }
+
+                for (Definition &def : definitions) {
+                    for (auto def_to_remove = to_remove.crbegin(); def_to_remove != to_remove.crend(); ++def_to_remove) {
+                        Definition new_def = def.substitute(def_to_remove->getIdent(), def_to_remove->getDef());
+                        if (new_def.def._rpn != def.def._rpn) {
+                            def = def.substitute(def_to_remove->getIdent(), def_to_remove->getDef());
+                            change = true;
+                        }
+                    }
+                }
+            } while (change);
+            std::sort(definitions.begin(), definitions.end());
+            
+            if (!to_remove.empty())
+                pc_state = TriState::UNKNOWN;
+        }
+        
+        template <typename Predicate>
+        void removeConditions(Predicate pred) {
+            auto it = std::remove_if(path_condition.begin(),
+                path_condition.end(), pred);
+            path_condition.resize(it - path_condition.begin());
+            
+            if (it != path_condition.end())
+                pc_state = TriState::UNKNOWN;
         }
     };
      
@@ -173,7 +364,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         for_each(++to_join.begin(), to_join.end(), [&](size_t i) {
             auto& group = sym_data.get(i);
             res.append(group);
-            for (const auto& var : group.group)
+            for (const auto& var : group.get_group())
                 dependency_map[var] = res_id;            
             sym_data.erase(i);
         });
@@ -191,7 +382,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         
         auto& group = resolve_dependency(deps);
         
-        group.path_condition.push_back(f);
+        group.push_condition(f);
         simplify();
     }
 
@@ -212,11 +403,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         
         std::vector<Formula::Ident> deps;
         whole_def.collect_variables(deps);
-        
-        auto& info = resolve_dependency(deps);
-        
-        auto it = std::upper_bound(info.definitions.begin(),info.definitions.end(), whole_def);
-        info.definitions.insert(it, whole_def);
+        resolve_dependency(deps).push_definition(std::move(whole_def));
     }
 
     std::vector< Formula::Ident > collect_variables() const
@@ -224,10 +411,8 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         std::vector<Formula::Ident> ret;
         
         for (const auto& group : sym_data) {
-            for (const auto& pc : group.second.path_condition)
-                pc.collect_variables(ret);
-            for (const auto& def : group.second.definitions)
-                def.collect_variables(ret);
+            group.second.collect_pc_variables(ret);
+            group.second.collect_def_variables(ret);
         }
 
         return ret;
@@ -245,15 +430,9 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
 
     bool depends_on(int seg, int offset, int generation) const
     {
-        for (auto& group : sym_data) {
-            for (const auto& pc : group.second.path_condition) {
-                if (pc.depends_on(seg, offset, generation))
-                    return true;
-            }
-            for (const auto& def : group.second.definitions) {
-                if (def.depends_on(seg, offset, generation))
-                    return true;
-            }
+        for (const auto& group : sym_data) {
+            if (group.second.depends_on(seg, offset, generation))
+                return true;
         }
         return false;
     }
@@ -276,23 +455,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
             return;*/
 
         for (auto& group : sym_data) {
-            if (group.second.path_condition.empty())
-                continue;
-            Formula conj;
-            for (Formula &pc : group.second.path_condition)
-                conj = conj && pc;
-
-            if (Config.is_set("--cheapsimplify")) {
-                auto simplified = cheap_simplify(conj);
-                group.second.path_condition.resize(1);
-                group.second.path_condition.back() = simplified;
-            }
-            else if (!Config.is_set("--dontsimplify")) {
-                // regular, full, expensive simplify
-                auto simplified = llvm_sym::simplify(conj);
-                group.second.path_condition.resize(1);
-                group.second.path_condition.back() = simplified;
-            }
+            group.second.simplify_pc();
         }
     }
 
@@ -304,20 +467,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         size += sizeof(size_t);
         for (const auto& group : sym_data) {
             size += representation_size(group.first); // Size of group ID
-            
-            size += sizeof(size_t);
-            for ( const Definition &f : group.second.definitions ) {
-                size += representation_size(f.symbol);
-                size += representation_size(f.def._rpn);
-            }
-            size += sizeof(size_t);
-            for (const Formula &pc : group.second.path_condition) {
-                size += representation_size(pc._rpn);
-            }
-            size += sizeof(size_t);
-            for (const Formula::Ident& id : group.second.group) {
-                size += representation_size(id);
-            }
+            size += group.second.getSize();
         }
         
         size += representation_size(sym_data.free_idx());
@@ -339,21 +489,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         blobWrite(mem, sym_data.size());
         for (const auto& group : sym_data) {
             blobWrite(mem, group.first);
-            
-            blobWrite(mem, group.second.definitions.size());
-            for (const Definition &f : group.second.definitions) {
-                blobWrite(mem, f.symbol);
-                blobWrite(mem, f.def._rpn);
-            }
-            blobWrite(mem, group.second.path_condition.size());
-            for (const Formula &pc : group.second.path_condition) {
-                blobWrite(mem, pc._rpn);
-            }
-            
-            blobWrite(mem, group.second.group.size());
-            for (const Formula::Ident &id : group.second.group) {
-                blobWrite(mem, id);
-            }
+            group.second.writeData(mem); 
         }
         blobWrite(mem, sym_data.free_idx());
         
@@ -379,29 +515,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
             size_t id;
             blobRead(mem, id);
             dependency_group& group = sym_data.insert(id, dependency_group());
-            
-            size_t definitions_size;
-            blobRead(mem, definitions_size);
-            group.definitions.resize(definitions_size);
-            for (unsigned i = 0; i < definitions_size; ++i) {
-                blobRead(mem, group.definitions[i].symbol);
-                blobRead(mem, group.definitions[i].def._rpn);
-            }
-            
-            size_t pc_size;
-            blobRead(mem, pc_size);
-            group.path_condition.resize(pc_size);
-            for (unsigned i = 0; i < pc_size; ++i) {
-                blobRead(mem, group.path_condition[i]._rpn);
-            }
-            
-            size_t group_size;
-            blobRead(mem, group_size);
-            for (size_t i = 0; i != group_size; i++) {
-                Formula::Ident id;
-                blobRead(mem, id);
-                group.group.insert(id);
-            }
+            group.readData(mem);
         }
         sym_data.free_idx().clear();
         blobRead(mem, sym_data.free_idx());
@@ -486,37 +600,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
             store.removeDefinitions(pred);
         // ToDo: Simplify dependency groups!
         for (auto& group : sym_data) {
-            std::vector< Definition > to_remove(group.second.definitions.size());
-            auto it = std::copy_if(group.second.definitions.begin(), group.second.definitions.end(), to_remove.begin(), pred);
-            to_remove.resize(it - to_remove.begin());
-
-            it = std::remove_if(group.second.definitions.begin(), group.second.definitions.end(), pred);
-            group.second.definitions.resize(it - group.second.definitions.begin());
-
-            bool change;
-            do {
-                change = false;
-                for (Formula &pc : group.second.path_condition) {
-                    for (const Definition &def : to_remove) {
-                        Formula new_pc = pc.substitute(def.getIdent(), def.getDef());
-                        if (new_pc._rpn != pc._rpn) {
-                            change = true;
-                            pc = new_pc;
-                        }
-                    }
-                }
-
-                for (Definition &def : group.second.definitions) {
-                    for (auto def_to_remove = to_remove.crbegin(); def_to_remove != to_remove.crend(); ++def_to_remove) {
-                        Definition new_def = def.substitute(def_to_remove->getIdent(), def_to_remove->getDef());
-                        if (new_def.def._rpn != def.def._rpn) {
-                            def = def.substitute(def_to_remove->getIdent(), def_to_remove->getDef());
-                            change = true;
-                        }
-                    }
-                }
-            } while (change);
-            std::sort(group.second.definitions.begin(), group.second.definitions.end());
+            group.second.removeDefinitions(pred);
         }
     }
 
@@ -528,9 +612,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         // precondition: run removeDefinition( pred ) to be sure that the symbols
         // are not used anywhere else
         for (auto& group : sym_data) {
-            auto it = std::remove_if(group.second.path_condition.begin(),
-                group.second.path_condition.end(), pred);
-            group.second.path_condition.resize(it - group.second.path_condition.begin());
+            group.second.removeConditions(pred);
         }
     }
 
@@ -543,7 +625,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
                subseteq(snd, *this, timeout, cache);
 	}
 
-    virtual bool empty() const;
+    virtual bool empty();
 
 	static bool subseteq(const SMTStorePartial &a, const SMTStorePartial &b,
         bool timeout, bool cache);

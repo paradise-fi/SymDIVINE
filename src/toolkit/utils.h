@@ -14,6 +14,8 @@
  */
 void break_string(size_t n, std::string& s);
 
+enum class TriState { TRUE, FALSE, UNKNOWN };
+
 /**
  * Provides debug output stream
  */
@@ -109,6 +111,7 @@ namespace std {
                 return hash<llvm_sym::Formula::Ident>()(i.id);
             default:
                 assert(false);
+                return 0; // Suppress compiler warning
             }
         };
     };

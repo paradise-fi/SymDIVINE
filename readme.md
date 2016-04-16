@@ -19,7 +19,7 @@ You can also use helper script `scripts/run_symdivine.py`, which takes a C a C++
 ## Building
 To build SymDIVINE, yout need `cmake`, `make`, `llvm-3.5`, `z3`, `boost`, `flex` and `bison`.
 
-Then just checkout this repo and run `./configure && cd build && cmake && make`. Final binary is `bin/symdivine`.
+Then just checkout this repo and run `./configure && cd build && make`. Final binary is `bin/symdivine`.
 
 If you run to problems with `docopt`, run `git submodule update --init --recursive`.
 
