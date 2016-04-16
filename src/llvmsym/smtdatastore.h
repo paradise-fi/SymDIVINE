@@ -318,7 +318,7 @@ namespace llvm_sym {
                    subseteq(snd, *this, timeout, cache);
         }
 
-        virtual bool empty() const;
+        virtual bool empty();
 
         static bool subseteq(const SMTStore &a, const SMTStore &b, bool timeout,
             bool enable_cache);

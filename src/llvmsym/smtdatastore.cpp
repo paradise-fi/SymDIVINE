@@ -20,7 +20,7 @@ namespace llvm_sym {
         return o;
     }
 
-    bool SMTStore::empty() const {
+    bool SMTStore::empty() {
         try {
             ++Statistics::getCounter(STAT_EMPTY_CALLS);
             if (path_condition.size() == 0)

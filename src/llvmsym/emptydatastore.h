@@ -242,7 +242,7 @@ struct EmptyStore : public DataStore {
     std::cout << translate( id ) << " := i" << bw << std::endl;
   }
 
-  bool empty() const {
+  bool empty() {
     return false;
   }
 
