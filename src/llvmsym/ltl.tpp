@@ -165,6 +165,12 @@ void Ltl<Store, Hit>::run_nested_dfs(StateId start_vertex, int max_depth) {
         std::cout << "Depth limit of " << max_depth << " reached!\n";
     }
 
+    if (Config.is_set("--statistics")) {
+        std::cout << "States count\n"
+            "------------\n";
+        std::cout << knowns.size() << "\n\n";
+    }
+
 	if (accepting_found)
 		std::cout << "Property violated!\n";
 	else
