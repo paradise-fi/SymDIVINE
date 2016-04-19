@@ -34,7 +34,13 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
     public:
         dependency_group(const std::set<Formula::Ident>& g = {},
             const std::vector<Formula>& pc = {}, const std::vector<Definition>& d = {})
-        : group(g), path_condition(pc), definitions(d), pc_state(TriState::UNKNOWN) {}
+        : path_condition(pc), definitions(d), pc_state(TriState::UNKNOWN)
+        {
+            for (Formula::Ident id : g) {
+                id.gen = 0;
+                group.insert(id);
+            }
+        }
         
         bool operator<(const dependency_group& g) const {
             return group < g.group;
@@ -54,13 +60,9 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         
         std::vector<Formula::Ident> collect_variables() const {
             std::vector<Formula::Ident> ret;
-            for (const auto& pc : path_condition)
-                pc.collect_variables(ret);
-            for (const auto& def : definitions)
-                def.collect_variables(ret);
-            
-            std::set<Formula::Ident> debug(ret.begin(), ret.end()); 
-            return { group.begin(), group.end() };
+            collect_pc_variables(ret);
+            collect_def_variables(ret);
+            return ret;
         }
         
         void append(const dependency_group& g) {
@@ -342,7 +344,8 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         assert(!deps.empty());
         
         std::set<size_t> to_join;
-        for (const auto& var : deps) {
+        for (auto var : deps) {
+            var.gen = 0;
             auto res = dependency_map.find(var);
             if (res == dependency_map.end()) {
                 // This variable doesn't exist - create it!

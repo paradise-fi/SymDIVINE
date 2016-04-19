@@ -69,7 +69,7 @@ void Reachability<Store, Hit>::run() {
         std::cout << "ERROR: uncaught exception: " << e.what() << "\n";
     }
     catch (z3::exception& e) {
-        std::cout << "ERROR: uncaught exception: " << e.msg() << "\n";
+        std::cout << "ERROR: uncaught Z3 exception: " << e.msg() << "\n";
     }
 }
 
