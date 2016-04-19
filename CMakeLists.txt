@@ -18,6 +18,12 @@ find_package(LIBDL REQUIRED)
 find_package(Curses REQUIRED)
 find_package(Z3 REQUIRED)
 
+# Check LLVM version
+if (NOT ${LLVM_STRING_VERSION} MATCHES "3[.][4]([^0-9]*|[.].*)")
+    message(FATAL_ERROR "LLVM 3.4 is required! Version ${LLVM_STRING_VERSION} found.")
+endif()
+
+
 # Setup C++ sources
 file(GLOB BIN_SOURCES
 	src/llvmsym/*.cpp
