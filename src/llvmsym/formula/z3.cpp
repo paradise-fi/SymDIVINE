@@ -301,12 +301,13 @@ z3::expr toz3( const Formula &f, char vpref, z3::context &c )
 
 z3::expr forall( const std::vector< z3::expr > &v, const z3::expr & b )
 {
+    assert(!v.empty());
     std::vector< Z3_app > vars;
     for ( unsigned i = 0; i < v.size(); i++ ) {
         check_context( v.at( i ), b );
         vars.push_back( (Z3_app) v.at( i ) );
     }
-    Z3_ast r = Z3_mk_forall_const(b.ctx(), 0, v.size(), vars.data(), 0, 0, b);
+    Z3_ast r = Z3_mk_forall_const(b.ctx(), 0, vars.size(), vars.data(), 0, 0, b);
     b.check_error();
     return z3::expr(b.ctx(), r);
 }

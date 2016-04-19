@@ -10,7 +10,7 @@ unsigned SMTStorePartial::unknown_instances = 0;
 std::ostream& operator<<(std::ostream& o, const SMTStorePartial::dependency_group& g) {
     o << "Variables: ";
     for (const auto& ident : g.get_group())
-        o << "seg_" << ident.seg << "_off_" << ident.off << ", ";
+        o << "seg_" << ident.seg << "_off_" << ident.off << "_gen_" << ident.gen << ", ";
     o << "\nPath condition:\n";
     for (const auto& pc : g.get_path_condition())
         o << pc << "\n";
@@ -107,7 +107,6 @@ bool SMTStorePartial::subseteq(
         return true;
     }
 
-
     std::map< Formula::Ident, Formula::Ident > to_compare;
     for (unsigned s = 0; s < aa.generations.size(); ++s) {
         assert(aa.generations[s].size() == bb.generations[s].size());
@@ -202,9 +201,13 @@ bool SMTStorePartial::subseteq(
 
     z3::expr distinct = c.bool_val(false);
 
+    std::vector<Formula::Ident> relevant;
     for (const auto &vars : to_compare) {
-        if (a_group.get_group().find(vars.first) == a_group.get_group().end())
+        Formula::Ident tmp = vars.first;
+        tmp.gen = 0;
+        if (a_group.get_group().find(tmp) == a_group.get_group().end())
             continue;
+        relevant.push_back(vars.first);
         z3::expr a_expr = toz3(Formula::buildIdentifier(vars.first), 'a', c);
         z3::expr b_expr = toz3(Formula::buildIdentifier(vars.second), 'b', c);
 
@@ -216,13 +219,20 @@ bool SMTStorePartial::subseteq(
     for (const auto &var : a_group.collect_variables()) {
         a_all_vars.push_back(toz3(Formula::buildIdentifier(var), 'a', c));
     }
+    
+    if (a_all_vars.empty()) { // There is group with no definitions
+        for (const auto& var : relevant) {
+            a_all_vars.push_back(toz3(Formula::buildIdentifier(var), 'a', c));
+        }
+    }
+    
 
     z3::expr not_witness = !pc_a || distinct;
     s.add(pc_b);
     s.add(forall(a_all_vars, not_witness));
 
     ++Statistics::getCounter(STAT_SMT_CALLS);
-
+    
     z3::check_result ret = s.check();
     if (ret == z3::unknown) {
         ++unknown_instances;
@@ -244,8 +254,6 @@ bool SMTStorePartial::subseteq(
 
     if (is_caching_enabled)
         Z3cache.place(formula, ret, solving_time.getUs());
-    
-    // ;std::cout << "Model: " << s.get_model() << "\n";
 
     return ret == z3::unsat;
 }
@@ -315,15 +323,33 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
     
     result = result && subseteq(unmatched_a, unmatched_b, a, b,
                                 timeout, caching);
-    
     if (Config.is_set("--testvalidity")) {
+        bool fail = false;
         if (result != full_check_result) {
             std::cout << "Different result other than join of the groups was obtained!\n";
-            abort();
+            fail = true;
         }
         if (result != SMTStore::subseteq(a.store, b.store, false, false)) {
             std::cout << "Different result other than SMTStore was obtained!\n";
-            abort(); 
+            fail = true;
+        }
+        
+        if (fail) {
+            std::cout << "Matched groups:\n";
+            for (const auto& p : same) {
+                std::cout << p.first << " | " << p.second << "\n";
+            }
+            
+            std::cout << "Unmatched groups A:\n";
+            for (const auto& p : unmatched_a) {
+                std::cout << p << "\n";
+            }
+            
+            std::cout << "Unmatched groups B:\n";
+            for (const auto& p : unmatched_b) {
+                std::cout << p << "\n";
+            }
+            abort();
         }
     }
     
