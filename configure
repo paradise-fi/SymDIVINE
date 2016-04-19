@@ -15,6 +15,7 @@ if [ "$1" = "clean" ] || [ "$1" = "reconfigure" ]; then
    	shift 1
 fi
 
+git submodule update --init --recursive
 test -e build && die "The directory \"build\" already exists, please remove it before reconfiguring (you can call ./configure clean)."
 
 mkdir build || die "Failed to create _build, permission problem?"
