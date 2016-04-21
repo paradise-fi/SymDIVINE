@@ -35,6 +35,12 @@ struct Formula {
         bool operator!=( const Ident &snd ) const {
             return !( *this == snd );
         }
+        
+        Ident no_gen() const {
+            Ident ret = *this;
+            ret.gen = 0;
+            return ret;
+        }
 
         Ident( short unsigned s, short unsigned o, short unsigned g, unsigned char b )
             : seg( s ), off( o ), gen( g ), bw( b ) {}
@@ -734,6 +740,7 @@ struct Definition {
 };
 
 std::ostream &operator<<( std::ostream &o, const Formula &f );
+std::ostream& operator <<(std::ostream& o, const Formula::Ident& id);
 
 }
 

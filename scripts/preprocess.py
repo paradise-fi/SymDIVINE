@@ -34,7 +34,7 @@ def timeout_command(command, timeout):
     start = datetime.datetime.now()
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     while process.poll() is None:
-      time.sleep(0.1)
+      time.sleep(0.02)
       now = datetime.datetime.now()
       if (now - start).seconds + (now - start).microseconds * 0.000001 > timeout:
         os.kill(process.pid, signal.SIGKILL)
@@ -175,6 +175,14 @@ def ltl_all(dir, output_filename, flags):
                 if not r:
                     r = []
                 csv_file.writerow([file, opt] + r)
+                out_file.flush()
+                os.fsync(out_file.fileno())
+                
+                src = os.path.join(bench, file)
+                r = ltl(src, "!({0})".format(property), flags)
+                if not r:
+                    r = []
+                csv_file.writerow([file + "_neg", opt] + r)
                 out_file.flush()
                 os.fsync(out_file.fileno())
     

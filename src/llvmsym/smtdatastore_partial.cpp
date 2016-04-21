@@ -2,6 +2,7 @@
 #include <functional>
 #include <llvmsym/smtdatastore_partial.h>
 #include <toolkit/z3cache.h>
+#include <toolkit/utils.h>
 
 namespace llvm_sym {
 
@@ -10,14 +11,13 @@ unsigned SMTStorePartial::unknown_instances = 0;
 std::ostream& operator<<(std::ostream& o, const SMTStorePartial::dependency_group& g) {
     o << "Variables: ";
     for (const auto& ident : g.get_group())
-        o << "seg_" << ident.seg << "_off_" << ident.off << "_gen_" << ident.gen << ", ";
-    o << "\nPath condition:\n";
+        o << "seg" << ident.seg << "_off" << ident.off << "_gen" << ident.gen << ", ";
+    /*o << "; Path condition: ";
     for (const auto& pc : g.get_path_condition())
-        o << pc << "\n";
-    o << "Definitions:\n";
+        o << pc << ", ";
+    o << "; Definitions: ";
     for (const auto& def : g.get_definitions())
-        o << def.to_formula() << "\n";
-    o << "\n";
+        o << def.to_formula() << ", ";*/
     return o;
 }
 
@@ -87,7 +87,7 @@ bool SMTStorePartial::syntax_equal(const dependency_group a,
 bool SMTStorePartial::subseteq(
         const std::vector<std::reference_wrapper<const dependency_group>>& a_g,
         const std::vector<std::reference_wrapper<const dependency_group>>& b_g,
-        const SMTStorePartial& aa, const SMTStorePartial& bb, bool timeout,
+        const std::map<Formula::Ident, Formula::Ident>& to_compare, bool timeout,
         bool is_caching_enabled)
 {
     if (a_g.empty() && b_g.empty())
@@ -106,39 +106,7 @@ bool SMTStorePartial::subseteq(
         ++Statistics::getCounter(STAT_SUBSETEQ_SYNTAX_EQUAL);
         return true;
     }
-
-    std::map< Formula::Ident, Formula::Ident > to_compare;
-    for (unsigned s = 0; s < aa.generations.size(); ++s) {
-        assert(aa.generations[s].size() == bb.generations[s].size());
-        for (unsigned offset = 0; offset < aa.generations[s].size(); ++offset) {
-            Value var;
-            var.type = Value::Type::Variable;
-            var.variable.segmentId = s;
-            var.variable.offset = offset;
-
-            Formula::Ident a_atom = aa.build_item(var);
-            Formula::Ident b_atom = bb.build_item(var);
-
-            if (!aa.depends_on(var) && !bb.depends_on(var))
-                continue;
-
-            to_compare.insert(std::make_pair(a_atom, b_atom));
-        }
-    }
-
-    if (to_compare.empty())
-        return true;
-    std::vector<Formula::Ident> tmp;
-    std::set_union(a_group.get_group().begin(), a_group.get_group().end(),
-        b_group.get_group().begin(), b_group.get_group().end(),
-        std::back_inserter(tmp));
     
-    std::map<Formula::Ident, Formula::Ident> to_compare2;
-    for (const auto& id : tmp) {
-        to_compare2.insert(std::make_pair(id, id));
-    }
-    //to_compare = std::move(to_compare2);
-     
     // pc_b && foreach(a).(!pc_a || a!=b)
     // (sat iff not _b_ subseteq _a_)
     static z3::context c;
@@ -177,7 +145,7 @@ bool SMTStorePartial::subseteq(
         if (Config.is_set("--verbose") || Config.is_set("--vverbose"))
             std::cout << "Building formula took " << s.getUs() << " us\n";
 
-            	        // Test if this formula is in cache or not
+        // Test if the formula is in cache or not
         if (Z3cache.is_cached(formula)) {
             ++Statistics::getCounter(STAT_SMT_CACHED);
             return Z3cache.result() == z3::unsat;
@@ -201,13 +169,7 @@ bool SMTStorePartial::subseteq(
 
     z3::expr distinct = c.bool_val(false);
 
-    std::vector<Formula::Ident> relevant;
     for (const auto &vars : to_compare) {
-        Formula::Ident tmp = vars.first;
-        tmp.gen = 0;
-        if (a_group.get_group().find(tmp) == a_group.get_group().end())
-            continue;
-        relevant.push_back(vars.first);
         z3::expr a_expr = toz3(Formula::buildIdentifier(vars.first), 'a', c);
         z3::expr b_expr = toz3(Formula::buildIdentifier(vars.second), 'b', c);
 
@@ -215,22 +177,14 @@ bool SMTStorePartial::subseteq(
     }
 
     std::vector< z3::expr > a_all_vars;
-
     for (const auto &var : a_group.collect_variables()) {
         a_all_vars.push_back(toz3(Formula::buildIdentifier(var), 'a', c));
-    }
-    
-    if (a_all_vars.empty()) { // There is group with no definitions
-        for (const auto& var : relevant) {
-            a_all_vars.push_back(toz3(Formula::buildIdentifier(var), 'a', c));
-        }
-    }
-    
+    }    
 
     z3::expr not_witness = !pc_a || distinct;
     s.add(pc_b);
     s.add(forall(a_all_vars, not_witness));
-
+    
     ++Statistics::getCounter(STAT_SMT_CALLS);
     
     z3::check_result ret = s.check();
@@ -270,45 +224,104 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
     for (const auto& value : b.sym_data)
         b_group.emplace_back(value.second);
     
+    std::map<Formula::Ident, Formula::Ident> a_to_b;
+    for (unsigned s = 0; s < a.generations.size(); ++s) {
+        assert(a.generations[s].size() == b.generations[s].size());
+        for (unsigned offset = 0; offset < a.generations[s].size(); ++offset) {
+            Value var;
+            var.type = Value::Type::Variable;
+            var.variable.segmentId = s;
+            var.variable.offset = offset;
+
+            Formula::Ident a_atom = a.build_item(var);
+            Formula::Ident b_atom = b.build_item(var);
+
+            if (!a.depends_on(var) && !b.depends_on(var))
+                continue;
+
+            a_to_b.insert({ a_atom, b_atom });
+        }
+    }
+    
     bool full_check_result;
     if (Config.is_set("--testvalidity"))
-        full_check_result = subseteq(a_group, b_group, a, b, timeout, caching);
+        full_check_result = subseteq(a_group, b_group, a_to_b, timeout, caching);
     
-    std::vector<std::pair<dependency_group_r, dependency_group_r>> same;
-    std::vector<dependency_group_r> unmatched_a, unmatched_b;
-    size_t i = 0;
-    size_t j = 0;
-    while (i != a_group.size() || j != b_group.size()) {
-        if (i == a_group.size()) {
-            unmatched_b.emplace_back(b_group[j]);
-            j++;
-            continue;
-        }
-        if (j == b_group.size()) {
-            unmatched_a.emplace_back(a_group[i]);
-            i++;
-            continue;
-        }
-        
-        if (a_group[i].get() == b_group[j].get()) {
-            same.emplace_back(a_group[i], b_group[j]);
-            i++; j++;
-        }
-        else if (a_group[i].get() < b_group[j].get()) {
-            unmatched_a.emplace_back(a_group[i]);
-            i++;
-        }
-        else {
-            unmatched_b.emplace_back(b_group[j]);
-            j++;
+    using DepSet = UnionSet<
+        const dependency_group*, std::map<Formula::Ident, Formula::Ident>>;
+    
+    std::map<Formula::Ident, DepSet*> a_id_info;
+    std::vector<DepSet> a_sets;
+    a_sets.reserve(a_group.size());
+    for (const auto& group : a_group) {
+        a_sets.emplace_back(&group.get());
+        for (const auto& id : group.get().get_group()) {
+            a_id_info.insert({id, &a_sets.back()});
         }
     }
 
+    std::map<Formula::Ident, DepSet*> b_id_info;
+    std::vector<DepSet> b_sets;
+    b_sets.reserve(b_group.size());
+    for (const auto& group : b_group) {
+        b_sets.emplace_back(&group.get());
+        for (const auto& id : group.get().get_group()) {
+            b_id_info.insert({id, &b_sets.back()});
+        }
+    }
+    
+    std::vector<std::pair<
+        std::vector<dependency_group_r>, std::vector<dependency_group_r>>> compare_groups;
+    
+    for (const auto& id_pair : a_to_b) {
+        assert(a_id_info.find(id_pair.first.no_gen()) != a_id_info.end());
+        assert(b_id_info.find(id_pair.second.no_gen()) != b_id_info.end());
+        
+        DepSet* a_set = a_id_info.find(id_pair.first.no_gen())->second;
+        DepSet* b_set = b_id_info.find(id_pair.second.no_gen())->second;
+        
+        a_set->get_set()->tag.insert(id_pair);
+        
+        if (a_set->get_set() != b_set->get_set()) {
+            join(a_set->get_set(), b_set->get_set(),
+                [](std::map<Formula::Ident, Formula::Ident> a,
+                   std::map<Formula::Ident, Formula::Ident> b)
+                {
+                    a.insert(b.begin(), b.end());
+                    assert(!a.empty());
+                    return a;
+                });
+        }
+        assert(!a_set->get_set()->tag.empty());
+        assert(!b_set->get_set()->tag.empty());
+    }
+    
+    std::map<const dependency_group*, std::tuple<
+        std::vector<dependency_group_r>,
+        std::vector<dependency_group_r>,
+        std::map<Formula::Ident, Formula::Ident>>> compares;
+    
+    for (DepSet& g : a_sets) {
+        auto& tup = compares[g.get_set()->data];
+        std::get<0>(tup).push_back(*g.data);
+        if (g.is_root()) {
+            std::get<2>(tup) = g.tag;
+        }
+    }
+    
+    for (DepSet& g : b_sets) {
+        auto& tup = compares[g.get_set()->data];
+        std::get<1>(tup).push_back(*g.data);
+        if (g.is_root()) {
+            std::get<2>(tup) = g.tag;
+        }
+    }
+    
     bool result = true;
-    for (auto& pair : same) {
-        if (!subseteq(std::vector<dependency_group_r>({pair.first}),
-                std::vector<dependency_group_r>({pair.second}), a, b,
-                timeout, caching))
+    for (const auto& pair : compares) {
+        if (std::get<2>(pair.second).empty())
+            continue;
+        if (!subseteq(std::get<0>(pair.second), std::get<1>(pair.second), std::get<2>(pair.second), timeout, caching))
         {
             result = false;
             if (Config.is_set("--testvalidity")) {
@@ -320,9 +333,7 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
             break;
         }
     }
-    
-    result = result && subseteq(unmatched_a, unmatched_b, a, b,
-                                timeout, caching);
+
     if (Config.is_set("--testvalidity")) {
         bool fail = false;
         if (result != full_check_result) {
@@ -335,19 +346,15 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
         }
         
         if (fail) {
-            std::cout << "Matched groups:\n";
-            for (const auto& p : same) {
-                std::cout << p.first << " | " << p.second << "\n";
-            }
-            
-            std::cout << "Unmatched groups A:\n";
-            for (const auto& p : unmatched_a) {
-                std::cout << p << "\n";
-            }
-            
-            std::cout << "Unmatched groups B:\n";
-            for (const auto& p : unmatched_b) {
-                std::cout << p << "\n";
+            std::cout << "Comapres: \n";
+            for (const auto& item : compares) {
+                for (const auto& p : std::get<0>(item.second))
+                    std::cout << p << ", ";
+                std::cout << " | ";
+                for (const auto& p : std::get<1>(item.second))
+                    std::cout << p << ", ";
+        
+                std::cout << "\n\n";
             }
             abort();
         }

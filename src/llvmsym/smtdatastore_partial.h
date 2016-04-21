@@ -635,7 +635,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
     static bool subseteq(
         const std::vector<std::reference_wrapper<const dependency_group>>& a_g,
         const std::vector<std::reference_wrapper<const dependency_group>>& b_g,
-        const SMTStorePartial& aa, const SMTStorePartial& bb, bool timeout,
+        const std::map<Formula::Ident, Formula::Ident>& to_compare, bool timeout,
         bool cache);
     
     static bool syntax_equal(const dependency_group a, const dependency_group b);
