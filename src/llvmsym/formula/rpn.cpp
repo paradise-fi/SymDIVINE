@@ -44,6 +44,11 @@ std::ostream &operator<<( std::ostream &o, const Formula &f )
 
     return o;
 }
+    
+std::ostream& operator <<(std::ostream& o, const Formula::Ident& id) {
+    o << "seg" << id.seg << "_off" << id.off << "_gen" << id.gen;
+    return o;
+}
 
 }
 
