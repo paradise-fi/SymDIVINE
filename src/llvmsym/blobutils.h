@@ -53,7 +53,7 @@ void blobRead( const char *& mem, T& e, Tail&...tail)
 }
 
 template< typename T >
-constexpr typename std::enable_if<is_not_vector<T>::value,size_t>::type representation_size( const T )
+constexpr typename std::enable_if<is_not_vector<T>::value,size_t>::type representation_size( const T& )
 {
     return sizeof( T );
 }
@@ -64,8 +64,8 @@ size_t representation_size( const std::vector< T > &e )
     constexpr size_t e_size = sizeof( decltype( e.size() ) );
     size_t s = e_size;
 
-    for ( const auto &a : e )
-        s += representation_size( a );
+    for (const auto &a : e)
+        s += representation_size(a);
 
     return s;
 }

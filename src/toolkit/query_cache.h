@@ -85,8 +85,8 @@ public:
     void dump_stat(std::ostream& s) {
         s << "Query cache statistics" << std::endl;
         s << "----------------------" << std::endl;
-        s << "Hit count: " << s_info.hit_count << std::endl;
-        s << "Miss count: " << s_info.miss_count << std::endl;
+        s << "Hit count:     " << s_info.hit_count << std::endl;
+        s << "Miss count:    " << s_info.miss_count << std::endl;
         s << "Replace count: " << s_info.replace_count << std::endl;
     }
 

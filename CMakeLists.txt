@@ -15,8 +15,14 @@ find_package(Threads REQUIRED)
 find_package(LLVM REQUIRED)
 find_package(Boost REQUIRED COMPONENTS regex graph) 
 find_package(LIBDL REQUIRED)
-find_package(TERMINFO REQUIRED)
+find_package(Curses REQUIRED)
 find_package(Z3 REQUIRED)
+
+# Check LLVM version
+if (NOT ${LLVM_STRING_VERSION} MATCHES "3[.][4]([^0-9]*|[.].*)")
+    message(FATAL_ERROR "LLVM 3.4 is required! Version ${LLVM_STRING_VERSION} found.")
+endif()
+
 
 # Setup C++ sources
 file(GLOB BIN_SOURCES
@@ -60,7 +66,7 @@ target_link_libraries(symdivine ${LLVM_LIBRARIES})
 target_link_libraries(symdivine ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(symdivine ${Boost_LIBRARIES})
 target_link_libraries(symdivine ${LIBDL_LIBRARIES})
-target_link_libraries(symdivine ${TERMINFO_LIBRARIES})
+target_link_libraries(symdivine ${CURSES_LIBRARIES})
 target_link_libraries(symdivine ${Z3_LIBRARIES})
 
 #set_target_properties(symdivine PROPERTIES LINK_SEARCH_START_STATIC 1)

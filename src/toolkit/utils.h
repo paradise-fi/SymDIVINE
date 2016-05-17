@@ -14,6 +14,8 @@
  */
 void break_string(size_t n, std::string& s);
 
+enum class TriState { TRUE, FALSE, UNKNOWN };
+
 /**
  * Provides debug output stream
  */
@@ -109,6 +111,7 @@ namespace std {
                 return hash<llvm_sym::Formula::Ident>()(i.id);
             default:
                 assert(false);
+                return 0; // Suppress compiler warning
             }
         };
     };
@@ -297,3 +300,56 @@ private:
     std::map<Id, T> values;
     std::vector<Id> unused;
 };
+
+template <class T, class Info = std::tuple<>>
+class UnionSet {
+public:
+    UnionSet(const T& data) : data(data), parent(nullptr), depth(0) { }
+    
+    bool is_root() const {
+        return !parent; 
+    }
+
+    UnionSet* get_set() {
+        UnionSet* p = this;
+        while (!p->is_root())
+            p = p->parent;
+        return p;
+    }
+    
+    T data;
+    Info tag;
+private:    
+    UnionSet* parent;
+    size_t depth;
+    
+    template <class U, class I, class Merge>
+    friend void join(UnionSet<U, I>*, UnionSet<U, I>*, Merge);
+};
+
+
+struct TupleMergeOp {
+    std::tuple<> operator()(std::tuple<>, std::tuple<>) {
+        return {};
+    }
+};
+
+template <class T, class Info, class Merge>
+void join(UnionSet<T, Info>* a, UnionSet<T, Info>* b, Merge merge = TupleMergeOp()) {
+    assert(a->is_root());
+    assert(b->is_root());
+    assert(a != b);
+    
+    UnionSet<T, Info>* top;
+    UnionSet<T, Info>* node;
+    if (b->depth < a->depth) {
+        top = b; node = a;
+    }
+    else {
+        top = a; node = b;
+    }
+    
+    top->depth++;
+    node->parent = top;
+    top->tag = merge(std::move(top->tag), std::move(node->tag));
+}

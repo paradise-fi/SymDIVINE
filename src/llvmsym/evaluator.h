@@ -157,7 +157,7 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
         return widths;
     }
 
-    const BB getBB( const PC pc ) const
+    const BB getBB( const PC& pc ) const
     {
         return getBB( pc.function, pc.basicblock );
     }
@@ -628,8 +628,8 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
     template < typename Yield >
     void do_phi( const llvm::PHINode *phi, int tid, Yield yield )
     {
-        auto &previous_bb = state.control.previous_bb[ tid ];
-        llvm::BasicBlock *prev_bb = getBB( previous_bb ).bb;
+        auto& previous_bb = state.control.previous_bb[ tid ];
+        llvm::BasicBlock *prev_bb = getBB(previous_bb).bb;
         assert( prev_bb );
         const llvm::Value* incoming_value =
             phi->getIncomingValueForBlock( prev_bb );
@@ -1056,7 +1056,8 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
     {
         int tid = state.control.startThread( fun_id );
         int last_thread = state.control.threadCount() - 1;
-        BB bb = getBB( state.control.getPC( last_thread ) );
+        auto last_pc = state.control.getPC(last_thread);
+        BB bb = getBB(last_pc);
         state.layout.startThread();
         unsigned sid = state.layout.getLastStackSegmentRange( last_thread ).first;
 

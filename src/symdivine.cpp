@@ -23,7 +23,7 @@ void process_statistics(T& t) {
             [&time](const Z3SubsetCall&, z3::check_result, const Z3Info& i) {
             time += i.time * i.accessed;
         });
-        std::cout << "Time saved: " << time << " us\n";
+        std::cout << "Time saved:    " << time << " us\n";
     }
 }
 
@@ -31,7 +31,7 @@ int main(int args, char *argv[])
 {
     try {
         Config.parse_cmd_args(args, argv);
-        
+
         if (Config.is_set("--version")) {
             std::cout << "SymDIVINE v0.2\n";
             return 0;
@@ -49,7 +49,7 @@ int main(int args, char *argv[])
                     reachability(Config.get_string("<model>"));
                 reachability.run();
                 process_statistics(reachability);
-            }           
+            }
         }
 
         if (Config.is_set("ltl")) {

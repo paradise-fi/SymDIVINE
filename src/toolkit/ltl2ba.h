@@ -65,7 +65,7 @@ public:
 	    // Preprocess formula
 	    std::string formula = ap_translator.preprocess(ltl);
         // Construct ba using external spot tool
-        std::string query = "ltl2tgba --ba -f \"" + formula + "\" 2>&1";
+        std::string query = "ltl2tgba --dot --ba -f \"" + formula + "\" 2>&1";
         FILE* pipe = popen(query.c_str(), "r");
         if (pipe < 0)
             throw LtlConvException(strerror(errno));

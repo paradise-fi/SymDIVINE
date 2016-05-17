@@ -424,7 +424,7 @@ class ValueStore : public DataStore {
         _empty = _empty || !holds;
     }
 
-    virtual bool empty() const
+    virtual bool empty()
     {
         return _empty;
     }

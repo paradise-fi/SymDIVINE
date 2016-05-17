@@ -35,6 +35,12 @@ struct Formula {
         bool operator!=( const Ident &snd ) const {
             return !( *this == snd );
         }
+        
+        Ident no_gen() const {
+            Ident ret = *this;
+            ret.gen = 0;
+            return ret;
+        }
 
         Ident( short unsigned s, short unsigned o, short unsigned g, unsigned char b )
             : seg( s ), off( o ), gen( g ), bw( b ) {}
@@ -93,7 +99,7 @@ struct Formula {
             return op == SExt || op == ZExt || op == Trunc || op == Not || op == BNot;
         }
 
-        bool dependsOn( short unsigned seg, short unsigned off, short unsigned gen ) const
+        bool depends_on( short unsigned seg, short unsigned off, short unsigned gen ) const
         {
             return kind == Item::Kind::Identifier
                         && id.seg == seg
@@ -152,7 +158,7 @@ struct Formula {
                                          + std::to_string(value & 0xFFFF) + "] ";
                     }
                 case Constant:
-                    ss << value << "[" << (int)id.bw << "]";
+                    ss << (int64_t)value << "[" << (int)id.bw << "]";
                     return ss.str();
                     
                 case Identifier:
@@ -287,10 +293,10 @@ struct Formula {
         return _rpn[ i ];
     }
 
-    bool dependsOn( int seg, int off, int gen ) const
+    bool depends_on( int seg, int off, int gen ) const
     {
         for ( const Item &i : _rpn )
-            if ( i.dependsOn( seg, off, gen ) )
+            if ( i.depends_on( seg, off, gen ) )
                 return true;
         return false;
     }
@@ -587,7 +593,7 @@ struct Formula {
         return joinUnary( *this, Item::Not);
     }
    
-    void collectVariables(  std::vector< Ident > &ret) const
+    void collect_variables(  std::vector< Ident > &ret) const
     {
         for ( const auto &i : _rpn ) {
             if ( i.kind == Item::Kind::Identifier )
@@ -685,10 +691,10 @@ struct Definition {
         return Formula::buildIdentifier( symbol ) == def;
     }
 
-    bool dependsOn( int seg, int off, int gen ) const
+    bool depends_on( int seg, int off, int gen ) const
     {
         bool symbol_depends = symbol.seg == seg && symbol.off == off && symbol.gen == gen;
-        return def.dependsOn( seg, off, gen ) || symbol_depends;
+        return def.depends_on( seg, off, gen ) || symbol_depends;
     }
 
     const Formula::Ident &getIdent() const {
@@ -699,8 +705,8 @@ struct Definition {
         return def;
     }
     
-    void collectVariables(std::vector<Formula::Ident>& vars) const {
-        def.collectVariables(vars);
+    void collect_variables(std::vector<Formula::Ident>& vars) const {
+        def.collect_variables(vars);
         vars.push_back(symbol);
     }
 
@@ -734,6 +740,7 @@ struct Definition {
 };
 
 std::ostream &operator<<( std::ostream &o, const Formula &f );
+std::ostream& operator <<(std::ostream& o, const Formula::Ident& id);
 
 }
 

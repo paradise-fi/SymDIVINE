@@ -98,7 +98,7 @@ struct DataStore {
     // read _bw_ bits from input, assign to _input_variable_
     virtual void implement_input( Value input_variable, unsigned bw ) = 0;
 
-    virtual bool empty() const = 0;
+    virtual bool empty() = 0;
 
     virtual void addSegment( unsigned id, const std::vector< int > &bit_widths ) = 0;
 

@@ -4,7 +4,8 @@
 
 std::ostream& operator<<( std::ostream &o, const Statistics &s )
 {
-    o << "STATISTICS:" << std::endl;
+    o << "General statistics\n"
+         "------------------\n";
 
     unsigned long l_max_width = 0, r_max_width = 0;
 
