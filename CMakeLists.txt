@@ -35,6 +35,7 @@ file(GLOB BIN_SOURCES
 	)
 
 set(DOCOPT_SOURCES libs/docopt/docopt.cpp)
+set(Q3B_SOURCES libs/q3b/ExprSimplifier.cpp libs/q3b/UnconstrainedVariableSimplifier.cpp)
 
 
 # Setup Bison/Flex sources
@@ -58,7 +59,7 @@ add_definitions(${LLVM_COMPILE_FLAGS})
 
 # Setup main binary
 add_executable(symdivine src/symdivine.cpp ${BIN_SOURCES} ${DOCOPT_SOURCES}
-	${BISON_LTL_PARSER_OUTPUTS} ${FLEX_LTL_SCANNER_OUTPUTS})
+	${BISON_LTL_PARSER_OUTPUTS} ${FLEX_LTL_SCANNER_OUTPUTS} ${Q3B_SOURCES})
 
 # Setup libraries
 # target_link_libraries(symdivine ${FLEX_LIBRARIES} ${BISON_LIBRARIES})

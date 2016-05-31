@@ -42,6 +42,10 @@ struct Formula {
             return ret;
         }
 
+	    std::string to_string_short() const {
+		    return "seg" + std::to_string(seg) + "_gen" + std::to_string(off);
+	    }
+
         Ident( short unsigned s, short unsigned o, short unsigned g, unsigned char b )
             : seg( s ), off( o ), gen( g ), bw( b ) {}
         Ident() = default;

@@ -22,27 +22,47 @@ namespace llvm_sym {
 
     bool SMTStore::empty() {
         try {
+	        static bool simplify = Config.is_set("--q3bsimplify");
             ++Statistics::getCounter(STAT_EMPTY_CALLS);
             if (path_condition.size() == 0)
                 return false;
 
             z3::context c;
-            z3::expr pc(c);
+	        z3::expr pc = c.bool_val(true);
 
             z3::solver s(c);
 
-            for (const Definition &def : definitions)
-                s.add(toz3(def.to_formula(), 'a', c));
+	        for (const Definition &def : definitions)
+		        pc = pc && toz3(def.to_formula(), 'a', c);
 
-            for (const Formula &pc : path_condition)
-                s.add(toz3(pc, 'a', c));
+	        for (const Formula &p : path_condition)
+		        pc = pc && toz3(p, 'a', c);
 
-            ++Statistics::getCounter(STAT_SMT_CALLS);
-            z3::check_result r = s.check();
+	        if (simplify) {
+		        ExprSimplifier simp(c, true);
+		        pc = simp.Simplify(pc); 
+	        }
 
-            assert(r != z3::unknown);
+	        z3::check_result ret;
+	        if (pc.is_const()) {
+		        if (pc.decl().decl_kind() == Z3_OP_TRUE) {
+			        ret = z3::sat;
+		        }
+		        else {
+			        assert(pc.decl().decl_kind() == Z3_OP_FALSE);
+			        ret = z3::unsat;
+		        }
+	        }
+	        else {
+		        s.add(pc);
+		        ++Statistics::getCounter(STAT_SMT_CALLS);
 
-            return r == z3::unsat;
+		        ret = s.check();
+	        }
+
+            assert(ret != z3::unknown);
+
+            return ret == z3::unsat;
         }
         catch (const z3::exception& e) {
             std::cerr << "Cannot perform empty operation: " << e.msg() << "\n";
@@ -53,6 +73,7 @@ namespace llvm_sym {
     bool SMTStore::subseteq(const SMTStore &b, const SMTStore &a, bool timeout,
         bool is_caching_enabled)
     {
+	    static bool simplify = Config.is_set("--q3bsimplify");
         ++Statistics::getCounter(STAT_SUBSETEQ_CALLS);
         if (a.definitions == b.definitions) {
             bool equal_syntax = a.path_condition.size() == b.path_condition.size();
@@ -167,14 +188,31 @@ namespace llvm_sym {
         }
 
         z3::expr not_witness = !pc_a || distinct;
-        s.add(pc_b);
-        s.add(forall(a_all_vars, not_witness));
+	    z3::expr query = pc_b && forall(a_all_vars, not_witness);
+        
+	    if (simplify) {
+		    ExprSimplifier simp(c, true);
+		    query = simp.Simplify(query); 
+	    }
 
-            //std::cerr << "checking equal():\n" << s << std::endl;
+	    z3::check_result ret;
+	    if (query.is_const()) {
+		    if (query.decl().decl_kind() == Z3_OP_TRUE) {
+			    ret = z3::sat;
+		    }
+		    else {
+			    assert(query.decl().decl_kind() == Z3_OP_FALSE);
+			    ret = z3::unsat;
+		    }
+	    }
+	    else {
+		    s.add(query);
+		    ++Statistics::getCounter(STAT_SMT_CALLS);
 
-        ++Statistics::getCounter(STAT_SMT_CALLS);
+		    ret = s.check();
+	    }
 
-        z3::check_result ret = s.check();
+
         if (ret == z3::unknown) {
             ++unknown_instances;
             if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {

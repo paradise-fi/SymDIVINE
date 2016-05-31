@@ -6,6 +6,7 @@
 #include <llvmsym/programutils/statistics.h>
 #include <llvmsym/programutils/config.h>
 #include <vector>
+#include <q3b/ExprSimplifier.h>
 
 
 namespace llvm_sym {

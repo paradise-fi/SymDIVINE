@@ -1,3 +1,6 @@
 [submodule "libs/docopt"]
 	path = libs/docopt
 	url = https://github.com/docopt/docopt.cpp.git
+[submodule "libs/q3b"]
+	path = libs/q3b
+	url = https://github.com/martinjonas/q3b
