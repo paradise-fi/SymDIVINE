@@ -452,8 +452,6 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
     {
         if (test_run)
             store.simplify();
-        // ToDo: Add dependency simplification
-        ++Statistics::getCounter(STAT_SMT_SIMPLIFY_CALLS);
         
         /*if (unknown_instances <= 4)
                 // instances are very easy (solving time < 10ms), it is a waste to simplify

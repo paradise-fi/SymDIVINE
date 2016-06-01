@@ -23,7 +23,6 @@ namespace llvm_sym {
     bool SMTStore::empty() {
         try {
 	        static bool simplify = Config.is_set("--q3bsimplify");
-            ++Statistics::getCounter(STAT_EMPTY_CALLS);
             if (path_condition.size() == 0)
                 return false;
 
@@ -43,22 +42,7 @@ namespace llvm_sym {
 		        pc = simp.Simplify(pc); 
 	        }
 
-	        z3::check_result ret;
-	        if (pc.is_const()) {
-		        if (pc.decl().decl_kind() == Z3_OP_TRUE) {
-			        ret = z3::sat;
-		        }
-		        else {
-			        assert(pc.decl().decl_kind() == Z3_OP_FALSE);
-			        ret = z3::unsat;
-		        }
-	        }
-	        else {
-		        s.add(pc);
-		        ++Statistics::getCounter(STAT_SMT_CALLS);
-
-		        ret = s.check();
-	        }
+	        z3::check_result ret = solve_query_qf(s, pc);
 
             assert(ret != z3::unknown);
 
@@ -74,7 +58,7 @@ namespace llvm_sym {
         bool is_caching_enabled)
     {
 	    static bool simplify = Config.is_set("--q3bsimplify");
-        ++Statistics::getCounter(STAT_SUBSETEQ_CALLS);
+        ++Statistics::getCounter(SUBSETEQ_CALLS);
         if (a.definitions == b.definitions) {
             bool equal_syntax = a.path_condition.size() == b.path_condition.size();
             for (size_t i = 0; equal_syntax && i < a.path_condition.size(); ++i) {
@@ -82,7 +66,7 @@ namespace llvm_sym {
                     equal_syntax = false;
             }
             if (equal_syntax) {
-                ++Statistics::getCounter(STAT_SUBSETEQ_SYNTAX_EQUAL);
+                ++Statistics::getCounter(SUBSETEQ_SYNTAX_EQUAL);
                 return true;
             }
         }
@@ -149,7 +133,7 @@ namespace llvm_sym {
 
             // Test if this formula is in cache or not
             if (Z3cache.is_cached(formula)) {
-                ++Statistics::getCounter(STAT_SMT_CACHED);
+                ++Statistics::getCounter(SMT_CACHED);
                 cached_result = Z3cache.result() == z3::unsat;
                 retrieved_from_cache = true;
                 if (!Config.is_set("--testvalidity"))
@@ -195,23 +179,7 @@ namespace llvm_sym {
 		    query = simp.Simplify(query); 
 	    }
 
-	    z3::check_result ret;
-	    if (query.is_const()) {
-		    if (query.decl().decl_kind() == Z3_OP_TRUE) {
-			    ret = z3::sat;
-		    }
-		    else {
-			    assert(query.decl().decl_kind() == Z3_OP_FALSE);
-			    ret = z3::unsat;
-		    }
-	    }
-	    else {
-		    s.add(query);
-		    ++Statistics::getCounter(STAT_SMT_CALLS);
-
-		    ret = s.check();
-	    }
-
+	    z3::check_result ret = solve_query_q(s, query);
 
         if (ret == z3::unknown) {
             ++unknown_instances;
@@ -223,13 +191,6 @@ namespace llvm_sym {
         }
         
         //FormulaeCapture::insert(s.to_smt2(), ret);
-
-        if (ret == z3::sat)
-            ++Statistics::getCounter(STAT_SUBSETEQ_SAT);
-        else if (ret == z3::unsat)
-            ++Statistics::getCounter(STAT_SUBSETEQ_UNSAT);
-        else
-            ++Statistics::getCounter(STAT_SUBSETEQ_UNKNOWN);
 
         solving_time.stop();
 

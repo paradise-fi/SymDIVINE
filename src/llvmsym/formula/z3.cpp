@@ -4,6 +4,19 @@
 
 namespace llvm_sym {
 
+TriState is_const(z3::expr& expr) {
+	if (expr.is_const()) {
+		if (expr.decl().decl_kind() == Z3_OP_TRUE) {
+			return TriState::TRUE;
+		}
+		else {
+			assert(expr.decl().decl_kind() == Z3_OP_FALSE);
+			return TriState::FALSE;
+		}
+	}
+	return TriState::UNKNOWN;
+}
+
 namespace {
     void operator2z3unary( const Formula::Item &i, std::vector< z3::expr > &res, z3::context &c )
     {

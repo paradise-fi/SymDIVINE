@@ -36,11 +36,13 @@ std::ostream & operator<<( std::ostream & o, const SMTStorePartial &v )
 
 bool SMTStorePartial::empty()
 {
-    ++Statistics::getCounter(STAT_EMPTY_CALLS);
-
     z3::context c;
 	z3::solver solver(c);
+	ExprSimplifier simp(c, true);
+
     std::vector<dependency_group*> set;
+	static bool simplify = Config.is_set("--q3bsimplify");
+	z3::expr query = c.bool_val(true);
     for (auto& group : sym_data) {
         TriState s = group.second.get_state();
         if (s == TriState::TRUE)
@@ -48,15 +50,18 @@ bool SMTStorePartial::empty()
         if (s == TriState::FALSE)
             return true;
         for (const Definition &def : group.second.get_definitions())
-            solver.add(toz3(def.to_formula(), 'a', c));
+            query = query && toz3(def.to_formula(), 'a', c);
 
         for (const Formula &pc : group.second.get_path_condition())
-            solver.add(toz3(pc, 'a', c)); 
+            query = query && toz3(pc, 'a', c); 
         set.push_back(&group.second);
     }
+
+    if (simplify) {
+	    query = simp.Simplify(query);
+    }
     
-    ++Statistics::getCounter(STAT_SMT_CALLS);
-    z3::check_result r = solver.check();
+    z3::check_result r = solve_query_qf(solver, query);
     assert(r != z3::unknown);
     
     if (r == z3::unsat) {
@@ -101,9 +106,9 @@ bool SMTStorePartial::subseteq(
     for (const auto& item : b_g)
         b_group.append(item.get());
     
-    ++Statistics::getCounter(STAT_SUBSETEQ_CALLS);
+    ++Statistics::getCounter(SUBSETEQ_CALLS);
     if (syntax_equal(a_group, b_group)) {
-        ++Statistics::getCounter(STAT_SUBSETEQ_SYNTAX_EQUAL);
+        ++Statistics::getCounter(SUBSETEQ_SYNTAX_EQUAL);
         return true;
     }
     
@@ -147,7 +152,7 @@ bool SMTStorePartial::subseteq(
 
         // Test if the formula is in cache or not
         if (Z3cache.is_cached(formula)) {
-            ++Statistics::getCounter(STAT_SMT_CACHED);
+            ++Statistics::getCounter(SMT_CACHED);
             return Z3cache.result() == z3::unsat;
         }
     }
@@ -182,12 +187,9 @@ bool SMTStorePartial::subseteq(
     }    
 
     z3::expr not_witness = !pc_a || distinct;
-    s.add(pc_b);
-    s.add(forall(a_all_vars, not_witness));
+	z3::expr query = pc_b && forall(a_all_vars, not_witness);
     
-    ++Statistics::getCounter(STAT_SMT_CALLS);
-    
-    z3::check_result ret = s.check();
+    z3::check_result ret = solve_query_q(s, query);
     if (ret == z3::unknown) {
         ++unknown_instances;
         if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
@@ -196,13 +198,6 @@ bool SMTStorePartial::subseteq(
             std::cerr << "\ngot 'unknown', reason: " << s.reason_unknown() << std::endl;
         }
     }
-
-    if (ret == z3::sat)
-        ++Statistics::getCounter(STAT_SUBSETEQ_SAT);
-    else if (ret == z3::unsat)
-        ++Statistics::getCounter(STAT_SUBSETEQ_UNSAT);
-    else
-        ++Statistics::getCounter(STAT_SUBSETEQ_UNKNOWN);
 
     solving_time.stop();
 

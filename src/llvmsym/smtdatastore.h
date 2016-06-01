@@ -147,7 +147,6 @@ namespace llvm_sym {
     public:
 
         void simplify() {
-            ++Statistics::getCounter(STAT_SMT_SIMPLIFY_CALLS);
             if (path_condition.empty())
                 return;
             if (unknown_instances <= 4)

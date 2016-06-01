@@ -17,9 +17,14 @@ CLANG = os.environ.get("CLANG")
 if not CLANG:
     CLANG = "clang"
 
-STAT_CASES = ["SMT calls Subseteq()", "SMT calls Empty()", "SMT queries", "SMT queries SAT",
-        "SMT queries unSAT", "SMT queries unSAT", "SMT subseteq on syntax. equal", 
-        "SMT simplify calls", "SMT CACHED", "Instruction executed", "Instructions executed observable"]
+SYMDIVINE = os.environ.get("SYMDIVINE")
+if not SYMDIVINE:
+    SYMDIVINE = "../bin/symdivine"
+
+STAT_CASES = ["Instruction executed", "Instructions executed observable", 
+    "Subseteq queries", "Subseteq on syntax", "Equal query cached", 
+    "QF queries solved via simplification", "QF queries solved via solver",
+    "Q queries solved via simplification", "Q queries solved via solver"]
 
 def change_suffix(src, suffix, pre_suffix = ""):
     out, _ = os.path.splitext(src)
@@ -42,9 +47,9 @@ def timeout_command(command, timeout):
         return None, None
     return process.stdout.read() + process.stderr.read(), (now - start).seconds + (now - start).microseconds * 0.000001
     
-def reachability(file, flags, timeout=120):
+def reachability(file, flags, timeout=300):
     print("Running reachability on file {0}".format(file))
-    command = ["../bin/symdivine", "reachability", file, "-s"] + flags
+    command = [SYMDIVINE, "reachability", file, "-s"] + flags
     out, time = timeout_command(command, timeout)
         
     result = [str(time)] + (2 + 4 + len(STAT_CASES))*[None]

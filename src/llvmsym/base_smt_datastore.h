@@ -11,15 +11,13 @@
 #include <set>
 #include <toolkit/utils.h>
 
-#define STAT_SUBSETEQ_CALLS "SMT calls Subseteq()"
-#define STAT_EMPTY_CALLS "SMT calls Empty()"
-#define STAT_SMT_CALLS "SMT queries"
-#define STAT_SUBSETEQ_SAT "SMT queries SAT"
-#define STAT_SUBSETEQ_UNSAT "SMT queries unSAT"
-#define STAT_SUBSETEQ_UNKNOWN "SMT queries unSAT"
-#define STAT_SUBSETEQ_SYNTAX_EQUAL "SMT subseteq on syntax. equal"
-#define STAT_SMT_SIMPLIFY_CALLS "SMT simplify calls"
-#define STAT_SMT_CACHED "SMT CACHED"
+#define SUBSETEQ_CALLS "Subseteq queries"
+#define SUBSETEQ_SYNTAX_EQUAL "Subseteq on syntax"
+#define SMT_CACHED "Equal query cached"
+#define QF_SIMP "QF queries solved via simplification"
+#define QF_N_SIMP "QF queries solved via solver"
+#define Q_SIMP "Q queries solved via simplification"
+#define Q_N_SIMP "Q queries solved via solver"
 
 namespace llvm_sym {
 
@@ -175,6 +173,33 @@ namespace llvm_sym {
 
 		bool equal(const StoreType& snd) {
 			return subseteq(*this, snd) && subseteq(snd, *this);
+		}
+
+        template <bool quantified>
+		static z3::check_result solve_query(z3::solver& s, z3::expr& e) {
+			const char* simp = quantified ? Q_SIMP : QF_SIMP;
+			const char* solv = quantified ? Q_N_SIMP : QF_N_SIMP;
+            switch(is_const(e))
+            {
+            case TriState::TRUE:
+	            ++Statistics::getCounter(simp);
+	            return z3::sat;
+            case TriState::FALSE:
+	            ++Statistics::getCounter(simp);
+	            return z3::unsat;
+            case TriState::UNKNOWN:
+	            ++Statistics::getCounter(solv);
+	            s.add(e);
+	            return s.check();
+            }
+        }
+
+		static z3::check_result solve_query_qf(z3::solver& s, z3::expr& e) {
+			return solve_query<false>(s, e);
+        }
+
+		static z3::check_result solve_query_q(z3::solver& s, z3::expr& e) {
+			return solve_query<true>(s, e);
 		}
 	};
 }
