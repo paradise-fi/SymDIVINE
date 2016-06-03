@@ -116,6 +116,8 @@ bool SMTStorePartial::subseteq(
     // (sat iff not _b_ subseteq _a_)
     static z3::context c;
     z3::solver s(c);
+    ExprSimplifier simp(c, true);
+    static bool simplify = Config.is_set("--q3bsimplify");
 
     z3::params p(c);
     p.set(":mbqi", true);
@@ -187,7 +189,11 @@ bool SMTStorePartial::subseteq(
     }    
 
     z3::expr not_witness = !pc_a || distinct;
-	z3::expr query = pc_b && forall(a_all_vars, not_witness);
+    z3::expr query = pc_b && forall(a_all_vars, not_witness);
+
+    if (simplify) {
+        query = simp.Simplify(query);
+    }
     
     z3::check_result ret = solve_query_q(s, query);
     if (ret == z3::unknown) {
