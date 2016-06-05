@@ -189,8 +189,11 @@ namespace llvm_sym {
 	            return z3::unsat;
             case TriState::UNKNOWN:
 	            ++Statistics::getCounter(solv);
+	            s.push();
 	            s.add(e);
-	            return s.check();
+	            auto res = s.check();
+	            s.pop();
+	            return res;
             }
         }
 

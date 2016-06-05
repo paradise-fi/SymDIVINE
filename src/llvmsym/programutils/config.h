@@ -89,7 +89,6 @@ struct ConfigStruct {
      */
     template <class T>
     void set(const std::string& name, T val) {
-        assert(false);
         args[name] = docopt::value(val);
     }
 
