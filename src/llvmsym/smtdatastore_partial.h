@@ -38,7 +38,6 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         {
             for (Formula::Ident id : g) {
                 id.gen = 0;
-	            id.bw = 0;
                 group.insert(id);
             }
         }
@@ -114,8 +113,8 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         bool depends_on(int seg, int offset, int generation) const {
             // ToDo: Can be simplified!
             // We could use a dependency group
-	        return group.find({ (unsigned short)seg, (unsigned short)offset, 0, 0 }) != group.end();
-            /*for (const auto& pc : path_condition) {
+	        //return group.find({ (unsigned short)seg, (unsigned short)offset, 0, 0 }) != group.end();
+            for (const auto& pc : path_condition) {
                 if (pc.depends_on(seg, offset, generation))
                     return true;
             }
@@ -125,7 +124,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
                     return true;
             }
             
-            return false;*/
+            return false;
         }
         
         void simplify_pc() {

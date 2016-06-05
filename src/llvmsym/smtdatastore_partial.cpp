@@ -40,6 +40,10 @@ bool SMTStorePartial::empty()
 	z3::solver solver(c);
 	ExprSimplifier simp(c, true);
 
+	bool smtstore_res = false;
+	if (test_run)
+		smtstore_res = store.empty();
+
     std::vector<dependency_group*> set;
 	static bool simplify = Config.is_set("--q3bsimplify");
 	z3::expr query = c.bool_val(true);
@@ -47,8 +51,10 @@ bool SMTStorePartial::empty()
         TriState s = group.second.get_state();
         if (s == TriState::TRUE)
             continue;
-        if (s == TriState::FALSE)
-            return true;
+	    if (s == TriState::FALSE) {
+		    assert(!test_run || smtstore_res);
+		    return true;
+	    }
         for (const Definition &def : group.second.get_definitions())
             query = query && toz3(def.to_formula(), 'a', c);
 
@@ -67,9 +73,11 @@ bool SMTStorePartial::empty()
     if (r == z3::unsat) {
         for (auto& g : set)
             g->set_state(TriState::TRUE);
+	    assert(!test_run || smtstore_res);
         return true;
     }
     
+	assert(!test_run || !smtstore_res);
     return false;
 }
     
@@ -189,7 +197,9 @@ bool SMTStorePartial::subseteq(
     }    
 
     z3::expr not_witness = !pc_a || distinct;
-    z3::expr query = pc_b && forall(a_all_vars, not_witness);
+	z3::expr query = pc_b;
+    if (!a_all_vars.empty())
+        query = query && forall(a_all_vars, not_witness);
 
     if (simplify) {
         query = simp.Simplify(query);
@@ -217,7 +227,6 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
         bool timeout, bool caching) 
 {
     using dependency_group_r = std::reference_wrapper<const dependency_group>;
-	std::vector<std::unique_ptr<dependency_group>> tmp_groups;
     std::vector<dependency_group_r> a_group;
     std::vector<dependency_group_r> b_group;
     
@@ -254,7 +263,7 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
     
     std::map<Formula::Ident, DepSet*> a_id_info;
     std::vector<DepSet> a_sets;
-	a_sets.reserve(a_to_b.size() + a_group.size());
+    a_sets.reserve(a_group.size());
     for (const auto& group : a_group) {
         a_sets.emplace_back(&group.get());
         for (const auto& id : group.get().get_group()) {
@@ -264,7 +273,7 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
 
     std::map<Formula::Ident, DepSet*> b_id_info;
     std::vector<DepSet> b_sets;
-	b_sets.reserve(a_to_b.size() + b_group.size());
+    b_sets.reserve(b_group.size());
     for (const auto& group : b_group) {
         b_sets.emplace_back(&group.get());
         for (const auto& id : group.get().get_group()) {
@@ -276,23 +285,11 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
         std::vector<dependency_group_r>, std::vector<dependency_group_r>>> compare_groups;
     
     for (const auto& id_pair : a_to_b) {
-	    auto a_var = a_id_info.find(id_pair.first.no_gen());
-	    if (a_var == a_id_info.end()) {
-		    tmp_groups.emplace_back(new dependency_group({ id_pair.first }));
-		    a_sets.emplace_back(tmp_groups.back().get());
-		    a_var = a_id_info.insert({ id_pair.first.no_gen(), &a_sets.back() }).first;
-        }
-	    auto b_var = b_id_info.find(id_pair.second.no_gen());
-	    if (b_var == b_id_info.end()) {
-		    tmp_groups.emplace_back(new dependency_group({ id_pair.second }));
-		    b_sets.emplace_back(tmp_groups.back().get());
-		    b_var = b_id_info.insert({ id_pair.second.no_gen(), &b_sets.back() }).first;
-        }
+        assert(a_id_info.find(id_pair.first.no_gen()) != a_id_info.end());
+        assert(b_id_info.find(id_pair.second.no_gen()) != b_id_info.end());
         
-        DepSet* a_set = a_var->second;
-        DepSet* b_set = b_var->second;
-	    assert(!a_set->data->get_group().empty());
-	    assert(!b_set->data->get_group().empty());
+        DepSet* a_set = a_id_info.find(id_pair.first.no_gen())->second;
+        DepSet* b_set = b_id_info.find(id_pair.second.no_gen())->second;
         
         a_set->get_set()->tag.insert(id_pair);
         
@@ -327,7 +324,6 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
         auto& tup = compares[g.get_set()->data];
         std::get<1>(tup).push_back(*g.data);
         if (g.is_root()) {
-	        assert(std::get<2>(tup).empty());
             std::get<2>(tup) = g.tag;
         }
     }
@@ -363,18 +359,11 @@ bool SMTStorePartial::subseteq(const SMTStorePartial &a, const SMTStorePartial &
         if (fail) {
             std::cout << "Comapres: \n";
             for (const auto& item : compares) {
-	            std::cout << "[ ";
-	            for (const auto& p : std::get<2>(item.second)) {
-		            std::cout << p.first.to_string_short()
-                        << ":" << p.second.to_string_short() << " ";
-	            }
-	            std::cout << "] ";
                 for (const auto& p : std::get<0>(item.second))
-                    std::cout << "{" << p << "}, ";
+                    std::cout << p << ", ";
                 std::cout << " | ";
                 for (const auto& p : std::get<1>(item.second))
                     std::cout << p << ", ";
-
         
                 std::cout << "\n\n";
             }
