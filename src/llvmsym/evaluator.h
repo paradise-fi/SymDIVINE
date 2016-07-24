@@ -469,6 +469,9 @@ class Evaluator : Dispatcher< Evaluator< DataStore > >{
             else if (fun_name == "llvm.dbg.declare") {
                 // ignore llvm dbg functions
             }
+            else if (fun_name.substr(0, 4) == "ldv_") {
+                // ignore ldv functions
+            }
             else {
                 std::cerr << "I don't know what to do with function "
                           << fun_name << std::endl;

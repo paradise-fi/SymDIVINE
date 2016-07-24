@@ -13,7 +13,7 @@ namespace llvm_sym {
         for (const Formula &pc : v.path_condition)
             o << pc << '\n';
 
-        o << "\ndefinitions:\n";
+        o << "\n" << v.definitions.size() << " definitions:\n";
         for (const Definition &def : v.definitions)
             o << def.to_formula() << "\n\n";
         

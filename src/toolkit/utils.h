@@ -226,6 +226,7 @@ void set_symmetric_difference_diff(InputIt1 first1, InputIt1 last1,
 template <class T, class Id = size_t>
 class IdContainer {
 public:
+    using IdType = Id;
     IdContainer() :
         unused({ 1 })
     { }

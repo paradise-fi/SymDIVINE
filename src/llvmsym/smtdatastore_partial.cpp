@@ -12,12 +12,13 @@ std::ostream& operator<<(std::ostream& o, const SMTStorePartial::dependency_grou
     o << "Variables: ";
     for (const auto& ident : g.get_group())
         o << "seg" << ident.seg << "_off" << ident.off << "_gen" << ident.gen << ", ";
-    /*o << "; Path condition: ";
+    o << "; Path condition: ";
     for (const auto& pc : g.get_path_condition())
         o << pc << ", ";
     o << "; Definitions: ";
     for (const auto& def : g.get_definitions())
-        o << def.to_formula() << ", ";*/
+        o << def.to_formula() << ", ";
+    o << "\n";
     return o;
 }
 

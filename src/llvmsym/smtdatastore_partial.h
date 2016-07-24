@@ -263,6 +263,31 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
     int fst_unused_id = 0;
     static unsigned unknown_instances;
 
+    void group_cleanup() {
+        std::vector<Formula::Ident> to_del;
+        for (const auto& item : sym_data) {
+            if (item.second.get_path_condition().empty()
+                && item.second.get_definitions().empty())
+            {
+                std::copy(item.second.get_group().begin(), item.second.get_group().end(), 
+                    std::back_inserter(to_del));
+            }
+        }
+
+        std::set<size_t> to_id_del;
+        for (const auto& ident : to_del) {
+            auto res = dependency_map.find(ident);
+            if (res != dependency_map.end()) {
+                to_id_del.insert(res->second);
+                dependency_map.erase(res);
+            }
+        }
+
+        for (const auto& id : to_id_del) {
+            sym_data.erase(id);
+        }
+    }
+
     Formula::Ident build_item( Value val ) const
     {
         assert ( val.type == Value::Type::Variable );
@@ -604,6 +629,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         for (auto& group : sym_data) {
             group.second.removeDefinitions(pred);
         }
+        group_cleanup();
     }
 
     template < typename Predicate >
@@ -616,6 +642,7 @@ class SMTStorePartial : public BaseSMTStore<SMTStorePartial> {
         for (auto& group : sym_data) {
             group.second.removeConditions(pred);
         }
+        group_cleanup();
     }
 
 	bool equal(const SMTStorePartial &snd)
