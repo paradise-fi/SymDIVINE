@@ -16,7 +16,7 @@ namespace llvm_sym {
         o << "\n" << v.definitions.size() << " definitions:\n";
         for (const Definition &def : v.definitions)
             o << def.to_formula() << "\n\n";
-        
+
         return o;
     }
 
@@ -39,7 +39,7 @@ namespace llvm_sym {
 
 	        if (simplify) {
 		        ExprSimplifier simp(c, true);
-		        pc = simp.Simplify(pc); 
+		        pc = simp.Simplify(pc);
 	        }
 
 	        z3::check_result ret = solve_query_qf(s, pc);
@@ -173,23 +173,24 @@ namespace llvm_sym {
 
         z3::expr not_witness = !pc_a || distinct;
 	    z3::expr query = pc_b && forall(a_all_vars, not_witness);
-        
+
 	    if (simplify) {
 		    ExprSimplifier simp(c, true);
-		    query = simp.Simplify(query); 
+		    query = simp.Simplify(query);
 	    }
 
 	    z3::check_result ret = solve_query_q(s, query);
 
         if (ret == z3::unknown) {
             ++unknown_instances;
+            ++Statistics::getCounter(SOLVER_UNKNOWN);
             if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
                 if (Config.is_set("--vverbose"))
                     std::cerr << "while checking:\n" << s;
                 std::cerr << "\ngot 'unknown', reason: " << s.reason_unknown() << std::endl;
             }
         }
-        
+
         //FormulaeCapture::insert(s.to_smt2(), ret);
 
         solving_time.stop();
@@ -198,14 +199,14 @@ namespace llvm_sym {
             Z3cache.place(formula, ret, solving_time.getUs());
 
         bool real_result = ret == z3::unsat;
-        
+
         if (is_caching_enabled && Config.is_set("--testvalidity") &&
             retrieved_from_cache && real_result != cached_result)
         {
             std::cout << "Got different result from cache!\n";
             abort();
         }
-        
+
         return real_result;
     }
 

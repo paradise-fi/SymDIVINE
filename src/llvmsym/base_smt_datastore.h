@@ -18,6 +18,7 @@
 #define QF_N_SIMP "QF queries solved via solver"
 #define Q_SIMP "Q queries solved via simplification"
 #define Q_N_SIMP "Q queries solved via solver"
+#define SOLVER_UNKNOWN "Solver unknown"
 
 namespace llvm_sym {
 
@@ -57,13 +58,13 @@ namespace llvm_sym {
 			Formula b_expr = build_expression(b_id);
 			push_definition(result_id, a_expr / b_expr);
 		}
-    
+
 		virtual void implement_urem(Value result_id, Value a_id, Value b_id) final {
 			Formula a_expr = build_expression(a_id);
 			Formula b_expr = build_expression(b_id);
 			push_definition(result_id, a_expr.buildURem(b_expr));
 		}
-    
+
 		virtual void implement_srem(Value result_id, Value a_id, Value b_id) final {
 			Formula a_expr = build_expression(a_id);
 			Formula b_expr = build_expression(b_id);
@@ -124,7 +125,7 @@ namespace llvm_sym {
 			Formula what_expr = build_expression(a_id);
 			push_definition(result_id, what_expr);
 		}
-    
+
 		virtual void implement_ptrtoint(Value result_id, Value a_id) final {
 			Formula what_expr = build_expression(a_id);
 			push_definition(result_id, what_expr);
