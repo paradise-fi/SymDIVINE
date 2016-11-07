@@ -9,9 +9,9 @@
 template <class T>
 void process_statistics(T& t) {
 	if (Config.is_set("--space_output")) {
-		t.output_state_space(Config.get_string("--space_output"));       
-    } 
-    
+		t.output_state_space(Config.get_string("--space_output"));
+    }
+
     if (Config.is_set("--statistics")) {
         std::cout << Statistics::get();
         std::cout << "\n";
@@ -33,7 +33,7 @@ int main(int args, char *argv[])
         Config.parse_cmd_args(args, argv);
 
         if (Config.is_set("--version")) {
-            std::cout << "SymDIVINE v0.2\n";
+            std::cout << "SymDIVINE v0.5\n";
             return 0;
         }
 
@@ -61,7 +61,7 @@ int main(int args, char *argv[])
             else
                 ltl.run();
             process_statistics(ltl);
-        } 
+        }
     }
     catch (const ArgNotFoundException& e) {
         std::cerr << "Missing command line argument " << e.what() << "\n";
