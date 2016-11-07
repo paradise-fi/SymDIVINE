@@ -13,14 +13,14 @@ find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 find_package(Threads REQUIRED)
 find_package(LLVM REQUIRED)
-find_package(Boost REQUIRED COMPONENTS regex graph) 
+find_package(Boost REQUIRED COMPONENTS regex graph)
 find_package(LIBDL REQUIRED)
 find_package(Curses REQUIRED)
 find_package(Z3 REQUIRED)
 
 # Check LLVM version
-if (NOT ${LLVM_STRING_VERSION} MATCHES "3[.][4]([^0-9]*|[.].*)")
-    message(FATAL_ERROR "LLVM 3.4 is required! Version ${LLVM_STRING_VERSION} found.")
+if (NOT ${LLVM_STRING_VERSION} MATCHES "3[.][45]([^0-9]*|[.].*)")
+    message(FATAL_ERROR "LLVM 3.4 or 3.5 is required! Version ${LLVM_STRING_VERSION} found.")
 endif()
 
 
@@ -35,6 +35,7 @@ file(GLOB BIN_SOURCES
 	)
 
 set(DOCOPT_SOURCES libs/docopt/docopt.cpp)
+set(Q3B_SOURCES libs/q3b/ExprSimplifier.cpp libs/q3b/UnconstrainedVariableSimplifier.cpp)
 
 
 # Setup Bison/Flex sources
@@ -46,8 +47,8 @@ add_flex_bison_dependency(LTL_SCANNER LTL_PARSER)
 include_directories(src libs)
 include_directories(${LLVM_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ltl_parser)
-include_directories(${Boost_INCLUDE_DIRS}) 
-include_directories(${LIBDL_INCLUDE_DIRS}) 
+include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${LIBDL_INCLUDE_DIRS})
 include_directories(${Z3_INCLUDE_DIRS})
 
 # Link directories
@@ -58,7 +59,7 @@ add_definitions(${LLVM_COMPILE_FLAGS})
 
 # Setup main binary
 add_executable(symdivine src/symdivine.cpp ${BIN_SOURCES} ${DOCOPT_SOURCES}
-	${BISON_LTL_PARSER_OUTPUTS} ${FLEX_LTL_SCANNER_OUTPUTS})
+	${BISON_LTL_PARSER_OUTPUTS} ${FLEX_LTL_SCANNER_OUTPUTS} ${Q3B_SOURCES})
 
 # Setup libraries
 # target_link_libraries(symdivine ${FLEX_LIBRARIES} ${BISON_LIBRARIES})

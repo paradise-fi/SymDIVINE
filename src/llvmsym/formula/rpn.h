@@ -35,12 +35,16 @@ struct Formula {
         bool operator!=( const Ident &snd ) const {
             return !( *this == snd );
         }
-        
+
         Ident no_gen() const {
             Ident ret = *this;
             ret.gen = 0;
             return ret;
         }
+
+	    std::string to_string_short() const {
+		    return "seg" + std::to_string(seg) + "_gen" + std::to_string(off);
+	    }
 
         Ident( short unsigned s, short unsigned o, short unsigned g, unsigned char b )
             : seg( s ), off( o ), gen( g ), bw( b ) {}
@@ -160,7 +164,7 @@ struct Formula {
                 case Constant:
                     ss << (int64_t)value << "[" << (int)id.bw << "]";
                     return ss.str();
-                    
+
                 case Identifier:
                     ss << 'a'
                        << "_seg"
@@ -217,12 +221,12 @@ struct Formula {
                                          + std::to_string(value & 0xFFFF) + "] ";
           case SExt:   return "SignExt ";
           case ZExt:   return "ZeroExt ";
-                    
+
           }
         case Constant:
           ss << "0d" << (int)id.bw << "_" << value;
           return ss.str();
-                    
+
         case Identifier:
           if ( id.gen == 0 )
             ss << "r" << m[id];
@@ -276,7 +280,7 @@ struct Formula {
     Item &top() {
         return _rpn.back();
     }
-   
+
     size_t size() const {
         return _rpn.size();
     }
@@ -284,11 +288,11 @@ struct Formula {
     const Item &top() const {
         return _rpn.back();
     }
-    
+
     Item &at( int i ) {
         return _rpn[ i ];
     }
-    
+
     const Item &at( int i ) const {
         return _rpn[ i ];
     }
@@ -383,7 +387,7 @@ struct Formula {
         assert( result._rpn.size() == 1 + l._rpn.size() + r._rpn.size() );
         return result;
     }
-    
+
     static Formula joinUnary( const Formula &l, Item::Operator op, int value = 0 )
     {
         Formula result;
@@ -443,7 +447,7 @@ struct Formula {
     {
         return joinUnary( *this, Item::ZExt, bits );
     }
-    
+
     Formula buildBNot() const
     {
         return joinUnary( *this, Item::BNot );
@@ -587,12 +591,12 @@ struct Formula {
     {
         return joinBinary( *this, b, Item::Xor);
     }
-    
+
     Formula operator!() const
     {
         return joinUnary( *this, Item::Not);
     }
-   
+
     void collect_variables(  std::vector< Ident > &ret) const
     {
         for ( const auto &i : _rpn ) {
@@ -616,7 +620,7 @@ struct Formula {
         for ( size_t i = 0; i < _rpn.size(); ++i ) {
             if ( at(i).kind != snd.at(i).kind )
                 return false;
-            
+
             switch ( at(i).kind ) {
                 case Item::Kind::Op:
                     if ( at(i).op != snd.at(i).op )
@@ -650,14 +654,14 @@ struct Formula {
 
       for ( unsigned pos = 0; pos < size(); ++pos ) {
         std::string l,r;
-        
+
         switch ( at( pos ).kind ) {
         case Formula::Item::Op:
           if ( at( pos ).op == Formula::Item::Not ) {
             assert( stack.size() >= 1 );
             l = stack.back(); stack.pop_back();
             stack.push_back( at( pos ).print( m ) + l );
-          } else { 
+          } else {
             assert( stack.size() >= 2 );
             r = stack.back(); stack.pop_back();
             l = stack.back(); stack.pop_back();
@@ -704,7 +708,7 @@ struct Definition {
     const Formula &getDef() const {
         return def;
     }
-    
+
     void collect_variables(std::vector<Formula::Ident>& vars) const {
         def.collect_variables(vars);
         vars.push_back(symbol);

@@ -18,6 +18,7 @@ Options:
   -p --partialstore       Use partial SMT store (better caching).
   --testvalidity          When using partial store, compare results with full store.
   -c --enablecaching      Enable caching for Z3 formulas.
+  --q3bsimplify           Enable simplifications using Q3B SMT Solver
   -s --statistics         Enable output of statistics.
   --space_output=<file>   Outputs state space to <file> in dot format.
   --bound=<depth>         Limits depth exploration to given bound.

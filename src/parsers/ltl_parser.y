@@ -82,10 +82,10 @@
 
 %token <string> TIDENTIFIER TINTEGER TDOUBLE
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TEQUAL
-%token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TDOT
+%token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA
 %token <token> TPLUS TMINUS TMUL TDIV TSEG TOFF TUND TAND TOR TIMP
 %token <token> TNEG TRSHIFT TLSHIFT TFUT TGLOB TUNTIL TREL TWEAK
-%token <token> TSLPAREN TSRPAREN
+%token <token> TSLPAREN TSRPAREN TDOT
 
 %type <formula> formula arexpr ident arterm arfactor lexpr lterm ltlformula lnterm
 %type <token> binary_ar_oper_low binary_ar_oper_high binary_la_oper binary_ll_oper

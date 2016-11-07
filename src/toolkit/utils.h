@@ -156,7 +156,7 @@ private:
 template <class A, class B>
 class Zip {
 public:
-    
+
 private:
     A& a;
     B& b;
@@ -208,7 +208,7 @@ void set_symmetric_difference_diff(InputIt1 first1, InputIt1 last1,
             std::copy(first1, last1, d_first);
             return;
         }
- 
+
         if (comp(*first1, *first2)) {
             *d_first++ = *first1++;
         } else {
@@ -226,10 +226,11 @@ void set_symmetric_difference_diff(InputIt1 first1, InputIt1 last1,
 template <class T, class Id = size_t>
 class IdContainer {
 public:
+    using IdType = Id;
     IdContainer() :
         unused({ 1 })
     { }
-    
+
     typename std::map<Id, T>::const_iterator begin() const {
         return values.begin();
     }
@@ -248,15 +249,15 @@ public:
     typename std::map<Id, T>::const_iterator cend() const {
         return values.cend();
     }
-    
+
     size_t size() const {
         return values.size();
     }
-    
+
     T& insert(Id id, const T& item) {
         return values.insert({ id, item }).first->second;
     }
-    
+
     Id insert(const T& item) {
         auto i = unused.back();
         unused.pop_back();
@@ -265,33 +266,33 @@ public:
         values.insert( {i, item});
         return i;
     }
-    
+
     void erase(typename std::map<Id, T>::iterator& it) {
         unused.push_back(it->first);
         values.erase(it);
     }
-    
+
     void erase(Id i) {
         unused.push_back(i);
         values.erase(values.find(i));
     }
-    
+
     const std::vector<Id>& free_idx() const {
         return unused;
     }
-    
+
     std::vector<Id>& free_idx() {
         return unused;
     }
-    
+
     const T& get(Id id) const {
         return values[id];
     }
-    
+
     T& get(Id id) {
         return values[id];
     }
-    
+
     void clear() {
         values.clear();
         unused = { 0 };
@@ -305,9 +306,9 @@ template <class T, class Info = std::tuple<>>
 class UnionSet {
 public:
     UnionSet(const T& data) : data(data), parent(nullptr), depth(0) { }
-    
+
     bool is_root() const {
-        return !parent; 
+        return !parent;
     }
 
     UnionSet* get_set() {
@@ -316,13 +317,13 @@ public:
             p = p->parent;
         return p;
     }
-    
+
     T data;
     Info tag;
-private:    
+private:
     UnionSet* parent;
     size_t depth;
-    
+
     template <class U, class I, class Merge>
     friend void join(UnionSet<U, I>*, UnionSet<U, I>*, Merge);
 };
@@ -339,7 +340,7 @@ void join(UnionSet<T, Info>* a, UnionSet<T, Info>* b, Merge merge = TupleMergeOp
     assert(a->is_root());
     assert(b->is_root());
     assert(a != b);
-    
+
     UnionSet<T, Info>* top;
     UnionSet<T, Info>* node;
     if (b->depth < a->depth) {
@@ -348,7 +349,7 @@ void join(UnionSet<T, Info>* a, UnionSet<T, Info>* b, Merge merge = TupleMergeOp
     else {
         top = a; node = b;
     }
-    
+
     top->depth++;
     node->parent = top;
     top->tag = merge(std::move(top->tag), std::move(node->tag));

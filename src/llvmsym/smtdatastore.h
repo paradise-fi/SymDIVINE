@@ -6,6 +6,7 @@
 #include <llvmsym/programutils/statistics.h>
 #include <llvmsym/programutils/config.h>
 #include <vector>
+#include <q3b/ExprSimplifier.h>
 
 
 namespace llvm_sym {
@@ -84,7 +85,7 @@ namespace llvm_sym {
         int get_generation(Value val, bool advance_generation = false) {
             assert(val.type == Value::Type::Variable);
             return get_generation(val.variable.segmentId, val.variable.offset, advance_generation);
-        }	
+        }
 
         void push_condition(const Formula &f) {
             path_condition.push_back(f);
@@ -146,7 +147,6 @@ namespace llvm_sym {
     public:
 
         void simplify() {
-            ++Statistics::getCounter(STAT_SMT_SIMPLIFY_CALLS);
             if (path_condition.empty())
                 return;
             if (unknown_instances <= 4)
@@ -198,7 +198,7 @@ namespace llvm_sym {
                 blobWrite(mem, pc._rpn);
             }
         }
-    
+
         virtual void readData(const char * &mem) {
             blobRead(mem, segments_mapping, generations, bitWidths, fst_unused_id);
 
@@ -231,7 +231,7 @@ namespace llvm_sym {
             }
             push_condition(f);
         }
-        
+
         int getBitWidth(Value val) {
             return bitWidths[val.variable.segmentId][val.variable.offset];
         }

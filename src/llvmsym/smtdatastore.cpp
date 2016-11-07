@@ -13,36 +13,40 @@ namespace llvm_sym {
         for (const Formula &pc : v.path_condition)
             o << pc << '\n';
 
-        o << "\ndefinitions:\n";
+        o << "\n" << v.definitions.size() << " definitions:\n";
         for (const Definition &def : v.definitions)
             o << def.to_formula() << "\n\n";
-        
+
         return o;
     }
 
     bool SMTStore::empty() {
         try {
-            ++Statistics::getCounter(STAT_EMPTY_CALLS);
+            static bool simplify = Config.is_set("--q3bsimplify");
             if (path_condition.size() == 0)
                 return false;
 
             z3::context c;
-            z3::expr pc(c);
+            z3::expr pc = c.bool_val(true);
 
             z3::solver s(c);
 
             for (const Definition &def : definitions)
-                s.add(toz3(def.to_formula(), 'a', c));
+                pc = pc && toz3(def.to_formula(), 'a', c);
 
-            for (const Formula &pc : path_condition)
-                s.add(toz3(pc, 'a', c));
+            for (const Formula &p : path_condition)
+                pc = pc && toz3(p, 'a', c);
 
-            ++Statistics::getCounter(STAT_SMT_CALLS);
-            z3::check_result r = s.check();
+            if (simplify) {
+                ExprSimplifier simp(c, true);
+                pc = simp.Simplify(pc);
+            }
 
-            assert(r != z3::unknown);
+            z3::check_result ret = solve_query_qf(s, pc);
 
-            return r == z3::unsat;
+            assert(ret != z3::unknown);
+
+            return ret == z3::unsat;
         }
         catch (const z3::exception& e) {
             std::cerr << "Cannot perform empty operation: " << e.msg() << "\n";
@@ -53,7 +57,8 @@ namespace llvm_sym {
     bool SMTStore::subseteq(const SMTStore &b, const SMTStore &a, bool timeout,
         bool is_caching_enabled)
     {
-        ++Statistics::getCounter(STAT_SUBSETEQ_CALLS);
+        static bool simplify = Config.is_set("--q3bsimplify");
+        ++Statistics::getCounter(SUBSETEQ_CALLS);
         if (a.definitions == b.definitions) {
             bool equal_syntax = a.path_condition.size() == b.path_condition.size();
             for (size_t i = 0; equal_syntax && i < a.path_condition.size(); ++i) {
@@ -61,7 +66,7 @@ namespace llvm_sym {
                     equal_syntax = false;
             }
             if (equal_syntax) {
-                ++Statistics::getCounter(STAT_SUBSETEQ_SYNTAX_EQUAL);
+                ++Statistics::getCounter(SUBSETEQ_SYNTAX_EQUAL);
                 return true;
             }
         }
@@ -128,7 +133,7 @@ namespace llvm_sym {
 
             // Test if this formula is in cache or not
             if (Z3cache.is_cached(formula)) {
-                ++Statistics::getCounter(STAT_SMT_CACHED);
+                ++Statistics::getCounter(SMT_CACHED);
                 cached_result = Z3cache.result() == z3::unsat;
                 retrieved_from_cache = true;
                 if (!Config.is_set("--testvalidity"))
@@ -167,31 +172,26 @@ namespace llvm_sym {
         }
 
         z3::expr not_witness = !pc_a || distinct;
-        s.add(pc_b);
-        s.add(forall(a_all_vars, not_witness));
+        z3::expr query = pc_b && forall(a_all_vars, not_witness);
 
-            //std::cerr << "checking equal():\n" << s << std::endl;
+        if (simplify) {
+            ExprSimplifier simp(c, true);
+            query = simp.Simplify(query);
+        }
 
-        ++Statistics::getCounter(STAT_SMT_CALLS);
+        z3::check_result ret = solve_query_q(s, query);
 
-        z3::check_result ret = s.check();
         if (ret == z3::unknown) {
             ++unknown_instances;
+            ++Statistics::getCounter(SOLVER_UNKNOWN);
             if (Config.is_set("--verbose") || Config.is_set("--vverbose")) {
                 if (Config.is_set("--vverbose"))
                     std::cerr << "while checking:\n" << s;
                 std::cerr << "\ngot 'unknown', reason: " << s.reason_unknown() << std::endl;
             }
         }
-        
-        //FormulaeCapture::insert(s.to_smt2(), ret);
 
-        if (ret == z3::sat)
-            ++Statistics::getCounter(STAT_SUBSETEQ_SAT);
-        else if (ret == z3::unsat)
-            ++Statistics::getCounter(STAT_SUBSETEQ_UNSAT);
-        else
-            ++Statistics::getCounter(STAT_SUBSETEQ_UNKNOWN);
+        //FormulaeCapture::insert(s.to_smt2(), ret);
 
         solving_time.stop();
 
@@ -199,14 +199,14 @@ namespace llvm_sym {
             Z3cache.place(formula, ret, solving_time.getUs());
 
         bool real_result = ret == z3::unsat;
-        
+
         if (is_caching_enabled && Config.is_set("--testvalidity") &&
             retrieved_from_cache && real_result != cached_result)
         {
             std::cout << "Got different result from cache!\n";
             abort();
         }
-        
+
         return real_result;
     }
 
