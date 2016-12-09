@@ -13,17 +13,47 @@ Options:
     --silent              Makes all the compilation steps silent
 """
 
-import sys, os
+import sys, os, subprocess
 import compile_to_bitcode
+import hashlib
 
 from tempfile import mkdtemp
 
-def run_symdivine(symdivine_location, benchmark, symdivine_params = []):
-    cmd = "LD_LIBRARY_PATH=" + symdivine_location + " "
-    cmd += os.path.join(symdivine_location, "symdivine") + " reachability " + ' '.join(symdivine_params)
-    cmd += " " + benchmark
+def produce_witness(benchmark, arch, type):
+    if type:
+        with open("witness-true-template.xml") as f:
+            witness = f.read()
+    else:
+        with open("witness-false-template.xml") as f:
+            witness = f.read()
+    with open(benchmark) as f:
+        src = f.read()
+    archname = "{}bit".format(arch)
+    hash = hashlib.sha1(src)
+    witness = witness.replace("{HASH}", hash.hexdigest())
+    witness = witness.replace("{PROGRAM}", benchmark)
+    witness =witness.replace("{ARCH}", archname)
+    with open("witness.xml", "w") as f:
+        f.write(witness)
 
-    return os.system(cmd) == 0
+def run_symdivine(symdivine_location, benchmark, arch, src, symdivine_params = []):
+    cmd = [os.path.join(symdivine_location, "symdivine"), "reachability"]
+    cmd += [benchmark]
+    cmd += symdivine_params
+    env = os.environ.copy()
+    env["LD_LIBRARY_PATH"] = symdivine_location
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
+    stdout, stderr = p.communicate()
+
+    if "Error state" in stdout or "Error state" in stderr:
+        produce_witness(src, arch, False)
+    elif "Safe" in stdout:
+        produce_witness(src, arch, True)
+
+    sys.stdout.write(stdout)
+    sys.stderr.write(stderr)
+
+    return p.returncode == 0
 
 def rmrf_tmp_dir(d):
     return os.system('rm -rf {0}'.format(d))
@@ -52,6 +82,7 @@ def parse_args():
     silent = False
     loc = args[1]
     benchmark = None
+    arch = 32
 
     for arg in args[2:]:
         if arg.startswith("-O"):
@@ -62,6 +93,8 @@ def parse_args():
             fix_inline = True
         elif arg == "--silent":
             silent = True
+        elif arg == "--64":
+            arch = 64
         elif arg.startswith("-"):
             print("Unknown argument " + arg)
             print(__doc__)
@@ -75,11 +108,11 @@ def parse_args():
     if not benchmark:
         print("Error: No benchmark specified!")
         sys.exit(2)
-    return (loc, benchmark, opt, fix_volatile, fix_inline, silent)
+    return (loc, benchmark, opt, fix_volatile, fix_inline, silent, arch)
 
 if __name__ == "__main__":
 
-    loc, benchmark, opt, fix_volatile, fix_inline, silent = parse_args()
+    loc, benchmark, opt, fix_volatile, fix_inline, silent, arch = parse_args()
 
     tmpdir, src = copy_source_to_tmp(benchmark)
 
@@ -89,13 +122,15 @@ if __name__ == "__main__":
         print("Preprocessing")
         result = compile_to_bitcode.compile_benchmark(
             src = src, args = [opt], output = model, fix_inline = fix_inline,
-            fix_volatile = fix_volatile, lart_path = loc, supress_output = silent)
+            fix_volatile = fix_volatile, lart_path = loc, supress_output = silent,
+            arch = arch)
 
         if result == "":
             print("Compilation failed!")
             sys.exit(1)
         print("Running symdivine")
-        return_code = run_symdivine(loc, model)
+        return_code = run_symdivine(loc, model, arch, benchmark,
+            ["--dontsimplify", "--partialstore", "--enablecaching", "--q3bsimplify"])
     except Exception as e:
         print(e.message)
     finally:

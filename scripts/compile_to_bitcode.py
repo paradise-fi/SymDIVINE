@@ -12,14 +12,15 @@ def change_suffix(src, suffix):
     out += "." + suffix
     return out
 
-def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=False, lart_path=None, supress_output=False):
+def compile_benchmark(src, args, output = None, fix_inline=False,
+    fix_volatile=False, lart_path=None, supress_output=False, arch=32):
     if not output:
         output = change_suffix(src, "ll")
 
     if fix_inline:
-        args.append('-fno-inline')
+        args += ["-fno-inline"]
 
-    args += ['-m32', '-emit-llvm', '-fgnu89-inline']
+    args += ["-m{}".format(arch), "-emit-llvm", "-fgnu89-inline"]
 
     suff = ""
     if supress_output:
@@ -28,7 +29,7 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
     if fix_volatile:
         lart_path = os.path.join(lart_path, "lart")
         args_no_opt = [x for x in args if not x.startswith("-O")]
-        cmd = "clang -c {0} -o {1} {2}".format(' '.join(args_no_opt), output, src) + suff
+        cmd = "clang-3.5 -c {0} -o {1} {2}".format(" ".join(args_no_opt), output, src) + suff
         if not supress_output:
             print cmd
 
@@ -39,16 +40,16 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
 
         cmd = lart_path + " {0} {1} main-volatilize".format(output, output) + suff
         if not supress_output:
-            print cmd
+            print(cmd)
 
         if os.system(cmd) != 0:
             print("ERROR")
             print("Transformation failed")
             return ""
 
-        cmd = "clang -S {0} -o {1} {2}".format(' '.join(args), output, output) + suff
+        cmd = "clang-3.5 -S {0} -o {1} {2}".format(" ".join(args), output, output) + suff
         if not supress_output:
-            print cmd
+            print(cmd)
 
         if os.system(cmd) != 0:
             print("ERROR")
@@ -56,9 +57,9 @@ def compile_benchmark(src, args, output = None, fix_inline=False, fix_volatile=F
             return ""
     else:
         print("Running without LART")
-        cmd = "clang -S {0} -o {1} {2}".format(' '.join(args), output, src) + suff
+        cmd = "clang-3.5 -S {0} -o {1} {2}".format(" ".join(args), output, src) + suff
         if not supress_output:
-            print cmd
+            print(cmd)
 
         if os.system(cmd) != 0:
             print("ERROR")
