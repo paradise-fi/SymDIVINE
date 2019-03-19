@@ -1,4 +1,7 @@
-#SymDIVINE
+**This project is no longer active. SymDIVINE functionality was integrated
+into [DIVINE](https://divine.fi.muni.cz/).**
+
+# SymDIVINE
 
 SymDIVINE is a tool for control explicit/data symbolic bit-precise LTL
 verification of parallel C/C++ programs using LLVM bitcode as intermediate
